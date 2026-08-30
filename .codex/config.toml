@@ -1,0 +1,6 @@
+[[hooks.SessionEnd]]
+
+[[hooks.SessionEnd.hooks]]
+type = "command"
+command = "python3 scripts/hooks/session_end.py --tool codex"
+timeout = 3

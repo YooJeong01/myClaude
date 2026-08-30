@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/hooks/session_end.py --tool claude"
+          }
+        ]
+      }
+    ]
+  }
+}
