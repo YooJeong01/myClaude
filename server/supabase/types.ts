@@ -133,6 +133,33 @@ export interface Database {
           }
         ];
       };
+      dart_corp_codes: {
+        Row: {
+          corp_code: string;
+          corp_name: string;
+          corp_eng_name: string | null;
+          stock_code: string | null;
+          modify_date: string | null;
+          synced_at: string;
+        };
+        Insert: {
+          corp_code: string;
+          corp_name: string;
+          corp_eng_name?: string | null;
+          stock_code?: string | null;
+          modify_date?: string | null;
+          synced_at?: string;
+        };
+        Update: {
+          corp_code?: string;
+          corp_name?: string;
+          corp_eng_name?: string | null;
+          stock_code?: string | null;
+          modify_date?: string | null;
+          synced_at?: string;
+        };
+        Relationships: [];
+      };
       company_analyses: {
         Row: {
           id: string;
