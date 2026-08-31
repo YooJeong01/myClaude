@@ -34,7 +34,11 @@ export async function downloadCorpCodeEntries(): Promise<DartCorpEntry[]> {
   }
 
   const xml = new TextDecoder().decode(xmlBytes);
-  const parser = new XMLParser({ isArray: (name) => name === "list" });
+  // parseTagValue:false → 모든 값을 문자열로. corp_code/stock_code 의 앞자리 0 보존.
+  const parser = new XMLParser({
+    isArray: (name) => name === "list",
+    parseTagValue: false
+  });
   const parsed = parser.parse(xml) as {
     result?: { status?: string; message?: string; list?: RawCorpEntry[] };
   };
