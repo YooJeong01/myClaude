@@ -7,6 +7,9 @@ scripts/
 # dependencies
 node_modules/
 
+# npm lockfile — 이 프로젝트는 pnpm 단일 사용
+package-lock.json
+
 # next.js
 .next/
 out/
