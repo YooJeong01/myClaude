@@ -1,0 +1,74 @@
+name: Collect job postings via scraping
+
+on:
+  schedule:
+    # 08:00 KST (00:00 UTC) 및 20:00 KST (12:00 UTC)
+    - cron: '0 0,12 * * *'
+  workflow_dispatch: {}
+
+concurrency:
+  group: scrape-job-postings
+  cancel-in-progress: false
+
+jobs:
+  scrape-saramin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsx --env-file=.env.local server/jobs/scrape-saramin.ts
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SCRAPE_OWNER_USER_ID: ${{ secrets.SCRAPE_OWNER_USER_ID }}
+          SCRAPE_SEARCH_KEYWORDS: ${{ secrets.SCRAPE_SEARCH_KEYWORDS }}
+
+  scrape-jobkorea:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec tsx --env-file=.env.local server/jobs/scrape-jobkorea.ts
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SCRAPE_OWNER_USER_ID: ${{ secrets.SCRAPE_OWNER_USER_ID }}
+          SCRAPE_SEARCH_KEYWORDS: ${{ secrets.SCRAPE_SEARCH_KEYWORDS }}
+
+  scrape-catch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec tsx --env-file=.env.local server/jobs/scrape-catch.ts
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SCRAPE_OWNER_USER_ID: ${{ secrets.SCRAPE_OWNER_USER_ID }}
+          SCRAPE_SEARCH_KEYWORDS: ${{ secrets.SCRAPE_SEARCH_KEYWORDS }}
