@@ -36,5 +36,6 @@ pnpm-debug.log*
 .corepack-cache/
 node_modules
 
-.env.example
+# (fixed from previous .env.example double-negation bug)
 .env*
+!.env.example
