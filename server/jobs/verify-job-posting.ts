@@ -12,7 +12,6 @@
  */
 
 import { createAdminClient } from "../supabase/admin";
-import type { Database } from "../supabase/types";
 
 // job-posting api를 직접 가져오지 않고, Supabase 클라이언트로 직접 조작한다.
 // (server/ no-restricted-imports 규칙 회피 + 순수 DB 조작 확인)

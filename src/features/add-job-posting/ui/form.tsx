@@ -5,9 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
 import { EMPLOYMENT_TYPES, type EmploymentType } from "@/entities/job-posting";
+import type { NewJobPostingInput } from "@/entities/job-posting";
 import { Button } from "@/shared/ui/button";
-
-import { submitJobPosting } from "../lib/submit.server";
 
 const inputClassName =
   "h-10 w-full rounded-md border bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-60";
@@ -20,7 +19,13 @@ type SubmitState = {
   success: string | null;
 };
 
-export function AddJobPostingForm() {
+type AddJobPostingFormProps = {
+  submitAction: (
+    input: NewJobPostingInput
+  ) => Promise<{ success: boolean; error?: string }>;
+};
+
+export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [state, setState] = useState<SubmitState>({
@@ -41,7 +46,7 @@ export function AddJobPostingForm() {
     startTransition(async () => {
       setState({ error: null, success: null });
 
-      const result = await submitJobPosting({
+      const result = await submitAction({
         companyNameRaw: String(formData.get("companyNameRaw") ?? ""),
         role,
         employmentType,

@@ -9,7 +9,7 @@ import {
   type NewJobPostingInput
 } from "@/entities/job-posting";
 import { requireUser, UnauthorizedError } from "@/entities/session";
-import { createClient as createSupabaseServerClient } from "@/shared/api/supabase/server";
+import { createSupabaseServerClient } from "@/shared/api-server";
 
 export async function submitJobPosting(
   input: NewJobPostingInput

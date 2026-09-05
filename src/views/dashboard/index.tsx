@@ -1,14 +1,21 @@
+import { redirect } from "next/navigation";
+
 import { listJobPostings, type JobPosting } from "@/entities/job-posting";
-import { requireUser } from "@/entities/session";
+import { getUser } from "@/entities/session";
 import { AddJobPostingForm } from "@/features/add-job-posting";
-import { createClient as createSupabaseServerClient } from "@/shared/api/supabase/server";
+import { submitJobPosting } from "@/features/add-job-posting/lib/submit.server";
+import { createSupabaseServerClient } from "@/shared/api-server";
 
 const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
   dateStyle: "medium"
 });
 
 export async function DashboardView() {
-  const user = await requireUser();
+  const user = await getUser();
+  if (!user) {
+    redirect("/");
+  }
+
   const supabase = await createSupabaseServerClient();
   const postings = await listJobPostings(supabase);
 
@@ -34,7 +41,7 @@ export async function DashboardView() {
                 URL이나 본문 중 하나를 넣으면 저장할 수 있습니다.
               </p>
             </div>
-            <AddJobPostingForm />
+            <AddJobPostingForm submitAction={submitJobPosting} />
           </div>
 
           <aside className="rounded-md border bg-card p-5 text-card-foreground">

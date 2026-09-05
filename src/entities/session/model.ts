@@ -1,6 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 
-import { createClient as createSupabaseServerClient } from "@/shared/api/supabase/server";
+import { createSupabaseServerClient } from "@/shared/api-server";
 
 export class UnauthorizedError extends Error {
   constructor() {
