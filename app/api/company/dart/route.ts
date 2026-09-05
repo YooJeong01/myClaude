@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { createClient } from "@/shared/api/supabase/server";
+import { UnauthorizedError, requireUser } from "@/entities/session";
 import { createAdminClient } from "@server/supabase/admin";
 import { fetchCompanyProfile, fetchKeyFinancials } from "@server/dart/client";
 import { resolveCorp } from "@server/dart/corp-codes";
@@ -12,15 +12,16 @@ export const runtime = "nodejs";
  * GET /api/company/dart?corp=<회사명>[&year=<사업연도>]
  * GET /api/company/dart?corp_code=<8자리>
  *
- * 얇은 어댑터: 로그인 확인 → corp_code 해석 → DART 기업개황 + 주요 재무 조회.
+ * 로그인 확인 후 corp_code를 해석하고 DART 기업개황 + 주요 재무를 조회한다.
  */
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  const supabase = await createClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  try {
+    await requireUser();
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
+    throw error;
   }
 
   const { searchParams } = req.nextUrl;
@@ -38,7 +39,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const year = yearParam ? Number(yearParam) : undefined;
   if (year !== undefined && (!Number.isInteger(year) || year < 2015)) {
-    return NextResponse.json({ error: "year 는 2015 이상의 정수여야 합니다." }, { status: 400 });
+    return NextResponse.json(
+      { error: "year는 2015 이상의 정수여야 합니다." },
+      { status: 400 }
+    );
   }
 
   try {
@@ -47,7 +51,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     if (!match) {
       return NextResponse.json(
-        { error: `'${lookup}' 에 해당하는 기업을 찾지 못했습니다.`, candidates },
+        { error: `'${lookup}'에 해당하는 기업을 찾지 못했습니다.`, candidates },
         { status: 404 }
       );
     }
@@ -65,10 +69,16 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     });
   } catch (err) {
     if (err instanceof DartApiError) {
-      return NextResponse.json({ error: err.message, code: err.code }, { status: statusFor(err) });
+      return NextResponse.json(
+        { error: err.message, code: err.code },
+        { status: statusFor(err) }
+      );
     }
     console.error("[/api/company/dart]", err);
-    return NextResponse.json({ error: "기업 정보 조회 중 오류가 발생했습니다." }, { status: 500 });
+    return NextResponse.json(
+      { error: "기업 정보 조회 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }
 
