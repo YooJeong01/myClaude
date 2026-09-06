@@ -13,7 +13,8 @@ export async function launchBrowser(): Promise<Browser> {
       headless: true,
       args: ['--disable-blink-features=AutomationControlled']
     });
-  } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_err) {
     throw ScrapeError.siteBlocked('Playwright 브라우저 시작 실패');
   }
 }

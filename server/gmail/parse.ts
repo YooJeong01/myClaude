@@ -13,7 +13,7 @@ import { load } from 'cheerio';
 import type { CollectedJobPosting, EmploymentType } from '../job-postings/types';
 import { EMPLOYMENT_TYPES } from '../job-postings/types';
 
-function normalizeEmploymentType(raw?: string): EmploymentType {
+export function normalizeEmploymentType(raw?: string): EmploymentType {
   if (!raw) return '기타';
   const normalized = raw.toLowerCase().trim();
   const found = EMPLOYMENT_TYPES.find((t) => normalized.includes(t) || t.includes(normalized));
@@ -46,7 +46,7 @@ export function parseSaraminAlertEmail(html: string): CollectedJobPosting[] {
 
         // URL에서 회사명/직무 추출 (쿼리파라미터 또는 텍스트 사용)
         // 간단한 방법: 링크 텍스트에서 "회사명 직무" 형식 추정
-        const parts = text.split(/[\s\-]+/).filter((p) => p.length > 0);
+        const parts = text.split(/[\s-]+/).filter((p) => p.length > 0);
         if (parts.length < 2) return;
 
         const posting: CollectedJobPosting = {
@@ -93,7 +93,7 @@ export function parseJobkoreaAlertEmail(html: string): CollectedJobPosting[] {
         if (!href || !text) return;
 
         // 링크 텍스트에서 회사명/직무 추출
-        const parts = text.split(/[\s\-]+/).filter((p) => p.length > 0);
+        const parts = text.split(/[\s-]+/).filter((p) => p.length > 0);
         if (parts.length < 2) return;
 
         const posting: CollectedJobPosting = {
@@ -120,7 +120,8 @@ export function parseJobkoreaAlertEmail(html: string): CollectedJobPosting[] {
  *
  * 캐치는 알림 이메일 기능이 명확하지 않으므로, 스텁으로 남겨둔다.
  */
-export function parseCatchAlertEmail(html: string): CollectedJobPosting[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function parseCatchAlertEmail(_html: string): CollectedJobPosting[] {
   // TODO: 캐치 알림 이메일 구조 확인 후 구현
   console.log('  ℹ️ 캐치 이메일 파싱 미구현');
   return [];

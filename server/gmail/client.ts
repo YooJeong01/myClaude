@@ -66,8 +66,8 @@ export async function getMessageBody(
     });
 
     const message = response.data;
-    const headers = message.payload?.headers ?? [];
-    const subject = headers.find((h) => h.name === 'Subject')?.value ?? '';
+    // const headers = message.payload?.headers ?? [];
+    // const subject = headers.find((h) => h.name === 'Subject')?.value ?? '';
 
     let htmlBody: string | null = null;
     let textBody: string | null = null;

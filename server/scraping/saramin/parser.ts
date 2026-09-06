@@ -4,7 +4,7 @@
  * 사람인은 SSR이라 정적 HTML에서 공고 정보를 직접 추출할 수 있다.
  * CSS 선택자로 각 공고 항목(class="item_recruit")을 순회하며 정규화.
  */
-import { load, type CheerioAPI } from 'cheerio';
+import { load, type CheerioAPI, type Cheerio, type Element } from 'cheerio';
 import { ScrapeError } from '../common/types';
 import type { CollectedJobPosting, EmploymentType } from '../../job-postings/types';
 import { EMPLOYMENT_TYPES } from '../../job-postings/types';
@@ -25,7 +25,7 @@ function normalizeEmploymentType(raw?: string): EmploymentType {
   return found ?? '기타';
 }
 
-function parseItemRecruit($: CheerioAPI, $item: any): RawPosting {
+function parseItemRecruit($: CheerioAPI, $item: Cheerio<Element>): RawPosting {
   // 기본 선택자 (실제 사이트 구조에 따라 조정 필요)
   const companyName = $item.find('.company_name, .co_name, [class*="company"]').first().text().trim();
   const jobTitle = $item.find('.job_tit, .tit, h2').first().text().trim();

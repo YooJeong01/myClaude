@@ -55,7 +55,7 @@ async function main(): Promise<void> {
   }
 
   console.log('4️⃣  이메일 본문 파싱 및 공고 추출');
-  let allPostings = [];
+  const allPostings = [];
   for (const email of emails) {
     try {
       const body = await getMessageBody(gmail, email.id);

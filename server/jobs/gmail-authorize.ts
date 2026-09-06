@@ -16,7 +16,6 @@
  * - 콘솔에서 출력되는 refresh_token을 안전하게 보관할 것.
  */
 import { google } from 'googleapis';
-import * as fs from 'fs';
 import * as readline from 'readline';
 
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
