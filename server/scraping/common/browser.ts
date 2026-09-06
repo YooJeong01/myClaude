@@ -23,8 +23,8 @@ export async function withPage<T>(
   browser: Browser,
   fn: (page: Page) => Promise<T>
 ): Promise<T> {
-  const context = await browser.createBrowserContext();
-  const page = await context.newPage();
+  // 직접 newPage() 호출 (context는 선택사항)
+  const page = await browser.newPage();
 
   try {
     // 기본 타임아웃 15초
@@ -34,6 +34,5 @@ export async function withPage<T>(
     return await fn(page);
   } finally {
     await page.close();
-    await context.close();
   }
 }

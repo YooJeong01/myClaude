@@ -27,17 +27,30 @@ export async function insertCollectedJobPostings(
 
   // 배치 처리
   for (let i = 0; i < validated.length; i += BATCH_SIZE) {
-    const batch = validated.slice(i, i + BATCH_SIZE).map((p) => ({
-      user_id: userId,
-      company_name_raw: p.companyNameRaw,
-      role: p.role,
-      employment_type: p.employmentType,
-      posted_at: p.postedAt ? new Date(p.postedAt).toISOString().split('T')[0] : null,
-      deadline: p.deadline ? new Date(p.deadline).toISOString().split('T')[0] : null,
-      url: p.url || null,
-      raw_text: p.rawText || null,
-      source
-    }));
+    const batch = validated.slice(i, i + BATCH_SIZE).map((p) => {
+      // 날짜 파싱: 유효하지 않은 형식은 null로 처리
+      const parseDate = (dateStr?: string | Date): string | null => {
+        if (!dateStr) return null;
+        try {
+          return new Date(dateStr).toISOString().split('T')[0];
+        } catch {
+          console.warn(`  ⚠ 날짜 파싱 실패: "${dateStr}"`);
+          return null;
+        }
+      };
+
+      return {
+        user_id: userId,
+        company_name_raw: p.companyNameRaw,
+        role: p.role,
+        employment_type: p.employmentType,
+        posted_at: parseDate(p.postedAt),
+        deadline: parseDate(p.deadline),
+        url: p.url || null,
+        raw_text: p.rawText || null,
+        source
+      };
+    });
 
     const { error, data } = await admin
       .from('job_postings')
