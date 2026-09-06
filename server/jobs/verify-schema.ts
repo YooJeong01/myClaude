@@ -97,7 +97,37 @@ async function main(): Promise<void> {
   assert(dupErr, "중복 insert 가 막히지 않음 (nulls not distinct 미지원?)");
   ok(`중복 거부됨 (${dupErr.code})`);
 
-  console.log("5. company_analyses insert");
+  console.log("5. job_postings source 값 검증 (Day2 스크래핑)");
+  const { data: jp2, error: jpErr2 } = await admin
+    .from("job_postings")
+    .insert({
+      user_id: userId,
+      company_name_raw: "스크래핑테스트(주)",
+      role: "프론트엔드",
+      employment_type: "정규직",
+      posted_at: "2026-09-05",
+      source: "scrape_saramin",
+      url: "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=1234"
+    })
+    .select("id, source")
+    .single();
+  assert(!jpErr2 && jp2, `job_postings scrape_saramin insert: ${jpErr2?.message}`);
+  created.push({ table: "job_postings", id: jp2.id });
+  ok(`scrape_saramin source 허용됨`);
+
+  const { error: jpInvalidErr } = await admin.from("job_postings").insert({
+    user_id: userId,
+    company_name_raw: "불가능테스트(주)",
+    role: "프론트엔드",
+    employment_type: "정규직",
+    posted_at: "2026-09-05",
+    source: "invalid_source",
+    url: "https://example.com/job/2"
+  });
+  assert(jpInvalidErr, "invalid_source 가 reject 되지 않음 (체크 제약 실패)");
+  ok(`invalid_source 거부됨 (${jpInvalidErr.code})`);
+
+  console.log("6. company_analyses insert");
   const { data: ca, error: caErr } = await admin
     .from("company_analyses")
     .insert({
@@ -113,7 +143,7 @@ async function main(): Promise<void> {
   created.push({ table: "company_analyses", id: ca.id });
   ok(`analysis ${ca.id}`);
 
-  console.log("6. RLS: anon select");
+  console.log("7. RLS: anon select");
   const { data: anonCa } = await anon.from("company_analyses").select("id");
   assert((anonCa?.length ?? 0) === 0, `anon 이 company_analyses ${anonCa?.length}행 읽음`);
   ok("anon → company_analyses 0행 (차단)");
