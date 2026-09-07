@@ -1,4 +1,10 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(codex exec:*)",
+      "Bash(codex e:*)"
+    ]
+  },
   "hooks": {
     "SessionEnd": [
       {
