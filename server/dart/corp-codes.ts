@@ -37,9 +37,7 @@ export async function resolveCorp(admin: Admin, nameOrCode: string): Promise<Res
     throw new DartApiError("DART_ERROR", `dart_corp_codes 조회 실패: ${error.message}`);
   }
 
-  // supabase-js 의 select('*') 반환 추론이 수기 Database 타입과 잘 안 맞아 명시 캐스트.
-  const rows = (data ?? []) as CorpRow[];
-  const candidates = rows.map(rowToEntry);
+  const candidates = (data ?? []).map(rowToEntry);
   if (candidates.length === 0) {
     return { match: null, candidates: [] };
   }
