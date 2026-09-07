@@ -14,7 +14,7 @@ goal.md 필수 기능인 **기업분석 → 지원동기 연결**의 앞단 (지
 
 - **Google Gemini API 무료 티어** 사용. 이유: Anthropic/OpenAI API 는 구독과 별도 유료이고, 사용자는 무료 티어를 원함.
   GitHub Models 는 2026-07-30 종료됨. 사용자가 구글 계정(`ujjh77@gmail.com`) 보유 → aistudio.google.com 에서 카드 없이 키 발급.
-- 모델: `gemini-2.5-flash` (발급 시 AI Studio 에서 현재 flash 티어 모델 ID 재확인). 무료 한도 ≈ 10 RPM / 250 RPD — "다시 분석하기" 수동 버튼이라 충분.
+- 모델: **`gemini-3.6-flash`** (2026-09 기준. `gemini-2.5-flash` 는 신규 사용자에게 닫혀 API 가 3.x 로 안내함). 무료 한도 ≈ 10 RPM / 250 RPD — "다시 분석하기" 수동 버튼이라 충분.
 - 구독(Claude Max)으로 하는 비동기 방식(GHA + `CLAUDE_CODE_OAUTH_TOKEN`)도 검토했으나 1~3분 지연 때문에 기각.
 
 ## 의존성 순서
@@ -34,18 +34,20 @@ goal.md 필수 기능인 **기업분석 → 지원동기 연결**의 앞단 (지
 - [완료] 검증: 삼성전자 리포트 3건 조회 (제목·증권사·작성일·PDF URL). Codex 위임 구현 → 재검증(tsc/lint/build)
 - [남음] 현재는 목록 첫 페이지 최대 80건만 조회. 더 깊은 과거 범위 필요 시 페이지네이션 정책 별도 결정
 
-## T20. LLM 클라이언트 모듈 — `server/llm/`
+## T20. LLM 클라이언트 모듈 — `server/llm/` [완료 2026-09-07]
 
-- [ ] `pnpm add @google/genai`
-- [ ] `.env.example` + `.env.local` 에 `GEMINI_API_KEY` 추가 (aistudio.google.com 에서 발급, 카드 불필요)
-- [ ] `server/llm/config.ts` — 모델 `gemini-2.5-flash` (발급 시 현재 flash 모델 ID 확인), `GEMINI_API_KEY` env 읽기 + 없을 때 명확한 에러, `maxOutputTokens` 등 상수
-- [ ] `server/llm/client.ts` — `@google/genai` 래퍼
-  - `new GoogleGenAI({ apiKey })`
-  - `generateJson(prompt, responseSchema)` — `ai.models.generateContent({ model, contents, config: { responseMimeType: "application/json", responseSchema } })` → `response.text` 파싱. Gemini 가 스키마 강제하므로 T21 파싱 부담 줄어듦
-  - 긴 입력 대비 필요 시 `generateContentStream` 도 노출 (종합 프롬프트는 입력이 큼 — 3개 소스)
-  - 에러를 도메인 타입(`LlmError`)으로 매핑 (rate limit 429 / quota / 그 외)
-  - `server/` 규칙상 `next/*` import 금지 — SDK 무관
-- [ ] `server/jobs/verify-llm.ts` — 짧은 프롬프트 1회 왕복해서 키·연결 확인
+- [완료] `pnpm add @google/genai` (2.21.0)
+- [완료] `.env.example` 에 `GEMINI_API_KEY` 추가. `.env.local` 은 사용자가 채움
+- [완료] `server/llm/config.ts` — 모델 `gemini-3.6-flash`, `getGeminiApiKey()` (없으면 `LlmError("NO_API_KEY")`), `MAX_OUTPUT_TOKENS`/`TEMPERATURE` 상수
+- [완료] `server/llm/errors.ts` — `LlmError` + `LlmErrorCode` (`NO_API_KEY`/`RATE_LIMITED`/`BAD_REQUEST`/`EMPTY_RESPONSE`/`INVALID_JSON`/`LLM_ERROR`)
+- [완료] `server/llm/client.ts` — `@google/genai` 래퍼
+  - `generateText({ prompt, systemInstruction? })` — 자유 텍스트 (스모크용)
+  - `generateJson<T>({ prompt, schema, systemInstruction? })` — `responseMimeType: "application/json"` + `responseSchema` 로 구조 강제 → `JSON.parse`
+  - `ApiError` → `LlmError` 매핑 (429 → `RATE_LIMITED`, 4xx → `BAD_REQUEST`, 그 외 → `LLM_ERROR`)
+  - 클라이언트 인스턴스 모듈 캐시
+- [완료] `server/jobs/verify-llm.ts` — 자유 텍스트 + JSON 스키마 강제 2케이스
+- [완료] 검증: `tsc`/`lint`/`build` 그린. `verify-llm.ts` 실행 → "연결 정상" + 삼성전자 JSON(company/sector/keywords) 정상
+- [발견] `gemini-2.5-flash` 는 신규 사용자에게 닫혀 404 → API 안내대로 `gemini-3.6-flash` 로 변경. `@google/genai` 는 `Interactions API` 권장 문구가 있으나 `models.generateContent` 로 동작
 
 ## T21. 기업분석 종합 로직 — `server/analysis/`
 
@@ -74,7 +76,7 @@ goal.md 필수 기능인 **기업분석 → 지원동기 연결**의 앞단 (지
   3. `companies` lazy upsert — DART 기업개황으로 (corp_code unique)
   4. DART(`fetchCompanyProfile` + `fetchKeyFinancials`) · 네이버(`fetchCompanyNews`) · 한경컨센서스(`fetchRecentReports`) **병렬 수집** (`Promise.allSettled` — 일부 실패해도 나머지로 진행)
   5. `synthesizeCompanyAnalysis(...)`
-  6. `company_analyses` insert — `user_id`, `company_id`, `role`, `result`, `sources`, `model`(`"gemini-2.5-flash"`)
+  6. `company_analyses` insert — `user_id`, `company_id`, `role`, `result`, `sources`, `model`(`GEMINI_MODEL`)
   7. 저장된 분석 반환
 - [ ] `export const runtime = "nodejs"`
 - [ ] 에러 매핑: `DartApiError` / `HankyungScrapeError` / `LlmError`(rate limit 시 429) → 적절한 status
@@ -90,11 +92,10 @@ goal.md 필수 기능인 **기업분석 → 지원동기 연결**의 앞단 (지
 
 ## 미결 판단 (사용자)
 
-- **`GEMINI_API_KEY` 발급** — T20 착수 전 필요. aistudio.google.com → API key 발급(카드 불필요) → `.env.local` 에 기입.
-  Vercel 배포 시 프로젝트 환경변수에도 등록
+- [완료] `GEMINI_API_KEY` 발급·기입 — Vercel 배포 시 프로젝트 환경변수에도 등록 필요 (Day 8~9)
 - `companies` 채우기 정책: analyze 시 lazy upsert (현재 계획) vs 별도 sync 잡. 우선 lazy 로 가고 필요 시 전환
 - 무료 티어 한도(≈250 RPD) 초과 시 대응: Groq/Cerebras 등으로 폴백 여부 — 우선순위 낮음, 초과가 실제로 나면 검토
-- 종합 리포트 한국어 품질이 `gemini-2.5-flash` 로 충분한지 T23 결과 보고 판단 (부족하면 `gemini-2.5-pro` 로 상향, 무료 한도는 더 낮음)
+- 종합 리포트 한국어 품질이 `gemini-3.6-flash` 로 충분한지 T23 결과 보고 판단 (부족하면 pro 티어로 상향, 무료 한도는 더 낮음)
 
 ## 규율 (day1.md 계승)
 
