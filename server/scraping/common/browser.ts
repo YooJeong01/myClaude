@@ -13,9 +13,9 @@ export async function launchBrowser(): Promise<Browser> {
       headless: true,
       args: ['--disable-blink-features=AutomationControlled']
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (_err) {
-    throw ScrapeError.siteBlocked('Playwright 브라우저 시작 실패');
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    throw ScrapeError.siteBlocked(`Playwright 브라우저 시작 실패: ${detail}`);
   }
 }
 
