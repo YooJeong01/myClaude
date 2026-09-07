@@ -49,44 +49,42 @@ goal.md 필수 기능인 **기업분석 → 지원동기 연결**의 앞단 (지
 - [완료] 검증: `tsc`/`lint`/`build` 그린. `verify-llm.ts` 실행 → "연결 정상" + 삼성전자 JSON(company/sector/keywords) 정상
 - [발견] `gemini-2.5-flash` 는 신규 사용자에게 닫혀 404 → API 안내대로 `gemini-3.6-flash` 로 변경. `@google/genai` 는 `Interactions API` 권장 문구가 있으나 `models.generateContent` 로 동작
 
-## T21. 기업분석 종합 로직 — `server/analysis/`
+## T21. 기업분석 종합 로직 — `server/analysis/` [완료 2026-09-07]
 
-- [ ] `server/analysis/types.ts` — `company_analyses.result` JSON 스키마 확정. 초안:
-  ```
-  {
-    overview:            string       // 회사 한 문단 개요
-    financials_summary:  string       // DART 주요 재무 요약 (매출·영업익·순익 추세)
-    recent_news_themes:  string[]     // 네이버 뉴스에서 뽑은 최근 이슈 테마
-    analyst_view:        string       // 한경컨센서스 리포트 종합 (원문 인용 없이)
-    risks:               string[]     // 리스크 요인
-    talking_points:      string[]     // 지원동기 연결용 소재 (Day 4 매칭에서 사용)
-  }
-  ```
-  `sources` 스키마: `{ dart: { year }, news: { link }[], consensus: { title, firm, url }[] }`
-- [ ] `server/analysis/synthesize.ts` — `synthesizeCompanyAnalysis(inputs)` : 3개 소스 수집 결과 → 프롬프트 구성 → `server/llm` 의 `generateJson(prompt, resultSchema)` 호출 → 결과 검증. `sources` 는 LLM 이 아니라 수집 단계에서 코드로 조립
-- [ ] 프롬프트 원칙: 원문(뉴스 본문·리포트 PDF) 재게시 금지, 출처 기반 요약, 한국어 리포트, talking_points 는 구체적으로
-- [ ] 마이그레이션 불필요 — T3 `company_analyses` 테이블 재사용. `server/supabase/types.ts` 의 `company_analyses.result` 타입만 위 스키마로 구체화
+확장 전제(사용자 지시): result 는 jsonb 라 컬럼 추가 자유, `schema_version` 으로 구 데이터 구분,
+LLM 생성부와 코드 조립부 분리, 프롬프트는 별도 모듈로 교체 쉽게.
 
-## T22. 분석 Route Handler — `app/api/company/analyze/route.ts`
+- [완료] `server/analysis/types.ts`
+  - `CompanyAnalysisResult` (v1): `schema_version` + `overview` / `financials_summary` / `recent_news_themes[]` / `analyst_view` / `risks[]` / `talking_points[]`
+  - `ANALYSIS_SCHEMA_VERSION = 1` — 필드 변경 시 올림
+  - `companyAnalysisResultSchema: Schema` — Gemini responseSchema (인터페이스와 수동 동기화, 주석에 명시)
+  - `AnalysisSources` (`dart` / `news[]` / `consensus[]`) — 코드로 조립, 프론트 "근거 보기"용
+  - `SynthesisInput` — 소스 추가 시 필드만 늘림. 각 소스 "없을 수 있음" 표현
+- [완료] `server/analysis/prompt.ts` — `SYNTHESIS_SYSTEM_INSTRUCTION` + `buildSynthesisPrompt()`. 섹션 포맷터 분리(재무/뉴스/리포트), 원문 재게시 금지·자료 기반·한국어·직무 반영
+- [완료] `server/analysis/synthesize.ts` — `synthesizeCompanyAnalysis(input)` : 프롬프트 → `generateJson` → `schema_version` stamp + `buildSources()` (LLM 관여 없이 입력에서 조립) → `{ result, sources, model }`
+- [완료] `server/jobs/verify-synthesize.ts` — DB/Route 없이 파이프라인만 스모크
+- [완료] 마이그레이션 불필요 (T3 `company_analyses` 재사용). result 타입은 `server/analysis/types.ts` 가 소유, `company_analyses.result` 는 `Json` 유지하고 insert 경계에서 캐스트 (T22)
+- [완료] 검증: tsc/lint/build 그린. `verify-synthesize.ts` 삼성전자 → 6필드 정상 채움, talking_points 가 "프론트엔드 개발자" 직무 반영, sources 뉴스 10·컨센서스 9건 조립
 
-- [ ] `POST` — body `{ corp?: string, corp_code?: string, role?: string, job_posting_id?: string }`
-- [ ] 흐름 (기존 `app/api/company/dart/route.ts` 패턴 계승):
-  1. `requireUser()` → 401 (`UnauthorizedError`)
-  2. `resolveCorp(admin, lookup)` → 404 (후보 목록 포함)
-  3. `companies` lazy upsert — DART 기업개황으로 (corp_code unique)
-  4. DART(`fetchCompanyProfile` + `fetchKeyFinancials`) · 네이버(`fetchCompanyNews`) · 한경컨센서스(`fetchRecentReports`) **병렬 수집** (`Promise.allSettled` — 일부 실패해도 나머지로 진행)
-  5. `synthesizeCompanyAnalysis(...)`
-  6. `company_analyses` insert — `user_id`, `company_id`, `role`, `result`, `sources`, `model`(`GEMINI_MODEL`)
-  7. 저장된 분석 반환
-- [ ] `export const runtime = "nodejs"`
-- [ ] 에러 매핑: `DartApiError` / `HankyungScrapeError` / `LlmError`(rate limit 시 429) → 적절한 status
+## T22. 분석 Route Handler — `app/api/company/analyze/route.ts` [완료 2026-09-07]
 
-## T23. 스모크 / 검증 — `server/jobs/verify-analyze.ts`
+- [완료] `POST` — body `{ corp?, corp_code?, role, job_posting_id? }`. `role` 필수(400), `corp`/`corp_code` 중 하나 필수(400)
+- [완료] 흐름 (dart route 패턴 계승): `requireUser()`(401) → `resolveCorp`(404, 후보 포함) →
+  `collectCompanySources` (3개 소스 병렬, profile 필수·나머지 degrade) → `upsertCompany` →
+  `synthesizeCompanyAnalysis` → `insertCompanyAnalysis`
+- [완료] 얇게 유지 — 수집은 `server/analysis/collect.ts`, DB 는 `server/analysis/persist.ts` 로 분리 (T23 재사용)
+- [완료] `export const runtime = "nodejs"`
+- [완료] 에러 매핑: `DartApiError`(NO_DATA 404 / RATE_LIMITED 429 / 그 외 502) / `LlmError`(RATE_LIMITED 429 / NO_API_KEY 500 / 그 외 502) / `HankyungScrapeError` 502
+- [완료] `pnpm build` → `ƒ /api/company/analyze` 라우트 등록 확인
 
-- [ ] 인증 미구현(Day 8~9)이라 curl 불가 → `SCRAPE_OWNER_USER_ID` 유저 + `createAdminClient()` 로 전체 파이프라인 1회 실행 (예: 삼성전자, "프론트엔드 개발자")
-- [ ] `result` JSON 6개 필드 채워졌는지, `sources` 에 실제 링크 들어갔는지 확인
-- [ ] `company_analyses` 행 생성 확인, 같은 (user, company, role) 재실행 시 이력 누적(덮어쓰기 없음) 확인
-- [ ] `tsc --noEmit` / `pnpm lint` / `pnpm build` 그린
+## T23. 스모크 / 검증 — `server/jobs/verify-analyze.ts` [완료 2026-09-07]
+
+- [완료] `SCRAPE_OWNER_USER_ID` 유저 + `createAdminClient()` 로 route 와 같은 순서 재현 (인자로 회사명·직무)
+- [완료] 검증 실행:
+  - 삼성전자 / 프론트엔드 개발자 → `company_analyses` 행 생성, result 6필드·talking_points 3·risks 3, sources dart+news12+consensus9
+  - 카카오 / 백엔드 개발자 → 정상, sources consensus 5
+  - `(user, company, role)` 누적 이력 카운트 확인 (덮어쓰기 없음)
+- [완료] `tsc --noEmit` / `pnpm lint` / `pnpm build` 그린
 
 ---
 
