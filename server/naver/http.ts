@@ -2,9 +2,9 @@
  * 네이버 검색 API HTTP 요청 래퍼.
  *
  * server/dart/http.ts와 동일한 패턴.
- * X-Naver-Client-Id/Secret 헤더를 자동으로 추가.
+ * NAVER API HUB(NCP) 인증 헤더(X-NCP-APIGW-API-KEY-ID/KEY)를 자동으로 추가.
  */
-import { getNaverConfig } from './config';
+import { getNaverConfig, NAVER_SEARCH_BASE_URL } from './config';
 
 export class NaverApiError extends Error {
   readonly code: string;
@@ -21,7 +21,7 @@ export class NaverApiError extends Error {
 export async function naverGet<T>(path: string, searchParams: Record<string, string | number>): Promise<T> {
   const { clientId, clientSecret } = getNaverConfig();
 
-  const url = new URL(path, 'https://openapi.naver.com');
+  const url = new URL(path, NAVER_SEARCH_BASE_URL);
   for (const [key, value] of Object.entries(searchParams)) {
     url.searchParams.set(key, String(value));
   }
@@ -29,8 +29,8 @@ export async function naverGet<T>(path: string, searchParams: Record<string, str
   const response = await fetch(url.toString(), {
     method: 'GET',
     headers: {
-      'X-Naver-Client-Id': clientId,
-      'X-Naver-Client-Secret': clientSecret,
+      'X-NCP-APIGW-API-KEY-ID': clientId,
+      'X-NCP-APIGW-API-KEY': clientSecret,
       Accept: 'application/json'
     }
   });
