@@ -66,26 +66,25 @@ LLM 생성부와 코드 조립부 분리, 프롬프트는 별도 모듈로 교�
 - [완료] 마이그레이션 불필요 (T3 `company_analyses` 재사용). result 타입은 `server/analysis/types.ts` 가 소유, `company_analyses.result` 는 `Json` 유지하고 insert 경계에서 캐스트 (T22)
 - [완료] 검증: tsc/lint/build 그린. `verify-synthesize.ts` 삼성전자 → 6필드 정상 채움, talking_points 가 "프론트엔드 개발자" 직무 반영, sources 뉴스 10·컨센서스 9건 조립
 
-## T22. 분석 Route Handler — `app/api/company/analyze/route.ts`
+## T22. 분석 Route Handler — `app/api/company/analyze/route.ts` [완료 2026-09-07]
 
-- [ ] `POST` — body `{ corp?: string, corp_code?: string, role?: string, job_posting_id?: string }`
-- [ ] 흐름 (기존 `app/api/company/dart/route.ts` 패턴 계승):
-  1. `requireUser()` → 401 (`UnauthorizedError`)
-  2. `resolveCorp(admin, lookup)` → 404 (후보 목록 포함)
-  3. `companies` lazy upsert — DART 기업개황으로 (corp_code unique)
-  4. DART(`fetchCompanyProfile` + `fetchKeyFinancials`) · 네이버(`fetchCompanyNews`) · 한경컨센서스(`fetchRecentReports`) **병렬 수집** (`Promise.allSettled` — 일부 실패해도 나머지로 진행)
-  5. `synthesizeCompanyAnalysis(...)`
-  6. `company_analyses` insert — `user_id`, `company_id`, `role`, `result`, `sources`, `model`(`GEMINI_MODEL`)
-  7. 저장된 분석 반환
-- [ ] `export const runtime = "nodejs"`
-- [ ] 에러 매핑: `DartApiError` / `HankyungScrapeError` / `LlmError`(rate limit 시 429) → 적절한 status
+- [완료] `POST` — body `{ corp?, corp_code?, role, job_posting_id? }`. `role` 필수(400), `corp`/`corp_code` 중 하나 필수(400)
+- [완료] 흐름 (dart route 패턴 계승): `requireUser()`(401) → `resolveCorp`(404, 후보 포함) →
+  `collectCompanySources` (3개 소스 병렬, profile 필수·나머지 degrade) → `upsertCompany` →
+  `synthesizeCompanyAnalysis` → `insertCompanyAnalysis`
+- [완료] 얇게 유지 — 수집은 `server/analysis/collect.ts`, DB 는 `server/analysis/persist.ts` 로 분리 (T23 재사용)
+- [완료] `export const runtime = "nodejs"`
+- [완료] 에러 매핑: `DartApiError`(NO_DATA 404 / RATE_LIMITED 429 / 그 외 502) / `LlmError`(RATE_LIMITED 429 / NO_API_KEY 500 / 그 외 502) / `HankyungScrapeError` 502
+- [완료] `pnpm build` → `ƒ /api/company/analyze` 라우트 등록 확인
 
-## T23. 스모크 / 검증 — `server/jobs/verify-analyze.ts`
+## T23. 스모크 / 검증 — `server/jobs/verify-analyze.ts` [완료 2026-09-07]
 
-- [ ] 인증 미구현(Day 8~9)이라 curl 불가 → `SCRAPE_OWNER_USER_ID` 유저 + `createAdminClient()` 로 전체 파이프라인 1회 실행 (예: 삼성전자, "프론트엔드 개발자")
-- [ ] `result` JSON 6개 필드 채워졌는지, `sources` 에 실제 링크 들어갔는지 확인
-- [ ] `company_analyses` 행 생성 확인, 같은 (user, company, role) 재실행 시 이력 누적(덮어쓰기 없음) 확인
-- [ ] `tsc --noEmit` / `pnpm lint` / `pnpm build` 그린
+- [완료] `SCRAPE_OWNER_USER_ID` 유저 + `createAdminClient()` 로 route 와 같은 순서 재현 (인자로 회사명·직무)
+- [완료] 검증 실행:
+  - 삼성전자 / 프론트엔드 개발자 → `company_analyses` 행 생성, result 6필드·talking_points 3·risks 3, sources dart+news12+consensus9
+  - 카카오 / 백엔드 개발자 → 정상, sources consensus 5
+  - `(user, company, role)` 누적 이력 카운트 확인 (덮어쓰기 없음)
+- [완료] `tsc --noEmit` / `pnpm lint` / `pnpm build` 그린
 
 ---
 
