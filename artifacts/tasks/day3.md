@@ -49,23 +49,22 @@ goal.md 필수 기능인 **기업분석 → 지원동기 연결**의 앞단 (지
 - [완료] 검증: `tsc`/`lint`/`build` 그린. `verify-llm.ts` 실행 → "연결 정상" + 삼성전자 JSON(company/sector/keywords) 정상
 - [발견] `gemini-2.5-flash` 는 신규 사용자에게 닫혀 404 → API 안내대로 `gemini-3.6-flash` 로 변경. `@google/genai` 는 `Interactions API` 권장 문구가 있으나 `models.generateContent` 로 동작
 
-## T21. 기업분석 종합 로직 — `server/analysis/`
+## T21. 기업분석 종합 로직 — `server/analysis/` [완료 2026-09-07]
 
-- [ ] `server/analysis/types.ts` — `company_analyses.result` JSON 스키마 확정. 초안:
-  ```
-  {
-    overview:            string       // 회사 한 문단 개요
-    financials_summary:  string       // DART 주요 재무 요약 (매출·영업익·순익 추세)
-    recent_news_themes:  string[]     // 네이버 뉴스에서 뽑은 최근 이슈 테마
-    analyst_view:        string       // 한경컨센서스 리포트 종합 (원문 인용 없이)
-    risks:               string[]     // 리스크 요인
-    talking_points:      string[]     // 지원동기 연결용 소재 (Day 4 매칭에서 사용)
-  }
-  ```
-  `sources` 스키마: `{ dart: { year }, news: { link }[], consensus: { title, firm, url }[] }`
-- [ ] `server/analysis/synthesize.ts` — `synthesizeCompanyAnalysis(inputs)` : 3개 소스 수집 결과 → 프롬프트 구성 → `server/llm` 의 `generateJson(prompt, resultSchema)` 호출 → 결과 검증. `sources` 는 LLM 이 아니라 수집 단계에서 코드로 조립
-- [ ] 프롬프트 원칙: 원문(뉴스 본문·리포트 PDF) 재게시 금지, 출처 기반 요약, 한국어 리포트, talking_points 는 구체적으로
-- [ ] 마이그레이션 불필요 — T3 `company_analyses` 테이블 재사용. `server/supabase/types.ts` 의 `company_analyses.result` 타입만 위 스키마로 구체화
+확장 전제(사용자 지시): result 는 jsonb 라 컬럼 추가 자유, `schema_version` 으로 구 데이터 구분,
+LLM 생성부와 코드 조립부 분리, 프롬프트는 별도 모듈로 교체 쉽게.
+
+- [완료] `server/analysis/types.ts`
+  - `CompanyAnalysisResult` (v1): `schema_version` + `overview` / `financials_summary` / `recent_news_themes[]` / `analyst_view` / `risks[]` / `talking_points[]`
+  - `ANALYSIS_SCHEMA_VERSION = 1` — 필드 변경 시 올림
+  - `companyAnalysisResultSchema: Schema` — Gemini responseSchema (인터페이스와 수동 동기화, 주석에 명시)
+  - `AnalysisSources` (`dart` / `news[]` / `consensus[]`) — 코드로 조립, 프론트 "근거 보기"용
+  - `SynthesisInput` — 소스 추가 시 필드만 늘림. 각 소스 "없을 수 있음" 표현
+- [완료] `server/analysis/prompt.ts` — `SYNTHESIS_SYSTEM_INSTRUCTION` + `buildSynthesisPrompt()`. 섹션 포맷터 분리(재무/뉴스/리포트), 원문 재게시 금지·자료 기반·한국어·직무 반영
+- [완료] `server/analysis/synthesize.ts` — `synthesizeCompanyAnalysis(input)` : 프롬프트 → `generateJson` → `schema_version` stamp + `buildSources()` (LLM 관여 없이 입력에서 조립) → `{ result, sources, model }`
+- [완료] `server/jobs/verify-synthesize.ts` — DB/Route 없이 파이프라인만 스모크
+- [완료] 마이그레이션 불필요 (T3 `company_analyses` 재사용). result 타입은 `server/analysis/types.ts` 가 소유, `company_analyses.result` 는 `Json` 유지하고 insert 경계에서 캐스트 (T22)
+- [완료] 검증: tsc/lint/build 그린. `verify-synthesize.ts` 삼성전자 → 6필드 정상 채움, talking_points 가 "프론트엔드 개발자" 직무 반영, sources 뉴스 10·컨센서스 9건 조립
 
 ## T22. 분석 Route Handler — `app/api/company/analyze/route.ts`
 
