@@ -5,7 +5,7 @@
  * upsert + ignoreDuplicates 로 중복 실행을 안전하게 처리한다.
  */
 import { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@/shared/supabase/types';
+import type { Database } from '../supabase/types';
 import type { CollectedJobPosting, InsertResult, JobPostingSource } from './types';
 
 const BATCH_SIZE = 100;

@@ -4,15 +4,18 @@
  * 사람인은 SSR이라 정적 HTML에서 공고 정보를 직접 추출할 수 있다.
  * CSS 선택자로 각 공고 항목(class="item_recruit")을 순회하며 정규화.
  */
-import { load, type CheerioAPI, type Cheerio, type Element } from 'cheerio';
+import { load, type CheerioAPI, type Cheerio } from 'cheerio';
 import { ScrapeError } from '../common/types';
 import type { CollectedJobPosting, EmploymentType } from '../../job-postings/types';
 import { EMPLOYMENT_TYPES } from '../../job-postings/types';
 
+// cheerio v1.x 는 노드 타입(Element)을 re-export 하지 않으므로 $() 반환 타입에서 추론한다.
+type CheerioNode = ReturnType<CheerioAPI> extends Cheerio<infer T> ? T : never;
+
 interface RawPosting {
   companyName?: string;
   jobTitle?: string;
-  employmentType?: string;
+  employmentType: EmploymentType;
   postedDate?: string;
   deadline?: string;
   url?: string;
@@ -25,7 +28,7 @@ function normalizeEmploymentType(raw?: string): EmploymentType {
   return found ?? '기타';
 }
 
-function parseItemRecruit($: CheerioAPI, $item: Cheerio<Element>): RawPosting {
+function parseItemRecruit($: CheerioAPI, $item: Cheerio<CheerioNode>): RawPosting {
   // 기본 선택자 (실제 사이트 구조에 따라 조정 필요)
   const companyName = $item.find('.company_name, .co_name, [class*="company"]').first().text().trim();
   const jobTitle = $item.find('.job_tit, .tit, h2').first().text().trim();
@@ -76,7 +79,7 @@ export function parseSearchResultPage(html: string): CollectedJobPosting[] {
       const posting: CollectedJobPosting = {
         companyNameRaw: raw.companyName,
         role: raw.jobTitle,
-        employmentType: raw.employmentType ?? '기타',
+        employmentType: raw.employmentType,
         postedAt: raw.postedDate,
         deadline: raw.deadline,
         url: raw.url

@@ -11,7 +11,8 @@
  *   - server/jobs/gmail-authorize.ts를 먼저 실행해서 refresh_token 획득
  */
 import { createAdminClient } from '../supabase/admin';
-import { createGmailClient, listRecentAlertEmails, getMessageBody, markMessageAsRead } from '../gmail/client';
+import { createGmailClient } from '../gmail/auth';
+import { listRecentAlertEmails, getMessageBody, markMessageAsRead } from '../gmail/client';
 import { parseAlertEmail } from '../gmail/parse';
 import { insertCollectedJobPostings } from '../job-postings/persist';
 
