@@ -158,9 +158,9 @@
 - [완료] 최소 스타일 (Tailwind 기본)
 
 ### 5-4. 테스트
-- [ ] 링크/텍스트 입력 후 제출 → Supabase `job_postings` 행 생성 확인
-- [ ] 대시보드 목록에 표시 확인
-  - `.env.local`이 없어 이번 세션에서는 못 돌림 — 사용자가 로컬에 키 채운 뒤 직접 확인 예정
+- [완료] 링크/텍스트 입력 후 제출 → Supabase `job_postings` 행 생성 확인 (2026-09-06 로컬 테스트)
+- [완료] 대시보드 목록에 표시 확인
+  - `.env.local` 채운 뒤 로컬 `pnpm dev` 에서 확인됨 (`artifacts/handover/2026-09-06-17-00-claude-day2-complete-status.md`)
 
 ---
 
@@ -191,33 +191,17 @@
 
 ### 6-6. 스모크 테스트
 - [완료] `pnpm lint` 통과 확인 (ESLint + Steiger FSD 경계)
-- [ ] `pnpm dev` → 랜딩 페이지 렌더 확인
-- [ ] 대시보드 라우트 접근 (mock 게이트 통과/거절 확인)
-  - `.env.local`이 없어 이번 세션에서는 못 돌림 — 사용자가 로컬에 키 채운 뒤 직접 확인 예정
+- [완료] `pnpm dev` → 랜딩 페이지 렌더 확인 (2026-09-06)
+- [완료] 대시보드 라우트 접근 (mock 게이트 통과/거절 확인)
+  - `.env.local` 채운 뒤 로컬에서 확인됨. middleware/getUser/requireUser 임시 수정 후 원복
 
 ---
 
-## T7. Vercel 연결 [사용자]
+## T7. Vercel 연결 [완료 2026-09-06, 사용자]
 
-### 7-1. Vercel 임포트
-- [ ] Vercel 대시보드에서 GitHub 리포 연결
-- [ ] `C:\myClaude` 레포 선택 및 임포트
-
-### 7-2. 환경 변수 등록
-- [ ] Vercel 프로젝트 Settings → Environment Variables
-  - `DART_API_KEY`
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-  - `SUPABASE_SERVICE_ROLE_KEY`
-  - `CRON_SECRET`
-
-### 7-3. 배포 테스트
-- [ ] 프리뷰 배포 트리거 (main 브랜치 푸시 또는 수동 배포)
-- [ ] 프리뷰 URL 접속 → 랜딩 페이지 로드 확인
-- [ ] 콘솔 에러 없음 확인
-
-### 7-4. 완료
-- [ ] 프리뷰 URL 기록
+- [완료] 사용자가 Vercel 에 리포 임포트 + 배포 완료 (`artifacts/handover/2026-09-06-17-00-claude-day2-complete-status.md`)
+- [남음] 환경변수 전체 등록 / 프리뷰 URL 기록 / 콘솔 에러 확인 — 인증·프로덕션 정비(Day 8~9)에서 마무리
+- 참고: `CRON_SECRET` 은 GitHub Actions 로 수집 파이프라인을 옮기면서(T16) Vercel Cron 대신 사용 안 함
 
 ---
 
