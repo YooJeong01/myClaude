@@ -50,9 +50,14 @@ export default async function AnalysesPage({
               회사별 분석
             </h1>
           </div>
-          <Button asChild variant="secondary">
-            <Link href="/dashboard">대시보드</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="secondary">
+              <Link href="/dashboard">대시보드</Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href="/dashboard/calendar">채용 캘린더</Link>
+            </Button>
+          </div>
         </header>
 
         <form className="flex flex-col gap-3 sm:flex-row" action="/dashboard/analyses">

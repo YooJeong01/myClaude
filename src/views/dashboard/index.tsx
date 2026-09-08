@@ -75,16 +75,19 @@ export async function DashboardView({ searchParams }: DashboardViewProps) {
                 공고 대시보드
               </h1>
             </div>
-            <form action={signOut}>
-              <div className="flex flex-wrap gap-2">
-                <Button asChild variant="secondary">
-                  <Link href="/dashboard/analyses">기업분석 목록</Link>
-                </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button asChild variant="secondary">
+                <Link href="/dashboard/analyses">기업분석 목록</Link>
+              </Button>
+              <Button asChild variant="secondary">
+                <Link href="/dashboard/calendar">채용 캘린더</Link>
+              </Button>
+              <form action={signOut}>
                 <Button type="submit" variant="secondary">
                   로그아웃
                 </Button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </header>
 

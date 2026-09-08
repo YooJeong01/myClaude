@@ -28,9 +28,14 @@ export default async function DashboardCalendarPage() {
               채용 캘린더
             </h1>
           </div>
-          <Button asChild variant="secondary">
-            <Link href="/dashboard">대시보드</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="secondary">
+              <Link href="/dashboard">대시보드</Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href="/dashboard/analyses">기업분석 목록</Link>
+            </Button>
+          </div>
         </header>
 
         {savedPostings.length > 0 ? (
