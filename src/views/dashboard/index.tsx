@@ -51,9 +51,14 @@ export async function DashboardView() {
               </h1>
             </div>
             <form action={signOut}>
-              <Button type="submit" variant="secondary">
-                로그아웃
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button asChild variant="secondary">
+                  <Link href="/dashboard/analyses">기업분석 목록</Link>
+                </Button>
+                <Button type="submit" variant="secondary">
+                  로그아웃
+                </Button>
+              </div>
             </form>
           </div>
         </header>

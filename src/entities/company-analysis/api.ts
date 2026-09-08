@@ -6,7 +6,11 @@ import type {
 
 import type { Database, Json } from "@/shared/api";
 
-import type { CompanyAnalysis, CompanyAnalysisSummary } from "./model";
+import type {
+  CompanyAnalysis,
+  CompanyAnalysisGroup,
+  CompanyAnalysisSummary
+} from "./model";
 
 type CompanyAnalysisRow =
   Database["public"]["Tables"]["company_analyses"]["Row"];
@@ -81,6 +85,57 @@ export async function listRecentAnalyses(
     throw error;
   }
   return data.map(mapSummary);
+}
+
+export async function listAnalysesGrouped(
+  supabase: SupabaseClient<Database>,
+  opts: { q?: string; cursor?: string; limit?: number } = {}
+): Promise<{ rows: CompanyAnalysisGroup[]; nextCursor: string | null }> {
+  const limit = opts.limit ?? 12;
+  const q = opts.q?.trim();
+
+  let query = supabase
+    .from("company_analyses")
+    .select(analysisSelect)
+    .order("created_at", { ascending: false })
+    .limit(1000);
+
+  if (q) {
+    query = query.ilike("companies.name", `%${q}%`);
+  }
+
+  const { data, error } = await query.returns<CompanyAnalysisJoinedRow[]>();
+
+  if (error) {
+    throw error;
+  }
+
+  const groups = new Map<string, CompanyAnalysisGroup>();
+  for (const row of data) {
+    const summary = mapSummary(row);
+    const existing = groups.get(summary.companyId);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      groups.set(summary.companyId, {
+        companyId: summary.companyId,
+        companyName: summary.companyName,
+        latest: summary,
+        count: 1
+      });
+    }
+  }
+
+  const sorted = Array.from(groups.values()).sort((a, b) =>
+    b.latest.createdAt.localeCompare(a.latest.createdAt)
+  );
+  const startIndex = opts.cursor
+    ? sorted.findIndex((group) => group.latest.id === opts.cursor) + 1
+    : 0;
+  const page = sorted.slice(Math.max(startIndex, 0), Math.max(startIndex, 0) + limit);
+  const nextCursor = page.length === limit ? page[page.length - 1].latest.id : null;
+
+  return { rows: page, nextCursor };
 }
 
 /** RLS가 현재 사용자의 분석만 노출한다. */
