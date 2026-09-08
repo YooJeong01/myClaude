@@ -138,6 +138,35 @@ export interface Database {
           }
         ];
       };
+      saved_postings: {
+        Row: {
+          id: string;
+          user_id: string;
+          job_posting_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          job_posting_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          job_posting_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "saved_postings_job_posting_id_fkey";
+            columns: ["job_posting_id"];
+            isOneToOne: false;
+            referencedRelation: "job_postings";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       dart_corp_codes: {
         Row: {
           corp_code: string;

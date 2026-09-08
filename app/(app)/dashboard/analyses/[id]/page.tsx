@@ -4,8 +4,10 @@ import {
   getAnalysis,
   listAnalysesForCompany
 } from "@/entities/company-analysis";
+import { listSavedPostingIds } from "@/entities/saved-posting";
 import { getUser } from "@/entities/session";
 import { RunAnalysisButton } from "@/features/run-analysis";
+import { SaveToggle } from "@/features/toggle-saved-posting";
 import { createSupabaseServerClient } from "@/shared/api-server";
 import { AnalysisHistoryList } from "@/widgets/analysis-history";
 import { MirroredCompanyAnalysisReport } from "@/widgets/company-analysis-report";
@@ -29,6 +31,9 @@ export default async function AnalysisPage({ params }: AnalysisPageProps) {
   const history = analysis
     ? await listAnalysesForCompany(supabase, analysis.companyId)
     : [];
+  const savedPostingIds = analysis?.jobPostingId
+    ? await listSavedPostingIds(supabase)
+    : new Set<string>();
 
   return (
     <main className="min-h-screen bg-background px-6 py-8">
@@ -36,21 +41,29 @@ export default async function AnalysisPage({ params }: AnalysisPageProps) {
         <MirroredCompanyAnalysisReport
           action={
             analysis ? (
-              <RunAnalysisButton
-                disabledWhenOffline
-                jobPostingIdOverride={analysis.jobPostingId}
-                posting={{
-                  id: analysis.jobPostingId ?? analysis.id,
-                  companyNameRaw: analysis.companyName,
-                  role: analysis.role,
-                  employmentType: "기타",
-                  postedAt: null,
-                  deadline: null,
-                  url: null,
-                  rawText: null,
-                  createdAt: analysis.createdAt
-                }}
-              />
+              <div className="flex flex-wrap gap-2">
+                <RunAnalysisButton
+                  disabledWhenOffline
+                  jobPostingIdOverride={analysis.jobPostingId}
+                  posting={{
+                    id: analysis.jobPostingId ?? analysis.id,
+                    companyNameRaw: analysis.companyName,
+                    role: analysis.role,
+                    employmentType: "기타",
+                    postedAt: null,
+                    deadline: null,
+                    url: null,
+                    rawText: null,
+                    createdAt: analysis.createdAt
+                  }}
+                />
+                {analysis.jobPostingId ? (
+                  <SaveToggle
+                    initialSaved={savedPostingIds.has(analysis.jobPostingId)}
+                    jobPostingId={analysis.jobPostingId}
+                  />
+                ) : null}
+              </div>
             ) : null
           }
           analysis={analysis}
