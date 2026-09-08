@@ -111,6 +111,11 @@ function CompanyAnalysisCard({ group }: { group: CompanyAnalysisGroup }) {
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
         {group.latest.role}
       </p>
+      {group.latest.result.estimated_size ? (
+        <p className="mt-3 w-fit rounded-md bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+          {group.latest.result.estimated_size.label} 추정
+        </p>
+      ) : null}
       <p className="mt-4 text-sm font-medium text-primary">
         {group.count}개 이력
       </p>

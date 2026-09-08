@@ -7,6 +7,7 @@
 
 import { generateJson } from "../llm/client";
 import { GEMINI_MODEL } from "../llm/config";
+import { estimateCompanySize } from "./company-size";
 import { buildSynthesisPrompt, SYNTHESIS_SYSTEM_INSTRUCTION } from "./prompt";
 import {
   ANALYSIS_SCHEMA_VERSION,
@@ -49,7 +50,8 @@ export async function synthesizeCompanyAnalysis(
 
   const result: CompanyAnalysisResult = {
     schema_version: ANALYSIS_SCHEMA_VERSION,
-    ...generated
+    ...generated,
+    estimated_size: estimateCompanySize(input.profile, input.financials)
   };
 
   return {

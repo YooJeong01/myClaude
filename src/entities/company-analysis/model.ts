@@ -17,7 +17,13 @@ export type CompanyAnalysis = {
 
 export type CompanyAnalysisSummary = Pick<
   CompanyAnalysis,
-  "id" | "companyId" | "companyName" | "role" | "jobPostingId" | "createdAt"
+  | "id"
+  | "companyId"
+  | "companyName"
+  | "role"
+  | "jobPostingId"
+  | "result"
+  | "createdAt"
 >;
 
 export type CompanyAnalysisGroup = {

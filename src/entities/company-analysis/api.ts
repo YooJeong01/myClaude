@@ -48,6 +48,7 @@ function mapSummary(row: CompanyAnalysisJoinedRow): CompanyAnalysisSummary {
     companyName: companyNameFromRow(row),
     role: row.role,
     jobPostingId: row.job_posting_id,
+    result: row.result as unknown as CompanyAnalysisResult,
     createdAt: row.created_at
   };
 }
