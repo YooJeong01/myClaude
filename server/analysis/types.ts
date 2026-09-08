@@ -13,9 +13,10 @@ import { Type, type Schema } from "@google/genai";
 import type { DartCompanyProfile, DartKeyFinancials } from "../dart/types";
 import type { HankyungReport } from "../hankyung/types";
 import type { SanitizedNewsItem } from "../naver/types";
+import type { CompanySizeEstimate } from "./company-size";
 
 /** result 스키마 버전. 필드를 바꾸면 올린다. */
-export const ANALYSIS_SCHEMA_VERSION = 1;
+export const ANALYSIS_SCHEMA_VERSION = 2;
 
 /**
  * LLM 이 생성하는 종합 리포트 본문. `company_analyses.result` 에 저장된다.
@@ -35,14 +36,20 @@ export interface CompanyAnalysisResult {
   risks: string[];
   /** 지원동기에 쓸 구체적 소재 (Day 4 매칭에서 사용) */
   talking_points: string[];
+  /** 공개 DART 자료 기반 코드 휴리스틱 규모 추정. LLM 생성 필드가 아니다. */
+  estimated_size?: CompanySizeEstimate;
 }
 
 /** LLM 이 채우는 필드 (schema_version 제외). */
-export type GeneratedAnalysis = Omit<CompanyAnalysisResult, "schema_version">;
+export type GeneratedAnalysis = Omit<
+  CompanyAnalysisResult,
+  "schema_version" | "estimated_size"
+>;
 
 /**
  * Gemini responseSchema. 위 CompanyAnalysisResult 와 **수동으로 동기화** 유지.
  * 필드를 추가하면: 인터페이스 + 이 스키마 + ANALYSIS_SCHEMA_VERSION 세 곳을 함께 고친다.
+ * estimated_size 는 코드가 채우므로 이 Gemini 스키마에 넣지 않는다.
  */
 export const companyAnalysisResultSchema: Schema = {
   type: Type.OBJECT,

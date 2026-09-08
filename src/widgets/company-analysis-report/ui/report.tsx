@@ -35,6 +35,12 @@ export function CompanyAnalysisReport({
             <p className="mt-2 text-sm text-muted-foreground">
               {analysis.role}
             </p>
+            {result.estimated_size ? (
+              <SizeBadge
+                basis={result.estimated_size.basis}
+                label={result.estimated_size.label}
+              />
+            ) : null}
           </div>
           <div className="flex flex-col gap-2 sm:items-end">
             {action}
@@ -71,6 +77,17 @@ export function CompanyAnalysisReport({
 
       <AnalysisSourcesView sources={analysis.sources} />
     </article>
+  );
+}
+
+function SizeBadge({ basis, label }: { basis: string; label: string }) {
+  return (
+    <div className="mt-3 inline-flex max-w-full flex-col rounded-md border bg-secondary px-3 py-2 text-secondary-foreground">
+      <span className="text-xs font-semibold">{label} 추정</span>
+      <span className="mt-1 text-xs leading-5 text-muted-foreground">
+        {basis}
+      </span>
+    </div>
   );
 }
 
