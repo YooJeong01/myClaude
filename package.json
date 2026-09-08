@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . && steiger ./src"
+    "lint": "eslint . && steiger ./src",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@google/genai": "^2.21.0",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@feature-sliced/steiger-plugin": "0.5.8",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
