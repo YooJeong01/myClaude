@@ -24,7 +24,8 @@
 - **T33** 오프라인 미러링 — `pnpm add idb`, `src/shared/lib/offline-mirror/` + `use-online.ts` +
   조회 경로에 폴백 얹기 (day5.md 33-1~33-3)
 - **T34** E2E — `pnpm add -D @playwright/test`, `playwright.config.ts`, `e2e/`, `test:e2e` 스크립트,
-  로그인 fixture, 6 시나리오 (day5.md 34-1~34-3)
+  로그인 fixture, 6 시나리오 (day5.md 34-1~34-3) + **구조화된 테스트 리포트
+  `artifacts/test-reports/day5-e2e.md` (day5.md 34-4 — 필수 산출물)**
 
 ## 레퍼런스 (이 패턴을 그대로 따를 것)
 
@@ -84,6 +85,8 @@ T28(로그인) 완료·커밋 후 `artifacts/handover/` 에 짧은 `<타임스�
 - 새 패키지·새 env 변수
 - tsc / lint(steiger 포함) / build 결과
 - `pnpm test:e2e` 결과 — 실패 시나리오가 있으면 원인(코드 문제인지 / Redirect URL 미등록 등 환경 문제인지)
+- **`artifacts/test-reports/day5-e2e.md` 작성 완료 여부** (day5.md 34-4 항목 전부 채웠는지:
+  환경/시나리오 expected·actual/성능 수치/통과율 N·M/발견 문제)
 - 커밋 해시 목록 (태스크별)
 - day5.md 스펙에서 벗어난 부분 + 이유
 - 미해결/주의 사항
