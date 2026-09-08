@@ -27,6 +27,7 @@ function mapPosting(row: JobPostingRow): SavedPostingWithDetail["posting"] {
     employmentType: row.employment_type as SavedPostingWithDetail["posting"]["employmentType"],
     postedAt: row.posted_at,
     deadline: row.deadline,
+    source: row.source,
     url: row.url,
     rawText: row.raw_text,
     createdAt: row.created_at

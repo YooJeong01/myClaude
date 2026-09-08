@@ -3,13 +3,19 @@ import Link from "next/link";
 
 import { listRecentAnalyses } from "@/entities/company-analysis";
 import { listExperiences } from "@/entities/experience";
-import { listJobPostings, type JobPosting } from "@/entities/job-posting";
+import {
+  EMPLOYMENT_TYPES,
+  listJobPostings,
+  type EmploymentType,
+  type JobPosting
+} from "@/entities/job-posting";
 import { listSavedPostingIds } from "@/entities/saved-posting";
 import { getUser } from "@/entities/session";
 import { signOut } from "@/features/auth";
 import { AddJobPostingForm } from "@/features/add-job-posting";
 import { submitJobPosting } from "@/features/add-job-posting/lib/submit.server";
 import { RunAnalysisButton } from "@/features/run-analysis";
+import { JobPostingFilterForm } from "@/features/search-job-postings";
 import { SaveToggle } from "@/features/toggle-saved-posting";
 import { createSupabaseServerClient } from "@/shared/api-server";
 import { Button } from "@/shared/ui/button";
@@ -18,19 +24,38 @@ const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
   dateStyle: "medium"
 });
 
-export async function DashboardView() {
+type DashboardViewProps = {
+  searchParams?: {
+    q?: string;
+    employmentType?: string;
+    source?: string;
+    onlyOpen?: string;
+    cursor?: string;
+  };
+};
+
+export async function DashboardView({ searchParams }: DashboardViewProps) {
   const user = await getUser();
   if (!user) {
     redirect("/");
   }
 
+  const filters = normalizeFilters(searchParams);
   const supabase = await createSupabaseServerClient();
-  const [postings, experiences, analyses, savedPostingIds] = await Promise.all([
-    listJobPostings(supabase),
+  const [postingResult, experiences, analyses, savedPostingIds] = await Promise.all([
+    listJobPostings(supabase, {
+      q: filters.q,
+      employmentType: filters.employmentType || undefined,
+      source: filters.source || undefined,
+      onlyOpen: filters.onlyOpen,
+      cursor: filters.cursor,
+      limit: 20
+    }),
     listExperiences(supabase),
     listRecentAnalyses(supabase),
     listSavedPostingIds(supabase)
   ]);
+  const postings = postingResult.rows;
   const latestAnalysisByPostingId = new Map(
     analyses
       .filter((analysis) => analysis.jobPostingId)
@@ -83,7 +108,7 @@ export async function DashboardView() {
                   저장된 공고
                 </p>
                 <p className="mt-2 text-3xl font-semibold tracking-normal">
-                  {postings.length}
+                  {postingResult.total}
                 </p>
               </div>
               <div className="border-t pt-5">
@@ -113,8 +138,14 @@ export async function DashboardView() {
         </section>
 
         <section className="pb-8">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold tracking-normal">공고 목록</h2>
+          <div className="mb-4 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold tracking-normal">공고 목록</h2>
+              <p className="text-sm text-muted-foreground">
+                전체 {postingResult.total}건 중 {postings.length}건
+              </p>
+            </div>
+            <JobPostingFilterForm defaultValues={filters} />
           </div>
           {postings.length > 0 ? (
             <div className="divide-y rounded-md border bg-card">
@@ -132,6 +163,20 @@ export async function DashboardView() {
               아직 저장된 공고가 없습니다.
             </div>
           )}
+          {postingResult.nextCursor ? (
+            <div className="mt-5 flex justify-center">
+              <Button asChild variant="secondary">
+                <Link
+                  href={{
+                    pathname: "/dashboard",
+                    query: buildNextQuery(filters, postingResult.nextCursor)
+                  }}
+                >
+                  더 보기
+                </Link>
+              </Button>
+            </div>
+          ) : null}
         </section>
       </div>
     </main>
@@ -194,4 +239,43 @@ function JobPostingListItem({
 
 function formatDate(value: string) {
   return dateFormatter.format(new Date(value));
+}
+
+type NormalizedDashboardFilters = {
+  q: string;
+  employmentType: EmploymentType | "";
+  source: string;
+  onlyOpen: boolean;
+  cursor?: string;
+};
+
+function normalizeFilters(
+  searchParams: DashboardViewProps["searchParams"]
+): NormalizedDashboardFilters {
+  const employmentType = EMPLOYMENT_TYPES.includes(
+    searchParams?.employmentType as EmploymentType
+  )
+    ? (searchParams?.employmentType as EmploymentType)
+    : "";
+
+  return {
+    q: searchParams?.q?.trim() ?? "",
+    employmentType,
+    source: searchParams?.source?.trim() ?? "",
+    onlyOpen: searchParams?.onlyOpen === "1",
+    cursor: searchParams?.cursor
+  };
+}
+
+function buildNextQuery(
+  filters: ReturnType<typeof normalizeFilters>,
+  cursor: string
+) {
+  return {
+    ...(filters.q ? { q: filters.q } : {}),
+    ...(filters.employmentType ? { employmentType: filters.employmentType } : {}),
+    ...(filters.source ? { source: filters.source } : {}),
+    ...(filters.onlyOpen ? { onlyOpen: "1" } : {}),
+    cursor
+  };
 }

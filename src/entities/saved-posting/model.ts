@@ -12,6 +12,7 @@ export type SavedPostingJobPosting = {
   employmentType: "정규직" | "계약직" | "인턴" | "파견" | "프리랜서" | "기타";
   postedAt: string | null;
   deadline: string | null;
+  source: string;
   url: string | null;
   rawText: string | null;
   createdAt: string;

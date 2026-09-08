@@ -50,9 +50,10 @@ export default async function AnalysisPage({ params }: AnalysisPageProps) {
                     companyNameRaw: analysis.companyName,
                     role: analysis.role,
                     employmentType: "기타",
-                    postedAt: null,
-                    deadline: null,
-                    url: null,
+                  postedAt: null,
+                  deadline: null,
+                  source: "analysis",
+                  url: null,
                     rawText: null,
                     createdAt: analysis.createdAt
                   }}
