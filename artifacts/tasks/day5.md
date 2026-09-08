@@ -52,7 +52,7 @@
 
 ---
 
-## T28. 매직링크 로그인 최소 구현
+## T28. 매직링크 로그인 최소 구현 [완료 2026-09-08]
 
 Supabase 이메일 매직링크(OTP)만. 비밀번호·소셜 없음. Day 8~9 에서 provider 추가할 수 있는 구조로.
 
@@ -84,7 +84,7 @@ Supabase 이메일 매직링크(OTP)만. 비밀번호·소셜 없음. Day 8~9 �
 - 매직링크 이메일은 Supabase 기본 SMTP(개발용, 저용량)로 충분. 프로덕션 SMTP 는 Day 8~9.
 - `.env.example` 에 필요 시 `NEXT_PUBLIC_SITE_URL` 추가(로컬은 비워도 `origin` 으로 대체 가능하면 생략).
 
-## T29. 경험 관리 — `user_experiences` CRUD
+## T29. 경험 관리 — `user_experiences` CRUD [완료 2026-09-08]
 
 `day4.md` T24 마이그레이션으로 생성된 `user_experiences`(id / user_id / title / body / created_at / updated_at,
 RLS `user_experiences_all_own`) 대상.
@@ -109,7 +109,7 @@ RLS `user_experiences_all_own`) 대상.
 - `app/(app)/dashboard/experiences/page.tsx` — `getUser()` 가드 + `ManageExperience` 위젯 렌더.
 - `src/views/dashboard/index.tsx` — "내 경험 N개" 요약 카드 + `/dashboard/experiences` 링크 추가.
 
-## T30. 기업분석 실행 / 결과 화면
+## T30. 기업분석 실행 / 결과 화면 [완료 2026-09-08]
 
 기존 `POST /api/company/analyze`(body `{ corp, role, job_posting_id? }`, 응답 `{ resolved, candidates?, analysis }`)
 호출. 분석은 LLM 때문에 수십 초 걸릴 수 있음 → 로딩 상태 필수.
@@ -140,7 +140,7 @@ RLS `user_experiences_all_own`) 대상.
   "이 분석으로 지원동기 만들기" 버튼(→ T31).
 - `src/views/dashboard/index.tsx` 공고 목록 항목에 `RunAnalysisButton` + (있으면) 최근 분석 링크.
 
-## T31. 지원동기 매칭 실행 / 결과 화면
+## T31. 지원동기 매칭 실행 / 결과 화면 [완료 2026-09-08]
 
 기존 `POST /api/motivation`(body `{ company_analysis_id, experience_ids[], role? }`) 호출.
 응답: 저장된 `motivation_drafts` 행(`result` = `MotivationResult`).
@@ -167,7 +167,7 @@ RLS `user_experiences_all_own`) 대상.
   `RunMotivationButton`(분석 결과 요약을 옆에 표시).
 - `app/(app)/dashboard/drafts/[id]/page.tsx` — 저장된 draft 1개 렌더(`MotivationResult` 위젯 재사용).
 
-## T32. 이력 · 신선도 UI
+## T32. 이력 · 신선도 UI [완료 2026-09-08]
 
 goal.md "오프라인 지원" 중 DB/UI 로 처리되는 부분(덮어쓰기 없는 이력은 이미 `company_analyses` /
 `motivation_drafts` 불변 설계로 완료 — 여기선 조회 UI).
@@ -187,7 +187,7 @@ goal.md "오프라인 지원" 중 DB/UI 로 처리되는 부분(덮어쓰기 없
 - `app/(app)/dashboard/analyses/[id]/motivation/page.tsx` 하단에 `listDraftsForAnalysis` 결과 목록
   (경험 조합/생성일). 같은 분석에 매칭을 여러 번 돌린 이력이 쌓임(D2 설계).
 
-## T33. 오프라인 미러링 (IndexedDB)
+## T33. 오프라인 미러링 (IndexedDB) [완료 2026-09-08]
 
 "완전 오프라인 우선 아님. 우연히 연결이 끊긴 경우 **기존에 조회한** 분석/지원동기 결과를 볼 수 있는 정도"
 (goal.md). 쓰기(새 분석/매칭)는 온라인에서만.
@@ -208,7 +208,7 @@ goal.md "오프라인 지원" 중 DB/UI 로 처리되는 부분(덮어쓰기 없
 ### 33-3. `src/shared/lib/use-online.ts`
 - `online`/`offline` 이벤트 구독 훅. "다시 분석하기"·"지원동기 만들기" 버튼 비활성 제어에 사용.
 
-## T34. 검증
+## T34. 검증 [완료 2026-09-08 — E2E 6/6 통과]
 
 ### 34-1. E2E — `@playwright/test` 리포지토리 상주 (첫 테스트 인프라)
 - `pnpm add -D @playwright/test` + `pnpm exec playwright install chromium`.
@@ -268,6 +268,25 @@ E2E 실행 결과를 **구조화된 리포트**로 남긴다. 위치: `artifacts
 
 - 매직링크 이메일 발송: Supabase 기본 SMTP(개발 저용량 한도)로 Day 5~6 진행 → 프로덕션 SMTP 는 Day 8~9.
 - Supabase Redirect URLs(로컬 `http://localhost:3000`, Vercel 도메인) 등록 — **사용자가 대시보드에서 설정** (진행 중).
+
+## 완료 (2026-09-08)
+
+- `feat/on-demand-report-ui` (Codex 구현 T28~T33, Claude T34 안정화) → `main` `--no-ff` 병합 (`64621e8`).
+- 병합 경과:
+  - Codex 세션이 T28~T33 커밋 후 T34 진행 중 **시스템 메모리 부족으로 강제 종료**. 커밋된 작업은 유실 없음.
+  - Claude 가 T34 마무리: `@playwright/test` 인프라 커밋(`d265c13`) → E2E 안정화(`f643207`).
+  - E2E 안정화 과정에서 고친 것:
+    - 프로덕션 서버(`pnpm start`) 기준으로 전환 — 로컬 메모리 여유 부족(2.5GB), `pnpm dev` + chromium 동시 실행이 OOM 유발.
+    - 경험 선택 셀렉터 `getByText` → `getByRole("checkbox")` (제목이 본문 프리픽스라 중복 매칭).
+    - 지원동기 실행: Gemini 무료 티어 일시 오류(502/503) 재시도 헬퍼. 실행 내내 과부하였고 한 번씩 통과.
+    - 시나리오 5(이력): 2회차 LLM 호출 대신 admin draft 시드, 시나리오 4와 독립.
+    - 시나리오 6(오프라인): 하드 리로드(서비스워커 없음 → 범위 밖) 대신 `offline` 이벤트로 미러 전환 검증.
+    - serial 모드 해제 — LLM 시나리오 실패가 나머지를 skip 시키지 않도록.
+  - 최종: **E2E 6/6 통과** (`artifacts/test-reports/day5-e2e.md`), `main` 에서 tsc/lint/build 그린.
+- 스펙 대비 관찰: 오프라인 시 "다시 분석하기" 버튼은 *비활성화*가 아니라 부모(`MirroredCompanyAnalysisReport`)가
+  action 을 제거해 *사라진다*. 결과적으로 오프라인에서 새 분석 불가는 동일 — 문제 아님.
+- 사용자 작업: Supabase URL Configuration 에 Redirect URL(`http://localhost:3000`, Vercel 도메인) 등록 — T28 실동작·메일 링크에 필요 (E2E 는 admin `generateLink` 로 우회).
+- 다음: Day 7 (워크넷 API + 버퍼) 또는 Day 8~9 (실인증·배포).
 
 ## 규율 (day4.md 계승)
 
