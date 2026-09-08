@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { getAnalysis } from "@/entities/company-analysis";
 import { listExperiences } from "@/entities/experience";
+import { listDraftsForAnalysis } from "@/entities/motivation-draft";
 import { getUser } from "@/entities/session";
 import { MotivationRunner } from "@/features/run-motivation";
 import { createSupabaseServerClient } from "@/shared/api-server";
@@ -20,9 +21,10 @@ export default async function MotivationPage({ params }: MotivationPageProps) {
 
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
-  const [analysis, experiences] = await Promise.all([
+  const [analysis, experiences, drafts] = await Promise.all([
     getAnalysis(supabase, id),
-    listExperiences(supabase)
+    listExperiences(supabase),
+    listDraftsForAnalysis(supabase, id)
   ]);
   if (!analysis) {
     notFound();
@@ -60,6 +62,44 @@ export default async function MotivationPage({ params }: MotivationPageProps) {
               <Link href={`/dashboard/analyses/${analysis.id}`}>분석 열기</Link>
             </Button>
           </aside>
+        </section>
+
+        <section className="pb-8">
+          <h2 className="mb-4 text-lg font-semibold tracking-normal">
+            지원동기 이력
+          </h2>
+          {drafts.length > 0 ? (
+            <div className="divide-y rounded-md border bg-card">
+              {drafts.map((draft) => (
+                <article
+                  className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                  key={draft.id}
+                >
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      경험 {draft.experienceIds.length}개 조합
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {new Intl.DateTimeFormat("ko-KR", {
+                        dateStyle: "medium",
+                        timeStyle: "short"
+                      }).format(new Date(draft.createdAt))}
+                    </p>
+                  </div>
+                  <Link
+                    className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                    href={`/dashboard/drafts/${draft.id}`}
+                  >
+                    결과 열기
+                  </Link>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-md border bg-card p-5 text-sm leading-6 text-muted-foreground">
+              아직 이 분석으로 만든 지원동기 이력이 없습니다.
+            </div>
+          )}
         </section>
       </div>
     </main>

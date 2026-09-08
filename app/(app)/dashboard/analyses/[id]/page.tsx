@@ -1,9 +1,13 @@
 import { notFound, redirect } from "next/navigation";
 
-import { getAnalysis } from "@/entities/company-analysis";
+import {
+  getAnalysis,
+  listAnalysesForCompany
+} from "@/entities/company-analysis";
 import { getUser } from "@/entities/session";
 import { RunAnalysisButton } from "@/features/run-analysis";
 import { createSupabaseServerClient } from "@/shared/api-server";
+import { AnalysisHistoryList } from "@/widgets/analysis-history";
 import { CompanyAnalysisReport } from "@/widgets/company-analysis-report";
 
 type AnalysisPageProps = {
@@ -22,31 +26,37 @@ export default async function AnalysisPage({ params }: AnalysisPageProps) {
   if (!analysis) {
     notFound();
   }
+  const history = await listAnalysesForCompany(supabase, analysis.companyId);
 
   return (
     <main className="min-h-screen bg-background px-6 py-8">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-5xl space-y-8">
         <CompanyAnalysisReport
           action={
-            analysis.jobPostingId ? undefined : (
-              <RunAnalysisButton
-                disabledWhenOffline
-                posting={{
-                  id: analysis.id,
-                  companyNameRaw: analysis.companyName,
-                  role: analysis.role,
-                  employmentType: "기타",
-                  postedAt: null,
-                  deadline: null,
-                  url: null,
-                  rawText: null,
-                  createdAt: analysis.createdAt
-                }}
-              />
-            )
+            <RunAnalysisButton
+              disabledWhenOffline
+              jobPostingIdOverride={analysis.jobPostingId}
+              posting={{
+                id: analysis.jobPostingId ?? analysis.id,
+                companyNameRaw: analysis.companyName,
+                role: analysis.role,
+                employmentType: "기타",
+                postedAt: null,
+                deadline: null,
+                url: null,
+                rawText: null,
+                createdAt: analysis.createdAt
+              }}
+            />
           }
           analysis={analysis}
         />
+        <section>
+          <h2 className="mb-4 text-lg font-semibold tracking-normal">
+            지난 분석
+          </h2>
+          <AnalysisHistoryList analyses={history} currentId={analysis.id} />
+        </section>
       </div>
     </main>
   );

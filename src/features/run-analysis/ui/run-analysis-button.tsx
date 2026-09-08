@@ -18,12 +18,14 @@ type RunAnalysisButtonProps = {
   posting: JobPosting;
   className?: string;
   disabledWhenOffline?: boolean;
+  jobPostingIdOverride?: string | null;
 };
 
 export function RunAnalysisButton({
   posting,
   className,
-  disabledWhenOffline = false
+  disabledWhenOffline = false,
+  jobPostingIdOverride
 }: RunAnalysisButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -39,7 +41,10 @@ export function RunAnalysisButton({
         body: JSON.stringify({
           corp: posting.companyNameRaw,
           role: posting.role,
-          job_posting_id: posting.id
+          job_posting_id:
+            jobPostingIdOverride === undefined
+              ? posting.id
+              : jobPostingIdOverride
         })
       });
       const payload = (await response.json().catch(() => ({}))) as AnalyzeResponse;
