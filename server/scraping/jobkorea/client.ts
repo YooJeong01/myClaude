@@ -9,6 +9,7 @@ import type { Page } from 'playwright';
 import { launchBrowser, withPage } from '../common/browser';
 import { sleep } from '../common/rate-limit';
 import { MIN_DELAY_MS } from '../common/rate-limit';
+import { filterRelevantPostings } from '../common/role-filter';
 import { ScrapeError } from '../common/types';
 import type { CollectedJobPosting, EmploymentType } from '../../job-postings/types';
 import { EMPLOYMENT_TYPES } from '../../job-postings/types';
@@ -130,8 +131,9 @@ export async function fetchJobkoreaListings(): Promise<CollectedJobPosting[]> {
             return await parseJobkoreaPage(pageObj);
           });
 
-          console.log(`    ✓ ${postings.length}건 파싱됨`);
-          allPostings.push(...postings);
+          const relevantPostings = filterRelevantPostings(postings, 'jobkorea');
+          console.log(`    ✓ ${relevantPostings.length}건 파싱됨`);
+          allPostings.push(...relevantPostings);
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
           console.error(`    ✗ 페이지 ${page} 오류: ${msg}`);

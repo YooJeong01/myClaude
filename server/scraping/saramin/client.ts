@@ -7,6 +7,7 @@
 import { fetchWithRetry } from '../common/http';
 import { sleep } from '../common/rate-limit';
 import { MIN_DELAY_MS } from '../common/rate-limit';
+import { filterRelevantPostings } from '../common/role-filter';
 import { SCRAPER_USER_AGENT } from '../common/user-agent';
 import { parseSearchResultPage } from './parser';
 import { SARAMIN_BASE_URL, SARAMIN_SEARCH_ENDPOINT, SEARCH_KEYWORDS, MAX_PAGES_PER_KEYWORD } from './config';
@@ -49,7 +50,10 @@ export async function fetchSaraminListings(): Promise<CollectedJobPosting[]> {
         }
 
         const html = await response.text();
-        const postings = parseSearchResultPage(html);
+        const postings = filterRelevantPostings(
+          parseSearchResultPage(html),
+          'saramin'
+        );
 
         console.log(`    ✓ ${postings.length}건 파싱됨`);
         allPostings.push(...postings);
