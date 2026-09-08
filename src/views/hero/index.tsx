@@ -1,9 +1,13 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+import { getUser } from "@/entities/session";
 import { Button } from "@/shared/ui/button";
 
-export function HeroView() {
+export async function HeroView() {
+  const user = await getUser();
+  const dashboardHref = user ? "/dashboard" : "/login";
+
   return (
     <main className="min-h-screen bg-background">
       <section className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 py-16">
@@ -20,7 +24,7 @@ export function HeroView() {
           </p>
           <div className="mt-8">
             <Button asChild>
-              <Link href="/dashboard">
+              <Link href={dashboardHref}>
                 대시보드
                 <ArrowRight aria-hidden="true" className="size-4" />
               </Link>

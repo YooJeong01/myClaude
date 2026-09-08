@@ -2,9 +2,11 @@ import { redirect } from "next/navigation";
 
 import { listJobPostings, type JobPosting } from "@/entities/job-posting";
 import { getUser } from "@/entities/session";
+import { signOut } from "@/features/auth";
 import { AddJobPostingForm } from "@/features/add-job-posting";
 import { submitJobPosting } from "@/features/add-job-posting/lib/submit.server";
 import { createSupabaseServerClient } from "@/shared/api-server";
+import { Button } from "@/shared/ui/button";
 
 const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
   dateStyle: "medium"
@@ -23,12 +25,21 @@ export async function DashboardView() {
     <main className="min-h-screen bg-background px-6 py-8">
       <div className="mx-auto max-w-5xl">
         <header className="border-b pb-5">
-          <p className="text-sm font-medium text-muted-foreground">
-            {user.email ?? "로그인 사용자"}
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-normal">
-            공고 대시보드
-          </h1>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                {user.email ?? "로그인 사용자"}
+              </p>
+              <h1 className="mt-2 text-3xl font-semibold tracking-normal">
+                공고 대시보드
+              </h1>
+            </div>
+            <form action={signOut}>
+              <Button type="submit" variant="secondary">
+                로그아웃
+              </Button>
+            </form>
+          </div>
         </header>
 
         <section className="grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
