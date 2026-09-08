@@ -24,6 +24,8 @@
   브라우저 E2E 검증에 로그인 수단이 필요. 실제 인증(Google OAuth)·프로덕션 배포·RLS 하드닝은 Day 8~9 유지.
 - **D5 — 오프라인 미러링(IndexedDB) 포함 (T33).** goal.md "오프라인 지원" 섹션 전체를 Day 5~6 안에서 처리.
   "완전 오프라인 우선 아님 — 우연히 끊겼을 때 기존 조회분만 읽기" 수준.
+- 세부 확정(D9 `idb` 사용 / D10 `@playwright/test` 상주 / D11 기존 테스트 데이터 재사용)은
+  아래 "확정된 설계 결정" 참고.
 
 ## 의존성 순서
 
@@ -44,7 +46,7 @@
    `/login`·`/auth/*` 는 비보호(로그인 안 된 상태에서 접근 가능해야 함).
 4. 브랜치 `feat/on-demand-report-ui` → 스텝별 커밋 → `main` `--no-ff` 병합(`main` 직접 커밋 금지).
 5. 커밋 전 검증: `pnpm exec tsc --noEmit` / `pnpm lint` / `pnpm build` 그린.
-6. 새 npm 패키지는 최소화. IndexedDB 는 가능하면 얇은 래퍼 직접 작성(`idb` 정도는 허용, 판단은 Claude 검토).
+6. 새 npm 패키지는 최소화. 단 `idb`(IndexedDB 래퍼, T33)와 `@playwright/test`(E2E, T34)는 도입 확정.
 7. 서버 API 는 이미 있는 `/api/company/analyze`·`/api/motivation` 를 **그대로 호출**. 라우트 시그니처 변경 금지
    (필요하면 멈추고 노트).
 
@@ -191,7 +193,8 @@ goal.md "오프라인 지원" 중 DB/UI 로 처리되는 부분(덮어쓰기 없
 (goal.md). 쓰기(새 분석/매칭)는 온라인에서만.
 
 ### 33-1. `src/shared/lib/offline-mirror/`
-- `db.ts` — IndexedDB 래퍼(`idb` 소형 라이브러리 또는 직접). object store 2개:
+- `pnpm add idb` (≈1KB, Promise 기반 IndexedDB 래퍼).
+- `db.ts` — `idb` 의 `openDB` 로 DB 1개, object store 2개:
   `company_analyses`(key = id), `motivation_drafts`(key = id). 값은 화면 렌더에 필요한 최소 필드.
 - `mirror.ts` — `putAnalysis(row)` / `getAnalysis(id)` / `putDraft(row)` / `getDraft(id)` /
   `listMirroredAnalyses()`. SSR 로 서버에서 읽어 화면에 뿌린 직후 클라이언트에서 미러에 저장.
@@ -207,20 +210,32 @@ goal.md "오프라인 지원" 중 DB/UI 로 처리되는 부분(덮어쓰기 없
 
 ## T34. 검증
 
-### 34-1. E2E (`claude-in-chrome` 또는 `@playwright/test` — Claude 판단)
-로컬 `pnpm dev` 기동 후:
-1. `/login` 에서 이메일 입력 → (테스트는 Supabase `admin.generateLink` 또는 `verifyOtp` 우회로 세션 주입)
-   → `/dashboard` 진입 확인
-2. `/dashboard/experiences` 에서 경험 2개 추가 → 목록 반영 확인
-3. 공고 목록에서 "기업분석" 실행 → 결과 페이지에 6필드 렌더 확인 (기존 테스트 회사 재사용 가능)
-4. 결과 페이지에서 "지원동기 만들기" → 경험 2개 선택 → 실행 → `angles[]` 카드 렌더 확인
-5. 같은 분석에서 매칭 한 번 더 → 이력 목록에 2건 확인
-6. DevTools 오프라인 토글 → 방금 본 분석 페이지 새로고침 → 미러에서 읽어 "오프라인" 배너 +
-   "다시 분석하기" 비활성 확인
+### 34-1. E2E — `@playwright/test` 리포지토리 상주 (첫 테스트 인프라)
+- `pnpm add -D @playwright/test` + `pnpm exec playwright install chromium`.
+- `playwright.config.ts` — `webServer` 로 `pnpm dev`(또는 `pnpm build && pnpm start`) 자동 기동,
+  `baseURL` 로컬. `.env.local` 사용(`SCRAPE_OWNER_USER_ID`, service role).
+- `e2e/` 디렉터리. `package.json` 에 `"test:e2e": "playwright test"` 스크립트 추가.
+- 세션 주입: 매직링크 메일을 기다리지 않고 `@supabase/supabase-js` admin 으로
+  `admin.generateLink({ type: "magiclink", email })` → 반환된 `token_hash` 로 `/auth/confirm` 진입,
+  또는 `admin.createSession`(가능 시). fixture 로 로그인된 컨텍스트 제공.
+- 테스트 사용자: **기존 `SCRAPE_OWNER_USER_ID` 계정 재사용** (아래 34-3).
+- 시나리오:
+  1. 로그인 fixture → `/dashboard` 진입 확인
+  2. `/dashboard/experiences` 에서 경험 2개 추가 → 목록 반영
+  3. 공고에서 "기업분석" 실행 → 결과 페이지 6필드 렌더 (기존 분석 데이터 재사용, 아래)
+  4. "지원동기 만들기" → 경험 2개 선택 → 실행 → `angles[]` 카드 렌더
+  5. 같은 분석에서 매칭 한 번 더 → 이력 2건
+  6. `context.setOffline(true)` → 방금 본 분석 페이지 새로고침 → 미러에서 읽어 "오프라인" 배너 +
+     "다시 분석하기" 비활성
 
 ### 34-2. 정적 검증
 - `pnpm exec tsc --noEmit` / `pnpm lint`(eslint + steiger) / `pnpm build` 그린
 - FSD 경계 위반 0
+
+### 34-3. 테스트 데이터
+- 기존 `company_analyses` 행(`SCRAPE_OWNER_USER_ID` 소유, 삼성전자·카카오)을 그대로 재사용.
+  LLM 을 매번 호출하지 않도록 기업분석 실행 시나리오는 기존 회사/직무로.
+- E2E 가 만드는 `user_experiences` 는 각 테스트 끝에 정리. `motivation_drafts` 는 이력이라 남겨도 됨(데모).
 
 ## 확정된 설계 결정 (2026-09-08)
 
@@ -229,14 +244,15 @@ goal.md "오프라인 지원" 중 DB/UI 로 처리되는 부분(덮어쓰기 없
 - **D6** 보호 라우트는 `/dashboard/*` 하위로 통일 — 미들웨어 매처 변경 없이 커버.
 - **D7** 실행 UI 는 기존 API 라우트를 client `fetch` 로 호출(server action 래핑 안 함) — 로딩/에러 UX 단순.
 - **D8** 결과·경험·이력 조회는 전부 SSR 클라이언트 + RLS. admin 클라이언트는 UI 경로에서 쓰지 않음.
+- **D9** (2026-09-08 확정) 오프라인 미러는 `idb` 패키지 사용(직접 래퍼 작성 안 함).
+- **D10** (2026-09-08 확정) E2E 는 `@playwright/test` 를 리포지토리에 상주시킨다 — 이 프로젝트 첫 테스트 인프라.
+- **D11** (2026-09-08 확정) E2E·화면 확인은 기존 `company_analyses` 테스트 데이터 + `SCRAPE_OWNER_USER_ID`
+  계정을 재사용한다(새 계정·새 분석 만들지 않음).
 
 ## 미결 판단 (사용자)
 
 - 매직링크 이메일 발송: Supabase 기본 SMTP(개발 저용량 한도)로 Day 5~6 진행 → 프로덕션 SMTP 는 Day 8~9.
-- Supabase Redirect URLs 등록(로컬/Vercel) — 사용자가 대시보드에서 설정.
-- `idb` 패키지 도입 허용 여부(≈1KB, 표준 IndexedDB 래퍼) vs 직접 작성 — Claude 가 위임 지시서에서 확정.
-- 기존 테스트 데이터(`company_analyses` 3행)로 화면 확인할지, 새 계정으로 새로 만들지.
-- E2E 를 리포지토리에 `@playwright/test` 로 상주시킬지(= 첫 테스트 인프라 도입), 일회성 확인만 할지.
+- Supabase Redirect URLs(로컬 `http://localhost:3000`, Vercel 도메인) 등록 — **사용자가 대시보드에서 설정** (진행 중).
 
 ## 규율 (day4.md 계승)
 
