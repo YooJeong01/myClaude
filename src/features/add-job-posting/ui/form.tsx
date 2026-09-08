@@ -1,8 +1,8 @@
 "use client";
 
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Wand2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition, type FormEvent } from "react";
+import { useRef, useState, useTransition, type FormEvent } from "react";
 
 import { EMPLOYMENT_TYPES, type EmploymentType } from "@/entities/job-posting";
 import type { NewJobPostingInput } from "@/entities/job-posting";
@@ -19,6 +19,19 @@ type SubmitState = {
   success: string | null;
 };
 
+type ParsedJobPostingResponse = {
+  parsed?: Partial<{
+    companyNameRaw: string;
+    role: string;
+    employmentType: EmploymentType;
+    postedAt: string;
+    deadline: string;
+    url: string;
+    rawText: string;
+  }>;
+  error?: string;
+};
+
 type AddJobPostingFormProps = {
   submitAction: (
     input: NewJobPostingInput
@@ -27,11 +40,61 @@ type AddJobPostingFormProps = {
 
 export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [isPending, startTransition] = useTransition();
+  const [isParsingUrl, setIsParsingUrl] = useState(false);
+  const [parseUrl, setParseUrl] = useState("");
   const [state, setState] = useState<SubmitState>({
     error: null,
     success: null
   });
+
+  async function handleParseUrl() {
+    const form = formRef.current;
+    if (!form || !parseUrl.trim()) {
+      setState({ error: "채울 공고 URL을 입력하세요.", success: null });
+      return;
+    }
+
+    setIsParsingUrl(true);
+    setState({ error: null, success: null });
+
+    try {
+      const response = await fetch("/api/job-posting/parse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: parseUrl.trim() })
+      });
+      const payload = (await response.json()) as ParsedJobPostingResponse;
+
+      if (!response.ok || !payload.parsed) {
+        setState({
+          error: payload.error ?? "URL에서 공고를 읽지 못했습니다.",
+          success: null
+        });
+        return;
+      }
+
+      fillIfEmpty(form, "companyNameRaw", payload.parsed.companyNameRaw);
+      fillIfEmpty(form, "role", payload.parsed.role);
+      fillIfEmpty(form, "employmentType", payload.parsed.employmentType);
+      fillIfEmpty(form, "deadline", toDateInputValue(payload.parsed.deadline));
+      fillIfEmpty(form, "url", payload.parsed.url ?? parseUrl.trim());
+      fillIfEmpty(form, "rawText", payload.parsed.rawText);
+
+      setState({
+        error: null,
+        success: "URL로 채웠습니다. 확인 후 저장하세요."
+      });
+    } catch {
+      setState({
+        error: "URL 파싱 요청 중 오류가 발생했습니다.",
+        success: null
+      });
+    } finally {
+      setIsParsingUrl(false);
+    }
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,7 +133,37 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
   }
 
   return (
-    <form className="space-y-5" onSubmit={handleSubmit}>
+    <form ref={formRef} className="space-y-5" onSubmit={handleSubmit}>
+      <div className="rounded-md border bg-muted/30 p-4">
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <label className="flex-1 space-y-2 text-sm font-medium">
+            <span>URL로 채우기</span>
+            <input
+              className={inputClassName}
+              disabled={isPending || isParsingUrl}
+              onChange={(event) => setParseUrl(event.target.value)}
+              placeholder="https://..."
+              type="url"
+              value={parseUrl}
+            />
+          </label>
+          <Button
+            className="sm:mt-7"
+            disabled={isPending || isParsingUrl}
+            onClick={handleParseUrl}
+            type="button"
+            variant="secondary"
+          >
+            {isParsingUrl ? (
+              <Loader2 aria-hidden="true" className="size-4 animate-spin" />
+            ) : (
+              <Wand2 aria-hidden="true" className="size-4" />
+            )}
+            URL로 채우기
+          </Button>
+        </div>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-2 text-sm font-medium">
           <span>회사명</span>
@@ -160,4 +253,26 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
       </div>
     </form>
   );
+}
+
+function fillIfEmpty(
+  form: HTMLFormElement,
+  name: string,
+  value: string | undefined
+) {
+  if (!value) return;
+  const field = form.elements.namedItem(name);
+  if (
+    field instanceof HTMLInputElement ||
+    field instanceof HTMLTextAreaElement ||
+    field instanceof HTMLSelectElement
+  ) {
+    if (!field.value) {
+      field.value = value;
+    }
+  }
+}
+
+function toDateInputValue(value: string | undefined): string | undefined {
+  return value?.match(/\d{4}-\d{2}-\d{2}/)?.[0];
 }

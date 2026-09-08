@@ -22,13 +22,18 @@ export async function HeroView() {
             채용 공고와 기업 분석 데이터를 한 흐름에서 정리하기 위한 Next.js
             기반 작업 공간입니다.
           </p>
-          <div className="mt-8">
+          <div className="mt-8 flex flex-wrap gap-2">
             <Button asChild>
               <Link href={dashboardHref}>
                 대시보드
                 <ArrowRight aria-hidden="true" className="size-4" />
               </Link>
             </Button>
+            {user ? (
+              <Button asChild variant="secondary">
+                <Link href="/dashboard/analyses">기업분석 목록</Link>
+              </Button>
+            ) : null}
           </div>
         </div>
       </section>

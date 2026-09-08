@@ -16,6 +16,7 @@ export type JobPosting = {
   employmentType: EmploymentType;
   postedAt: string | null;
   deadline: string | null;
+  source: string;
   url: string | null;
   rawText: string | null;
   createdAt: string;

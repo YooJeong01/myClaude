@@ -1,6 +1,7 @@
 import { fetchWithRetry } from '../common/http';
 import { sleep } from '../common/rate-limit';
 import { MIN_DELAY_MS } from '../common/rate-limit';
+import { filterRelevantPostings } from '../common/role-filter';
 import { ScrapeError } from '../common/types';
 import { SCRAPER_USER_AGENT } from '../common/user-agent';
 import type { CollectedJobPosting, EmploymentType } from '../../job-postings/types';
@@ -126,7 +127,10 @@ export async function fetchCatchListings(): Promise<CollectedJobPosting[]> {
       await sleep(MIN_DELAY_MS.catch);
 
       try {
-        const postings = await fetchCatchPage(keyword, page);
+        const postings = filterRelevantPostings(
+          await fetchCatchPage(keyword, page),
+          'catch'
+        );
         console.log(`    ✓ ${postings.length}건 파싱됨`);
         allPostings.push(...postings);
       } catch (err) {

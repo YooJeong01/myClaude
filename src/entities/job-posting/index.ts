@@ -6,3 +6,4 @@ export {
   type NewJobPostingInput
 } from "./model";
 export { insertJobPosting, listJobPostings } from "./api";
+export type { ListJobPostingsOptions, ListJobPostingsResult } from "./api";

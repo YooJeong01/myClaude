@@ -19,3 +19,10 @@ export type CompanyAnalysisSummary = Pick<
   CompanyAnalysis,
   "id" | "companyId" | "companyName" | "role" | "jobPostingId" | "createdAt"
 >;
+
+export type CompanyAnalysisGroup = {
+  companyId: string;
+  companyName: string;
+  latest: CompanyAnalysisSummary;
+  count: number;
+};

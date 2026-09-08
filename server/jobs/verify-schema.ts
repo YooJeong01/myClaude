@@ -48,7 +48,8 @@ async function main(): Promise<void> {
     "job_postings",
     "company_analyses",
     "user_experiences",
-    "motivation_drafts"
+    "motivation_drafts",
+    "saved_postings"
   ] as const) {
     const { error } = await admin.from(table).select("*").limit(0);
     assert(!error, `${table}: ${error?.message} — 마이그레이션을 먼저 실행하세요`);
@@ -129,7 +130,34 @@ async function main(): Promise<void> {
   assert(dupErr, "중복 insert 가 막히지 않음 (nulls not distinct 미지원?)");
   ok(`중복 거부됨 (${dupErr.code})`);
 
-  console.log("5. job_postings source 값 검증 (Day2 스크래핑)");
+  console.log("5. saved_postings insert + RLS 위장 insert + 중복 거부");
+  const { data: saved, error: savedErr } = await authed
+    .from("saved_postings")
+    .insert({
+      user_id: userId,
+      job_posting_id: jp.id
+    })
+    .select("id")
+    .single();
+  assert(!savedErr && saved, `saved_postings insert: ${savedErr?.message}`);
+  created.push({ table: "saved_postings", id: saved.id });
+  ok(`saved posting ${saved.id}`);
+
+  const { error: savedMasqueradeErr } = await authed.from("saved_postings").insert({
+    user_id: otherUserId,
+    job_posting_id: jp.id
+  });
+  assert(savedMasqueradeErr, "saved_postings 타 유저 user_id insert 가 거부되지 않음");
+  ok(`saved_postings 위장 insert 거부됨 (${savedMasqueradeErr.code})`);
+
+  const { error: savedDupErr } = await authed.from("saved_postings").insert({
+    user_id: userId,
+    job_posting_id: jp.id
+  });
+  assert(savedDupErr, "saved_postings 중복 insert 가 거부되지 않음");
+  ok(`saved_postings 중복 거부됨 (${savedDupErr.code})`);
+
+  console.log("6. job_postings source 값 검증 (Day2 스크래핑)");
   const { data: jp2, error: jpErr2 } = await admin
     .from("job_postings")
     .insert({
@@ -159,7 +187,7 @@ async function main(): Promise<void> {
   assert(jpInvalidErr, "invalid_source 가 reject 되지 않음 (체크 제약 실패)");
   ok(`invalid_source 거부됨 (${jpInvalidErr.code})`);
 
-  console.log("6. company_analyses insert");
+  console.log("7. company_analyses insert");
   const { data: ca, error: caErr } = await admin
     .from("company_analyses")
     .insert({
@@ -175,7 +203,7 @@ async function main(): Promise<void> {
   created.push({ table: "company_analyses", id: ca.id });
   ok(`analysis ${ca.id}`);
 
-  console.log("7. user_experiences insert + RLS 위장 insert 거부");
+  console.log("8. user_experiences insert + RLS 위장 insert 거부");
   const { data: exp, error: expErr } = await authed
     .from("user_experiences")
     .insert({
@@ -197,7 +225,7 @@ async function main(): Promise<void> {
   assert(expMasqueradeErr, "user_experiences 타 유저 user_id insert 가 거부되지 않음");
   ok(`user_experiences 위장 insert 거부됨 (${expMasqueradeErr.code})`);
 
-  console.log("8. motivation_drafts insert + RLS 위장 insert/update 거부");
+  console.log("9. motivation_drafts insert + RLS 위장 insert/update 거부");
   const { data: draft, error: draftErr } = await authed
     .from("motivation_drafts")
     .insert({
@@ -260,7 +288,7 @@ async function main(): Promise<void> {
   );
   ok("motivation_drafts update/delete 무효 (0행, 행 불변)");
 
-  console.log("9. RLS: anon select");
+  console.log("10. RLS: anon select");
   const { data: anonCa } = await anon.from("company_analyses").select("id");
   assert((anonCa?.length ?? 0) === 0, `anon 이 company_analyses ${anonCa?.length}행 읽음`);
   ok("anon → company_analyses 0행 (차단)");
