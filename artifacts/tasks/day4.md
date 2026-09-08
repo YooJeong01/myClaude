@@ -23,7 +23,7 @@
 
 **T24 → T25 → T26 → T27**
 
-## T24. 스키마 — `user_experiences` + `motivation_drafts`
+## T24. 스키마 — `user_experiences` + `motivation_drafts` [완료 2026-09-08]
 
 ### 24-1. 마이그레이션 — `supabase/migrations/<타임스탬프>_day4_motivation.sql`
 사용자가 Supabase 대시보드 SQL Editor 에서 실행. `20260830155347_init.sql` 의 패턴(RLS, moddatetime 트리거) 준수.
@@ -54,7 +54,7 @@
   타 유저 `user_id` 로 위장 insert 거부(RLS), `motivation_drafts` update 시도 거부
 - `pnpm exec tsx --env-file=.env.local server/jobs/verify-schema.ts` 통과
 
-## T25. 지원동기 매칭 로직 — `server/motivation/`
+## T25. 지원동기 매칭 로직 — `server/motivation/` [완료 2026-09-08]
 
 `server/analysis/` 구조를 그대로 따른다 (types / prompt / generate 분리, 확장 전제, `schema_version`).
 
@@ -88,7 +88,7 @@
   `server/llm/client.ts` 의 `generateJson<Omit<MotivationResult,"schema_version">>` 호출 →
   `schema_version` stamp → 반환. 모델은 `GEMINI_MODEL`
 
-## T26. Route Handler — `app/api/motivation/route.ts`
+## T26. Route Handler — `app/api/motivation/route.ts` [완료 2026-09-08]
 
 `app/api/company/analyze/route.ts` 패턴 계승.
 - `POST` body `{ company_analysis_id: string, experience_ids: string[], role?: string }`
@@ -107,7 +107,7 @@
 - 에러 매핑: `LlmError`(RATE_LIMITED 429 / NO_API_KEY 500 / 그 외 502), 그 외 500
 - 참고: `row.result` 는 jsonb(`Json`) 라 `CompanyAnalysisResult` 로 캐스트해서 넘긴다 (analyze route insert 경계와 대칭)
 
-## T27. 스모크 — `server/jobs/verify-motivation.ts`
+## T27. 스모크 — `server/jobs/verify-motivation.ts` [완료 2026-09-08]
 
 - `SCRAPE_OWNER_USER_ID` + `createAdminClient()`
 - 준비:
@@ -124,6 +124,21 @@
   + `summary_paragraph`(예시). 완성 자소서 문단이 아니라 "소재" (goal.md). `schema_version` 으로 추후 조정.
 - **D2 — 저장**: `motivation_drafts` 별도 테이블. 분석 1개 → 경험 조합별 매칭 여러 번 = 이력 누적.
 - **D3 — UI 범위**: Day 4 는 백엔드만. 경험 입력 폼·대시보드·결과 화면은 Day 5~6 로 이동.
+
+## 완료 (2026-09-08)
+
+- `feat/motivation-matching` (Codex 구현) → `main` `--no-ff` 병합 (`499bcc9`).
+- 병합 전 검증:
+  - 사용자가 `20260907233000_day4_motivation.sql` 실행 (처음엔 다른 구문을 실행해 테이블 미생성 → 재실행으로 해결).
+  - `verify-schema.ts` 통과. 단, `motivation_drafts` 불변성 단언이 "update 시 42501 에러"를 기대했으나
+    RLS 는 정책 없는 update/delete 를 에러가 아니라 0행으로 조용히 필터링함 → "0행 + 행 불변" 확인으로
+    교정하고 delete 케이스 추가 (`020586f`, Claude 직접 수정 — 검증 스크립트 교정이므로).
+  - `verify-motivation.ts` 통과 — 카카오/백엔드 분석으로 `angles` 2개 생성, `motivation_drafts` 저장,
+    이력 누적 확인 (Gemini 503 일시 오류 후 재시도 성공).
+  - `tsc --noEmit` / `pnpm lint` / `pnpm build` 그린, `/api/motivation` 라우트 등록 확인.
+- 스펙 이탈 1건(문제 없음): `company_analyses` 행에 회사명이 없어 라우트가 `companies.name` 을 별도 조회해
+  `MotivationInput.companyName` 으로 전달.
+- 다음: Day 5~6 (`day5.md`, T28~T34) — Codex 위임 예정.
 
 ## 규율
 
