@@ -17,10 +17,14 @@ if (!url || !anonKey || !serviceKey) {
   throw new Error("환경변수 누락. `--env-file=.env.local` 로 실행하세요.");
 }
 
-const admin = createClient(url, serviceKey, {
+const supabaseUrl = url;
+const supabaseAnonKey = anonKey;
+const supabaseServiceKey = serviceKey;
+
+const admin = createClient(supabaseUrl, supabaseServiceKey, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
-const anon = createClient(url, anonKey, {
+const anon = createClient(supabaseUrl, supabaseAnonKey, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
 
@@ -38,7 +42,14 @@ const created: { table: string; id: string }[] = [];
 
 async function main(): Promise<void> {
   console.log("1. 스키마 존재 확인 (admin)");
-  for (const table of ["profiles", "companies", "job_postings", "company_analyses"] as const) {
+  for (const table of [
+    "profiles",
+    "companies",
+    "job_postings",
+    "company_analyses",
+    "user_experiences",
+    "motivation_drafts"
+  ] as const) {
     const { error } = await admin.from(table).select("*").limit(0);
     assert(!error, `${table}: ${error?.message} — 마이그레이션을 먼저 실행하세요`);
     ok(table);
@@ -54,6 +65,27 @@ async function main(): Promise<void> {
   assert(!userErr && userRes.user, `createUser: ${userErr?.message}`);
   const userId = userRes.user.id;
   ok(`user ${userId}`);
+
+  const otherEmail = `t3-smoke-other-${Date.now()}@example.com`;
+  const { data: otherUserRes, error: otherUserErr } =
+    await admin.auth.admin.createUser({
+      email: otherEmail,
+      password: "smoke-test-pw-123456",
+      email_confirm: true
+    });
+  assert(!otherUserErr && otherUserRes.user, `createUser(other): ${otherUserErr?.message}`);
+  const otherUserId = otherUserRes.user.id;
+  ok(`other user ${otherUserId}`);
+
+  const authed = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  });
+  const { error: signInErr } = await authed.auth.signInWithPassword({
+    email,
+    password: "smoke-test-pw-123456"
+  });
+  assert(!signInErr, `signInWithPassword: ${signInErr?.message}`);
+  ok("authenticated client 준비됨");
 
   const { data: prof, error: profErr } = await admin
     .from("profiles")
@@ -143,7 +175,92 @@ async function main(): Promise<void> {
   created.push({ table: "company_analyses", id: ca.id });
   ok(`analysis ${ca.id}`);
 
-  console.log("7. RLS: anon select");
+  console.log("7. user_experiences insert + RLS 위장 insert 거부");
+  const { data: exp, error: expErr } = await authed
+    .from("user_experiences")
+    .insert({
+      user_id: userId,
+      title: "스모크 경험",
+      body: "스키마 검증용 사용자 경험"
+    })
+    .select("id")
+    .single();
+  assert(!expErr && exp, `user_experiences insert: ${expErr?.message}`);
+  created.push({ table: "user_experiences", id: exp.id });
+  ok(`experience ${exp.id}`);
+
+  const { error: expMasqueradeErr } = await authed.from("user_experiences").insert({
+    user_id: otherUserId,
+    title: "위장 경험",
+    body: "다른 user_id 로 insert 시도"
+  });
+  assert(expMasqueradeErr, "user_experiences 타 유저 user_id insert 가 거부되지 않음");
+  ok(`user_experiences 위장 insert 거부됨 (${expMasqueradeErr.code})`);
+
+  console.log("8. motivation_drafts insert + RLS 위장 insert/update 거부");
+  const { data: draft, error: draftErr } = await authed
+    .from("motivation_drafts")
+    .insert({
+      user_id: userId,
+      company_analysis_id: ca.id,
+      job_posting_id: jp.id,
+      experience_ids: [exp.id],
+      result: { summary: "motivation smoke" },
+      model: "smoke-model"
+    })
+    .select("id")
+    .single();
+  assert(!draftErr && draft, `motivation_drafts insert: ${draftErr?.message}`);
+  created.push({ table: "motivation_drafts", id: draft.id });
+  ok(`motivation draft ${draft.id}`);
+
+  const { error: draftMasqueradeErr } = await authed.from("motivation_drafts").insert({
+    user_id: otherUserId,
+    company_analysis_id: ca.id,
+    experience_ids: [exp.id],
+    result: { summary: "masquerade" }
+  });
+  assert(draftMasqueradeErr, "motivation_drafts 타 유저 user_id insert 가 거부되지 않음");
+  ok(`motivation_drafts 위장 insert 거부됨 (${draftMasqueradeErr.code})`);
+
+  // motivation_drafts 는 불변 이력: update/delete 정책이 없다.
+  // Postgres RLS 는 정책 없는 update/delete 를 에러가 아니라 "0행 영향"으로 조용히 필터링하므로,
+  // 에러 발생이 아니라 "행이 실제로 안 바뀌는지"로 불변성을 확인한다.
+  const { data: draftUpdRows, error: draftUpdErr } = await authed
+    .from("motivation_drafts")
+    .update({ model: "updated-model" })
+    .eq("id", draft.id)
+    .select();
+  assert(!draftUpdErr, `motivation_drafts update 예기치 못한 에러: ${draftUpdErr?.message}`);
+  assert(
+    (draftUpdRows?.length ?? 0) === 0,
+    `motivation_drafts update 가 ${draftUpdRows?.length}행에 반영됨 (불변이어야 함)`
+  );
+
+  const { data: draftDelRows, error: draftDelErr } = await authed
+    .from("motivation_drafts")
+    .delete()
+    .eq("id", draft.id)
+    .select();
+  assert(!draftDelErr, `motivation_drafts delete 예기치 못한 에러: ${draftDelErr?.message}`);
+  assert(
+    (draftDelRows?.length ?? 0) === 0,
+    `motivation_drafts delete 가 ${draftDelRows?.length}행에 반영됨 (불변이어야 함)`
+  );
+
+  const { data: draftAfter, error: draftAfterErr } = await admin
+    .from("motivation_drafts")
+    .select("model")
+    .eq("id", draft.id)
+    .single();
+  assert(!draftAfterErr && draftAfter, `motivation_drafts 재조회 실패: ${draftAfterErr?.message}`);
+  assert(
+    draftAfter.model === "smoke-model",
+    `motivation_drafts 행이 변경됨 (model='${draftAfter.model}', 'smoke-model' 이어야 함)`
+  );
+  ok("motivation_drafts update/delete 무효 (0행, 행 불변)");
+
+  console.log("9. RLS: anon select");
   const { data: anonCa } = await anon.from("company_analyses").select("id");
   assert((anonCa?.length ?? 0) === 0, `anon 이 company_analyses ${anonCa?.length}행 읽음`);
   ok("anon → company_analyses 0행 (차단)");
@@ -166,6 +283,12 @@ async function main(): Promise<void> {
     console.warn(`  ! user: ${delUserErr.message}`);
   } else {
     ok("user 삭제 (profiles cascade)");
+  }
+  const { error: delOtherUserErr } = await admin.auth.admin.deleteUser(otherUserId);
+  if (delOtherUserErr) {
+    console.warn(`  ! other user: ${delOtherUserErr.message}`);
+  } else {
+    ok("other user 삭제 (profiles cascade)");
   }
 
   console.log("\n✅ 전부 통과");

@@ -217,6 +217,81 @@ export interface Database {
           }
         ];
       };
+      user_experiences: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          body: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          body: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          title?: string;
+          body?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      motivation_drafts: {
+        Row: {
+          id: string;
+          user_id: string;
+          company_analysis_id: string;
+          job_posting_id: string | null;
+          experience_ids: string[];
+          result: Json;
+          model: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          company_analysis_id: string;
+          job_posting_id?: string | null;
+          experience_ids?: string[];
+          result: Json;
+          model?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          company_analysis_id?: string;
+          job_posting_id?: string | null;
+          experience_ids?: string[];
+          result?: Json;
+          model?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "motivation_drafts_company_analysis_id_fkey";
+            columns: ["company_analysis_id"];
+            isOneToOne: false;
+            referencedRelation: "company_analyses";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "motivation_drafts_job_posting_id_fkey";
+            columns: ["job_posting_id"];
+            isOneToOne: false;
+            referencedRelation: "job_postings";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
