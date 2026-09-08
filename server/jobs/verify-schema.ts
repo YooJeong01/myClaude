@@ -223,12 +223,42 @@ async function main(): Promise<void> {
   assert(draftMasqueradeErr, "motivation_drafts 타 유저 user_id insert 가 거부되지 않음");
   ok(`motivation_drafts 위장 insert 거부됨 (${draftMasqueradeErr.code})`);
 
-  const { error: draftUpdateErr } = await authed
+  // motivation_drafts 는 불변 이력: update/delete 정책이 없다.
+  // Postgres RLS 는 정책 없는 update/delete 를 에러가 아니라 "0행 영향"으로 조용히 필터링하므로,
+  // 에러 발생이 아니라 "행이 실제로 안 바뀌는지"로 불변성을 확인한다.
+  const { data: draftUpdRows, error: draftUpdErr } = await authed
     .from("motivation_drafts")
     .update({ model: "updated-model" })
-    .eq("id", draft.id);
-  assert(draftUpdateErr, "motivation_drafts update 가 거부되지 않음");
-  ok(`motivation_drafts update 거부됨 (${draftUpdateErr.code})`);
+    .eq("id", draft.id)
+    .select();
+  assert(!draftUpdErr, `motivation_drafts update 예기치 못한 에러: ${draftUpdErr?.message}`);
+  assert(
+    (draftUpdRows?.length ?? 0) === 0,
+    `motivation_drafts update 가 ${draftUpdRows?.length}행에 반영됨 (불변이어야 함)`
+  );
+
+  const { data: draftDelRows, error: draftDelErr } = await authed
+    .from("motivation_drafts")
+    .delete()
+    .eq("id", draft.id)
+    .select();
+  assert(!draftDelErr, `motivation_drafts delete 예기치 못한 에러: ${draftDelErr?.message}`);
+  assert(
+    (draftDelRows?.length ?? 0) === 0,
+    `motivation_drafts delete 가 ${draftDelRows?.length}행에 반영됨 (불변이어야 함)`
+  );
+
+  const { data: draftAfter, error: draftAfterErr } = await admin
+    .from("motivation_drafts")
+    .select("model")
+    .eq("id", draft.id)
+    .single();
+  assert(!draftAfterErr && draftAfter, `motivation_drafts 재조회 실패: ${draftAfterErr?.message}`);
+  assert(
+    draftAfter.model === "smoke-model",
+    `motivation_drafts 행이 변경됨 (model='${draftAfter.model}', 'smoke-model' 이어야 함)`
+  );
+  ok("motivation_drafts update/delete 무효 (0행, 행 불변)");
 
   console.log("9. RLS: anon select");
   const { data: anonCa } = await anon.from("company_analyses").select("id");
