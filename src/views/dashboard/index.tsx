@@ -1,10 +1,16 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
+import { listRecentAnalyses } from "@/entities/company-analysis";
+import { listExperiences } from "@/entities/experience";
 import { listJobPostings, type JobPosting } from "@/entities/job-posting";
 import { getUser } from "@/entities/session";
+import { signOut } from "@/features/auth";
 import { AddJobPostingForm } from "@/features/add-job-posting";
 import { submitJobPosting } from "@/features/add-job-posting/lib/submit.server";
+import { RunAnalysisButton } from "@/features/run-analysis";
 import { createSupabaseServerClient } from "@/shared/api-server";
+import { Button } from "@/shared/ui/button";
 
 const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
   dateStyle: "medium"
@@ -17,18 +23,36 @@ export async function DashboardView() {
   }
 
   const supabase = await createSupabaseServerClient();
-  const postings = await listJobPostings(supabase);
+  const [postings, experiences, analyses] = await Promise.all([
+    listJobPostings(supabase),
+    listExperiences(supabase),
+    listRecentAnalyses(supabase)
+  ]);
+  const latestAnalysisByPostingId = new Map(
+    analyses
+      .filter((analysis) => analysis.jobPostingId)
+      .map((analysis) => [analysis.jobPostingId, analysis])
+  );
 
   return (
     <main className="min-h-screen bg-background px-6 py-8">
       <div className="mx-auto max-w-5xl">
         <header className="border-b pb-5">
-          <p className="text-sm font-medium text-muted-foreground">
-            {user.email ?? "로그인 사용자"}
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-normal">
-            공고 대시보드
-          </h1>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                {user.email ?? "로그인 사용자"}
+              </p>
+              <h1 className="mt-2 text-3xl font-semibold tracking-normal">
+                공고 대시보드
+              </h1>
+            </div>
+            <form action={signOut}>
+              <Button type="submit" variant="secondary">
+                로그아웃
+              </Button>
+            </form>
+          </div>
         </header>
 
         <section className="grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
@@ -45,15 +69,27 @@ export async function DashboardView() {
           </div>
 
           <aside className="rounded-md border bg-card p-5 text-card-foreground">
-            <p className="text-sm font-medium text-muted-foreground">
-              저장된 공고
-            </p>
-            <p className="mt-2 text-3xl font-semibold tracking-normal">
-              {postings.length}
-            </p>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Supabase RLS 기준으로 현재 사용자에게 보이는 공고만 표시합니다.
-            </p>
+            <div className="space-y-5">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  저장된 공고
+                </p>
+                <p className="mt-2 text-3xl font-semibold tracking-normal">
+                  {postings.length}
+                </p>
+              </div>
+              <div className="border-t pt-5">
+                <p className="text-sm font-medium text-muted-foreground">
+                  내 경험
+                </p>
+                <p className="mt-2 text-3xl font-semibold tracking-normal">
+                  {experiences.length}
+                </p>
+                <Button asChild className="mt-4 w-full" variant="secondary">
+                  <Link href="/dashboard/experiences">경험 관리</Link>
+                </Button>
+              </div>
+            </div>
           </aside>
         </section>
 
@@ -64,7 +100,11 @@ export async function DashboardView() {
           {postings.length > 0 ? (
             <div className="divide-y rounded-md border bg-card">
               {postings.map((posting) => (
-                <JobPostingListItem key={posting.id} posting={posting} />
+                <JobPostingListItem
+                  key={posting.id}
+                  latestAnalysis={latestAnalysisByPostingId.get(posting.id)}
+                  posting={posting}
+                />
               ))}
             </div>
           ) : (
@@ -78,7 +118,13 @@ export async function DashboardView() {
   );
 }
 
-function JobPostingListItem({ posting }: { posting: JobPosting }) {
+function JobPostingListItem({
+  latestAnalysis,
+  posting
+}: {
+  latestAnalysis?: { id: string; createdAt: string };
+  posting: JobPosting;
+}) {
   return (
     <article className="p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -107,7 +153,16 @@ function JobPostingListItem({ posting }: { posting: JobPosting }) {
             원문 보기
           </a>
         ) : null}
+        {latestAnalysis ? (
+          <Link
+            className="text-primary underline-offset-4 hover:underline"
+            href={`/dashboard/analyses/${latestAnalysis.id}`}
+          >
+            최근 분석 {formatDate(latestAnalysis.createdAt)}
+          </Link>
+        ) : null}
       </div>
+      <RunAnalysisButton className="mt-4" posting={posting} />
     </article>
   );
 }
