@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
+import { listExperiences } from "@/entities/experience";
 import { listJobPostings, type JobPosting } from "@/entities/job-posting";
 import { getUser } from "@/entities/session";
 import { signOut } from "@/features/auth";
@@ -19,7 +21,10 @@ export async function DashboardView() {
   }
 
   const supabase = await createSupabaseServerClient();
-  const postings = await listJobPostings(supabase);
+  const [postings, experiences] = await Promise.all([
+    listJobPostings(supabase),
+    listExperiences(supabase)
+  ]);
 
   return (
     <main className="min-h-screen bg-background px-6 py-8">
@@ -56,15 +61,27 @@ export async function DashboardView() {
           </div>
 
           <aside className="rounded-md border bg-card p-5 text-card-foreground">
-            <p className="text-sm font-medium text-muted-foreground">
-              저장된 공고
-            </p>
-            <p className="mt-2 text-3xl font-semibold tracking-normal">
-              {postings.length}
-            </p>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Supabase RLS 기준으로 현재 사용자에게 보이는 공고만 표시합니다.
-            </p>
+            <div className="space-y-5">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  저장된 공고
+                </p>
+                <p className="mt-2 text-3xl font-semibold tracking-normal">
+                  {postings.length}
+                </p>
+              </div>
+              <div className="border-t pt-5">
+                <p className="text-sm font-medium text-muted-foreground">
+                  내 경험
+                </p>
+                <p className="mt-2 text-3xl font-semibold tracking-normal">
+                  {experiences.length}
+                </p>
+                <Button asChild className="mt-4 w-full" variant="secondary">
+                  <Link href="/dashboard/experiences">경험 관리</Link>
+                </Button>
+              </div>
+            </div>
           </aside>
         </section>
 
