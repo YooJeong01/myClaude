@@ -24,7 +24,7 @@
 
 ---
 
-## T38. URL 단건 파싱 (수동 입력 보조) — 우선순위 1
+## T38. URL 단건 파싱 (수동 입력 보조) — 우선순위 1 [완료 2026-09-09]
 
 수동 공고 입력 폼에서 URL 하나만 주면 회사명·직무·고용형태·게시일·마감일·본문을 뽑아 폼을 채운다.
 **자동 저장 아님** — 폼 프리필 후 사용자가 확인·수정하고 저장.
@@ -63,7 +63,7 @@
 - 검증: `server/jobs/verify-parse-url.ts` 스모크 — 공개 채용공고 URL 2~3개(schema.org 있는 것 1개,
   없는 것 1개)로 필드 추출 확인. LLM 과부하 시 재시도.
 
-## T39. 관심 공고 북마크 — 우선순위 2
+## T39. 관심 공고 북마크 — 우선순위 2 [완료 2026-09-09]
 
 ### 39-1. 마이그레이션 — `supabase/migrations/20260909005000_saved_postings.sql`
 **이 파일은 이미 `main` 에 있다 (Claude 가 작성, 사용자가 실행 예정). Codex 는 새로 만들지 말고
@@ -97,7 +97,7 @@
 - 대시보드 공고 목록 항목 + 분석 페이지에 `SaveToggle` 추가.
 - 대시보드에 "북마크한 공고 N개" 요약 + `/dashboard/calendar` 링크.
 
-## T40. 캘린더 뷰 — 우선순위 3 (T39 의존)
+## T40. 캘린더 뷰 — 우선순위 3 (T39 의존) [완료 2026-09-09]
 
 ### 40-1. 라이브러리
 - **가정**: `pnpm add react-big-calendar date-fns` + `react-big-calendar/lib/css/react-big-calendar.css`
@@ -122,7 +122,7 @@
 - 이벤트 클릭 요약은 **LLM 안 씀** — `raw_text` 발췌 + 링크 (Gemini 과부하 회피, 빠름).
 - `react-big-calendar` 채택 (직접 월 그리드 대신). 사용자가 원하면 교체 가능.
 
-## T36. 기업분석 모아보기 페이지 — 우선순위 4
+## T36. 기업분석 모아보기 페이지 — 우선순위 4 [완료 2026-09-09]
 
 ### 36-1. `src/entities/company-analysis/api.ts`
 - `listRecentAnalyses` 를 확장하거나 `listAnalysesGrouped(supabase, { q?, cursor?, limit? })` 추가:
@@ -138,7 +138,7 @@
 ### 36-3. 통합
 - 대시보드 헤더/네비에 "기업분석 목록" 링크. hero 로그인 후 진입점에서도 접근 가능하게.
 
-## T35. 공고 검색 + 페이지네이션 — 우선순위 5
+## T35. 공고 검색 + 페이지네이션 — 우선순위 5 [완료 2026-09-09]
 
 ### 35-1. `src/entities/job-posting/api.ts`
 - `listJobPostings(supabase, opts?)` 시그니처 확장:
@@ -154,7 +154,7 @@
 - "더 보기" 버튼(커서). 총 건수 표시("전체 310건 중 20건")
 - 서버 컴포넌트 유지, 필터 폼만 `"use client"`
 
-## T37. 스크래핑 범위 정교화 — 우선순위 6
+## T37. 스크래핑 범위 정교화 — 우선순위 6 [완료 2026-09-09 — 기존 데이터 정리는 사용자 판단 대기]
 
 ### 37-1. `server/scraping/common/role-filter.ts`
 - `isRelevantRole(role: string, title?: string): boolean` — 순수 함수.
@@ -182,7 +182,7 @@
 - `server/jobs/verify-schema.ts` 등 기존 스모크 영향 없음. `role-filter` 단위 케이스는
   `server/jobs/verify-role-filter.ts` 로 간단히(입력→기대값 표).
 
-## T41. 기업 규모 구분 — 우선순위 7
+## T41. 기업 규모 구분 — 우선순위 7 [완료 2026-09-09]
 
 ### 41-1. `server/analysis/company-size.ts`
 - `estimateCompanySize(profile: DartCompanyProfile, financials: DartKeyFinancials | null): CompanySizeEstimate`
@@ -216,6 +216,22 @@ E2E(`e2e/day5-report.spec.ts`)에 **LLM 안 쓰는** 시나리오 추가:
 - 기업분석 모아보기 페이지 회사 카드 렌더
 - URL 파싱: mock 불가하면 스킵하거나 스모크(`verify-parse-url.ts`)로 대체
 리포트(`artifacts/test-reports/`)는 `day6-e2e.md` 로 새로. 통과율·성능·expected/actual 형식 유지(day5.md 34-4).
+
+## 완료 (2026-09-09 야간 자율 세션)
+
+- T35~T41 전부 `main` 병합. `4bdb95e` (T38·T39·T40·T36·T35·T37), `f2fac53` (T41).
+- Codex 가 T38~T37 커밋 → T41 작업 중 **시스템 메모리 부족으로 프로세스 강제 종료** →
+  Claude 가 6개 검증·병합 + 미커밋 T41 WIP 복구·검증·병합.
+- 검증: `main` 에서 tsc / lint(steiger, FSD 위반 0) / build 그린. E2E 회귀 6/6 통과.
+- **day6 신규 기능 E2E 시나리오 미추가** (Codex 가 T34 확장 전 종료) — 스모크 스크립트만.
+- 상세: `artifacts/ai-notes/2026-09-09 day6 야간 진행.md`.
+
+### 아침 확인·판단 (사용자)
+1. T37: 기존 공고 331건 중 **293건(89%)이 직무 범위 밖** — 삭제 / 태그 / 유지?
+2. T37: 직무 범위 = 프론트엔드/웹개발/퍼블리셔/풀스택 가정 (백엔드·앱·데이터·PM 제외) — 조정?
+3. T38: 사용자가 준 단일 URL 1회 fetch 파싱 (robots 미확인) — OK?
+4. T40: `react-big-calendar` 채택, 요약은 raw_text 발췌 — 브라우저에서 실제 렌더 확인 권장.
+5. day6 기능 E2E 시나리오 추가 여부.
 
 ## 규율 (day5.md 계승)
 
