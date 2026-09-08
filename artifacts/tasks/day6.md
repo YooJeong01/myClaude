@@ -65,7 +65,9 @@
 
 ## T39. 관심 공고 북마크 — 우선순위 2
 
-### 39-1. 마이그레이션 — `supabase/migrations/<ts>_saved_postings.sql`
+### 39-1. 마이그레이션 — `supabase/migrations/20260909005000_saved_postings.sql`
+**이 파일은 이미 `main` 에 있다 (Claude 가 작성, 사용자가 실행 예정). Codex 는 새로 만들지 말고
+아래 스펙과 일치하는지 확인만 하고, 39-2(타입 동기화)·39-3(verify 케이스)에 집중한다.**
 - `saved_postings`:
   - `id uuid pk default gen_random_uuid()`
   - `user_id uuid not null references auth.users(id) on delete cascade`
