@@ -1,12 +1,14 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
+import { listRecentAnalyses } from "@/entities/company-analysis";
 import { listExperiences } from "@/entities/experience";
 import { listJobPostings, type JobPosting } from "@/entities/job-posting";
 import { getUser } from "@/entities/session";
 import { signOut } from "@/features/auth";
 import { AddJobPostingForm } from "@/features/add-job-posting";
 import { submitJobPosting } from "@/features/add-job-posting/lib/submit.server";
+import { RunAnalysisButton } from "@/features/run-analysis";
 import { createSupabaseServerClient } from "@/shared/api-server";
 import { Button } from "@/shared/ui/button";
 
@@ -21,10 +23,16 @@ export async function DashboardView() {
   }
 
   const supabase = await createSupabaseServerClient();
-  const [postings, experiences] = await Promise.all([
+  const [postings, experiences, analyses] = await Promise.all([
     listJobPostings(supabase),
-    listExperiences(supabase)
+    listExperiences(supabase),
+    listRecentAnalyses(supabase)
   ]);
+  const latestAnalysisByPostingId = new Map(
+    analyses
+      .filter((analysis) => analysis.jobPostingId)
+      .map((analysis) => [analysis.jobPostingId, analysis])
+  );
 
   return (
     <main className="min-h-screen bg-background px-6 py-8">
@@ -92,7 +100,11 @@ export async function DashboardView() {
           {postings.length > 0 ? (
             <div className="divide-y rounded-md border bg-card">
               {postings.map((posting) => (
-                <JobPostingListItem key={posting.id} posting={posting} />
+                <JobPostingListItem
+                  key={posting.id}
+                  latestAnalysis={latestAnalysisByPostingId.get(posting.id)}
+                  posting={posting}
+                />
               ))}
             </div>
           ) : (
@@ -106,7 +118,13 @@ export async function DashboardView() {
   );
 }
 
-function JobPostingListItem({ posting }: { posting: JobPosting }) {
+function JobPostingListItem({
+  latestAnalysis,
+  posting
+}: {
+  latestAnalysis?: { id: string; createdAt: string };
+  posting: JobPosting;
+}) {
   return (
     <article className="p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -135,7 +153,16 @@ function JobPostingListItem({ posting }: { posting: JobPosting }) {
             원문 보기
           </a>
         ) : null}
+        {latestAnalysis ? (
+          <Link
+            className="text-primary underline-offset-4 hover:underline"
+            href={`/dashboard/analyses/${latestAnalysis.id}`}
+          >
+            최근 분석 {formatDate(latestAnalysis.createdAt)}
+          </Link>
+        ) : null}
       </div>
+      <RunAnalysisButton className="mt-4" posting={posting} />
     </article>
   );
 }
