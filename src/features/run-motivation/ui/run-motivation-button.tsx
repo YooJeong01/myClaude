@@ -17,11 +17,13 @@ type RunMotivationButtonProps = {
   experienceIds: string[];
   role?: string;
   disabled?: boolean;
+  disabledReason?: string;
 };
 
 export function RunMotivationButton({
   analysisId,
   disabled = false,
+  disabledReason,
   experienceIds,
   role
 }: RunMotivationButtonProps) {
@@ -69,7 +71,11 @@ export function RunMotivationButton({
         {isPending ? "매칭 중..." : "지원동기 만들기"}
       </Button>
       <p aria-live="polite" className="mt-2 min-h-5 text-sm text-muted-foreground">
-        {isPending ? "기업분석과 선택한 경험을 매칭하는 중입니다." : message}
+        {disabled && disabledReason
+          ? disabledReason
+          : isPending
+            ? "기업분석과 선택한 경험을 매칭하는 중입니다."
+            : message}
       </p>
     </div>
   );

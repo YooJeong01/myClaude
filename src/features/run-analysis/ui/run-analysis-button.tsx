@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import type { JobPosting } from "@/entities/job-posting";
+import { useOnline } from "@/shared/lib/use-online";
 import { Button } from "@/shared/ui/button";
 
 type AnalyzeResponse = {
@@ -28,9 +29,10 @@ export function RunAnalysisButton({
   jobPostingIdOverride
 }: RunAnalysisButtonProps) {
   const router = useRouter();
+  const isOnline = useOnline();
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
-  const isOfflineDisabled = disabledWhenOffline && false;
+  const isOfflineDisabled = disabledWhenOffline && !isOnline;
 
   function runAnalysis() {
     startTransition(async () => {

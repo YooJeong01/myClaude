@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import {
   getAnalysis,
@@ -8,7 +8,7 @@ import { getUser } from "@/entities/session";
 import { RunAnalysisButton } from "@/features/run-analysis";
 import { createSupabaseServerClient } from "@/shared/api-server";
 import { AnalysisHistoryList } from "@/widgets/analysis-history";
-import { CompanyAnalysisReport } from "@/widgets/company-analysis-report";
+import { MirroredCompanyAnalysisReport } from "@/widgets/company-analysis-report";
 
 type AnalysisPageProps = {
   params: Promise<{ id: string }>;
@@ -22,41 +22,48 @@ export default async function AnalysisPage({ params }: AnalysisPageProps) {
 
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
-  const analysis = await getAnalysis(supabase, id);
-  if (!analysis) {
-    notFound();
-  }
-  const history = await listAnalysesForCompany(supabase, analysis.companyId);
+  const analysis = await getAnalysis(supabase, id).catch((error) => {
+    console.error("[AnalysisPage]", error);
+    return null;
+  });
+  const history = analysis
+    ? await listAnalysesForCompany(supabase, analysis.companyId)
+    : [];
 
   return (
     <main className="min-h-screen bg-background px-6 py-8">
       <div className="mx-auto max-w-5xl space-y-8">
-        <CompanyAnalysisReport
+        <MirroredCompanyAnalysisReport
           action={
-            <RunAnalysisButton
-              disabledWhenOffline
-              jobPostingIdOverride={analysis.jobPostingId}
-              posting={{
-                id: analysis.jobPostingId ?? analysis.id,
-                companyNameRaw: analysis.companyName,
-                role: analysis.role,
-                employmentType: "기타",
-                postedAt: null,
-                deadline: null,
-                url: null,
-                rawText: null,
-                createdAt: analysis.createdAt
-              }}
-            />
+            analysis ? (
+              <RunAnalysisButton
+                disabledWhenOffline
+                jobPostingIdOverride={analysis.jobPostingId}
+                posting={{
+                  id: analysis.jobPostingId ?? analysis.id,
+                  companyNameRaw: analysis.companyName,
+                  role: analysis.role,
+                  employmentType: "기타",
+                  postedAt: null,
+                  deadline: null,
+                  url: null,
+                  rawText: null,
+                  createdAt: analysis.createdAt
+                }}
+              />
+            ) : null
           }
           analysis={analysis}
+          analysisId={id}
         />
-        <section>
-          <h2 className="mb-4 text-lg font-semibold tracking-normal">
-            지난 분석
-          </h2>
-          <AnalysisHistoryList analyses={history} currentId={analysis.id} />
-        </section>
+        {analysis ? (
+          <section>
+            <h2 className="mb-4 text-lg font-semibold tracking-normal">
+              지난 분석
+            </h2>
+            <AnalysisHistoryList analyses={history} currentId={analysis.id} />
+          </section>
+        ) : null}
       </div>
     </main>
   );
