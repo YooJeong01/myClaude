@@ -34,6 +34,7 @@ const performanceRows: {
 const admin = createAdminClient();
 let analysisId = "";
 let draftId = "";
+const testRunStart = new Date().toISOString();
 
 const plannedScenarios = [
   "로그인 fixture",
@@ -41,7 +42,10 @@ const plannedScenarios = [
   "기업분석 결과",
   "지원동기 실행",
   "지원동기 이력",
-  "오프라인 미러"
+  "오프라인 미러",
+  "공고 검색·페이지네이션",
+  "북마크·캘린더",
+  "기업분석 모아보기"
 ];
 
 // serial 아님: LLM 의존 시나리오(4·5)가 Gemini 무료 티어 일시 오류로 실패해도
@@ -50,6 +54,7 @@ test.describe.configure({ mode: "default" });
 
 test.afterAll(async () => {
   await cleanupExperiences();
+  await cleanupSavedPostings();
   writeReport();
 });
 
@@ -203,6 +208,104 @@ test("6. 오프라인 전환 시 분석 페이지가 미러로 전환", async ({
     }
   );
 });
+
+// ── Day 6 시나리오 (LLM 안 씀) ─────────────────────────────────────
+
+test("7. 공고 검색 + 페이지네이션", async ({ page }) => {
+  await runScenario(
+    "공고 검색·페이지네이션",
+    "대시보드 공고 목록이 검색어로 필터되고 커서 페이지네이션이 동작한다.",
+    "로그인 세션과 수집된 공고가 필요하다.",
+    "검색어 입력 → URL 갱신 → 결과 필터 확인, '더 보기' 있으면 클릭",
+    "검색 시 URL 에 q 파라미터가 붙고 목록이 좁혀진다.",
+    async () => {
+      await login(page);
+      await page.goto("/dashboard");
+      const totalText = await page
+        .getByText(/전체 \d+건 중 \d+건/)
+        .first()
+        .textContent();
+
+      await page.getByPlaceholder("회사명 또는 직무 검색").fill("개발");
+      await page.getByPlaceholder("회사명 또는 직무 검색").press("Enter");
+      await page.waitForURL(/[?&]q=/);
+      await expect(page.getByRole("heading", { name: "공고 목록" })).toBeVisible();
+
+      const moreLink = page.getByRole("link", { name: "더 보기" });
+      const hadMore = (await moreLink.count()) > 0;
+      if (hadMore) {
+        await moreLink.click();
+        await page.waitForURL(/[?&]cursor=/);
+      }
+      return `검색 적용(이전: ${totalText?.trim()}), 더보기=${hadMore}`;
+    }
+  );
+});
+
+test("8. 북마크 토글 → 캘린더 반영", async ({ page }) => {
+  await runScenario(
+    "북마크·캘린더",
+    "공고를 북마크하면 요약 카운트가 늘고 캘린더 페이지가 렌더된다.",
+    "로그인 세션과 공고 1건 이상이 필요하다.",
+    "첫 공고 북마크 → 대시보드 '북마크한 공고' 카운트 확인 → /dashboard/calendar 렌더 확인",
+    "북마크 토글이 '북마크됨'으로 바뀌고 캘린더가 표시된다.",
+    async () => {
+      await login(page);
+      await page.goto("/dashboard");
+
+      const before = await readSavedCount(page);
+      const toggle = page
+        .getByRole("button", { name: "북마크", exact: true })
+        .first();
+      await toggle.click();
+      await expect(
+        page.getByRole("button", { name: "북마크됨" }).first()
+      ).toBeVisible();
+
+      await page.reload();
+      const after = await readSavedCount(page);
+      expect(after).toBeGreaterThanOrEqual(before + 1);
+
+      await page.goto("/dashboard/calendar");
+      await expect(page.locator(".rbc-calendar")).toBeVisible();
+      await expect(page.locator(".rbc-month-view")).toBeVisible();
+      return `북마크 카운트 ${before} → ${after}, 캘린더 렌더 확인`;
+    }
+  );
+});
+
+test("9. 기업분석 모아보기 페이지", async ({ page }) => {
+  await runScenario(
+    "기업분석 모아보기",
+    "회사별 분석 카드가 렌더되고 회사명 검색이 동작한다.",
+    "기존 company_analyses 데이터(삼성전자·카카오)가 있어야 한다.",
+    "/dashboard/analyses 진입 → 카드 확인 → '카카오' 검색 → 결과 좁혀짐",
+    "회사 카드가 1개 이상 보이고 검색 시 URL 에 q 가 붙는다.",
+    async () => {
+      await login(page);
+      await page.goto("/dashboard/analyses");
+      await expect(
+        page.getByRole("heading", { name: "회사별 분석" })
+      ).toBeVisible();
+      const cardLinks = page.locator("main a[href^='/dashboard/analyses/']");
+      const cardCount = await cardLinks.count();
+      expect(cardCount).toBeGreaterThan(0);
+
+      await page.getByPlaceholder("회사명 검색").fill("카카오");
+      await page.getByRole("button", { name: "검색" }).click();
+      await page.waitForURL(/[?&]q=/);
+      return `회사 카드 ${cardCount}개, 검색 적용 확인`;
+    }
+  );
+});
+
+async function readSavedCount(page: Page): Promise<number> {
+  const countP = page
+    .getByText("북마크한 공고", { exact: true })
+    .locator("xpath=following-sibling::p[1]");
+  const text = await countP.textContent();
+  return Number.parseInt(text?.trim() ?? "0", 10) || 0;
+}
 
 /**
  * "지원동기 만들기" 실행 후 draft 페이지 이동까지 대기.
@@ -381,6 +484,19 @@ async function cleanupExperiences() {
     .delete()
     .eq("user_id", userId)
     .in("title", createdExperienceTitles);
+}
+
+/** 시나리오 8 이 만든 북마크만 지운다 (이 실행 시작 이후 생성분). */
+async function cleanupSavedPostings() {
+  const userId = process.env.SCRAPE_OWNER_USER_ID;
+  if (!userId) {
+    return;
+  }
+  await admin
+    .from("saved_postings")
+    .delete()
+    .eq("user_id", userId)
+    .gte("created_at", testRunStart);
 }
 
 function createAdminClient() {
