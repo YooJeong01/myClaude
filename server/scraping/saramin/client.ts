@@ -5,7 +5,7 @@
  * 각 페이지에서 공고들을 추출한다.
  */
 import { fetchWithRetry } from '../common/http';
-import { sleep } from '../common/rate-limit';
+import { sleep, withJitter } from '../common/rate-limit';
 import { MIN_DELAY_MS } from '../common/rate-limit';
 import { filterRelevantPostings } from '../common/role-filter';
 import { SCRAPER_USER_AGENT } from '../common/user-agent';
@@ -35,7 +35,7 @@ export async function fetchSaraminListings(): Promise<CollectedJobPosting[]> {
         url.searchParams.set('recruitPage', page.toString());
 
         console.log(`    페이지 ${page}...`);
-        await sleep(MIN_DELAY_MS.saramin);
+        await sleep(withJitter(MIN_DELAY_MS.saramin));
 
         const response = await fetchWithRetry(url.toString(), {
           headers: {

@@ -23,25 +23,11 @@ alter table public.job_postings add column company_key text generated always as 
   )
 ) stored;
 
+-- role_norm 은 최소 정규화만 한다: 소문자 + 공백 정리.
+-- 괄호·대괄호·수식어를 지우면 "(3~5년)"·"(신입)"·"(음성 에이전트)" 같은
+-- 의미 있는 구분까지 사라져 서로 다른 공고가 합쳐진다 (day7.md D5).
 alter table public.job_postings add column role_norm text generated always as (
-  btrim(
-    regexp_replace(
-      regexp_replace(
-        regexp_replace(
-          lower(coalesce(role, '')),
-          '\[[^]]*\]|\([^)]*\)',
-          '',
-          'g'
-        ),
-        '\s*(채용|모집|공고)\s*$',
-        '',
-        'g'
-      ),
-      '\s+',
-      ' ',
-      'g'
-    )
-  )
+  btrim(regexp_replace(lower(coalesce(role, '')), '\s+', ' ', 'g'))
 ) stored;
 
 with ranked as (

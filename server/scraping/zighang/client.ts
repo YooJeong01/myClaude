@@ -1,5 +1,5 @@
 import { fetchWithRetry } from '../common/http';
-import { sleep, MIN_DELAY_MS } from '../common/rate-limit';
+import { sleep, withJitter, MIN_DELAY_MS } from '../common/rate-limit';
 import { filterRelevantPostings } from '../common/role-filter';
 import { ScrapeError } from '../common/types';
 import { SCRAPER_USER_AGENT } from '../common/user-agent';
@@ -134,7 +134,7 @@ export async function fetchZighangListings(): Promise<CollectedJobPosting[]> {
 
   for (let page = 0; page < MAX_PAGES; page++) {
     console.log(`    페이지 ${page + 1}...`);
-    await sleep(MIN_DELAY_MS.zighang);
+    await sleep(withJitter(MIN_DELAY_MS.zighang));
 
     try {
       const result = await fetchZighangPage(page);

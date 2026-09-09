@@ -8,4 +8,4 @@
 export const JUMPIT_BASE_URL = 'https://www.jumpit.co.kr';
 export const JUMPIT_API_BASE_URL = 'https://jumpit-api.saramin.co.kr';
 export const JUMPIT_POSITIONS_PATH = '/api/positions';
-export const MAX_PAGES = Number(process.env.SCRAPE_MAX_PAGES) || 10;
+export const MAX_PAGES = Number(process.env.SCRAPE_MAX_PAGES) || 3;

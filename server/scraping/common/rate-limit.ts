@@ -17,3 +17,8 @@ export const MIN_DELAY_MS = {
 export async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+/** 기본 대기 + 0~1500ms 랜덤 지터. 요청 간격의 기계적 규칙성을 완화한다. */
+export function withJitter(baseMs: number): number {
+  return baseMs + Math.floor(Math.random() * 1500);
+}

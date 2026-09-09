@@ -7,7 +7,7 @@
 import { load } from 'cheerio';
 import type { Page } from 'playwright';
 import { launchBrowser, withPage } from '../common/browser';
-import { sleep } from '../common/rate-limit';
+import { sleep, withJitter } from '../common/rate-limit';
 import { MIN_DELAY_MS } from '../common/rate-limit';
 import { filterRelevantPostings } from '../common/role-filter';
 import { ScrapeError } from '../common/types';
@@ -115,7 +115,7 @@ export async function fetchJobkoreaListings(): Promise<CollectedJobPosting[]> {
 
       for (let page = 1; page <= MAX_PAGES_PER_KEYWORD; page++) {
         console.log(`    페이지 ${page}...`);
-        await sleep(MIN_DELAY_MS.jobkorea);
+        await sleep(withJitter(MIN_DELAY_MS.jobkorea));
 
         try {
           const postings = await withPage(browser, async (pageObj) => {

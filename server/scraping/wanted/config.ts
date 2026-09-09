@@ -9,4 +9,4 @@ export const WANTED_BASE_URL = 'https://www.wanted.co.kr';
 export const WANTED_RESULTS_PATH = '/api/chaos/navigation/v1/results';
 export const WANTED_JOB_GROUP_ID = '518';
 export const WANTED_PAGE_SIZE = 20;
-export const MAX_PAGES = Number(process.env.SCRAPE_MAX_PAGES) || 10;
+export const MAX_PAGES = Number(process.env.SCRAPE_MAX_PAGES) || 3;

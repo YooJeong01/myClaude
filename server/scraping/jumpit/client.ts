@@ -1,5 +1,5 @@
 import { fetchWithRetry } from '../common/http';
-import { sleep, MIN_DELAY_MS } from '../common/rate-limit';
+import { sleep, withJitter, MIN_DELAY_MS } from '../common/rate-limit';
 import { filterRelevantPostings } from '../common/role-filter';
 import { ScrapeError } from '../common/types';
 import { SCRAPER_USER_AGENT } from '../common/user-agent';
@@ -114,7 +114,7 @@ export async function fetchJumpitListings(): Promise<CollectedJobPosting[]> {
 
   for (let page = 1; page <= MAX_PAGES; page++) {
     console.log(`    페이지 ${page}...`);
-    await sleep(MIN_DELAY_MS.jumpit);
+    await sleep(withJitter(MIN_DELAY_MS.jumpit));
 
     try {
       const pagePostings = await fetchJumpitPage(page);
