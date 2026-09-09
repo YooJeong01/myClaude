@@ -31,7 +31,7 @@ export const SEARCH_KEYWORDS = getScrapeKeywords();
  * 각 키워드별 최대 페이지 수.
  * 저강도 유지를 위해 상한을 잡아둔다. (1페이지당 40건 ~ 100건)
  */
-export const MAX_PAGES_PER_KEYWORD = 2;
+export const MAX_PAGES_PER_KEYWORD = Number(process.env.SCRAPE_MAX_PAGES) || 10;
 
 /**
  * robots.txt 준수 여부 확인:

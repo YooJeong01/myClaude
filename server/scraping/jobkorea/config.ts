@@ -31,7 +31,7 @@ export const JOBKOREA_BASE_URL = 'https://www.jobkorea.co.kr';
 export const JOBKOREA_SEARCH_PATH = '/recruit/joblist';
 
 export const SEARCH_KEYWORDS = getScrapeKeywords();
-export const MAX_PAGES_PER_KEYWORD = 2;
+export const MAX_PAGES_PER_KEYWORD = Number(process.env.SCRAPE_MAX_PAGES) || 10;
 
 /**
  * Playwright 네비게이션/렌더링 타임아웃.

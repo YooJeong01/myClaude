@@ -31,7 +31,7 @@ export const CATCH_BASE_URL = 'https://www.catch.co.kr';
 export const CATCH_SEARCH_PATH = '/NCS/RecruitSearch';
 
 export const SEARCH_KEYWORDS = getScrapeKeywords();
-export const MAX_PAGES_PER_KEYWORD = 2;
+export const MAX_PAGES_PER_KEYWORD = Number(process.env.SCRAPE_MAX_PAGES) || 10;
 
 /**
  * Playwright 네비게이션/렌더링 타임아웃.
