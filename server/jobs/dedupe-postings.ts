@@ -28,13 +28,10 @@ function normalizeCompanyName(value: string | null): string {
     .replace(/주식회사|㈜|\(주\)|\(유\)|유한회사|\binc\.?|\bcorp\.?|\bco\.?|\bltd\.?|\bllc|\s/g, "");
 }
 
+// 최소 정규화만: 소문자 + 공백 정리. (괄호·수식어를 지우면 "(3~5년)"·"(신입)" 같은
+// 의미 있는 구분이 사라져 다른 공고가 합쳐진다 — day7.md D5.)
 function normalizeRole(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/\[[^\]]*\]|\([^)]*\)/g, "")
-    .replace(/\s*(채용|모집|공고)\s*$/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 function dedupeKey(row: PostingRow): string {

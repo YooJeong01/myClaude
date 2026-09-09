@@ -1,5 +1,5 @@
 import { fetchWithRetry } from '../common/http';
-import { sleep } from '../common/rate-limit';
+import { sleep, withJitter } from '../common/rate-limit';
 import { MIN_DELAY_MS } from '../common/rate-limit';
 import { filterRelevantPostings } from '../common/role-filter';
 import { ScrapeError } from '../common/types';
@@ -124,7 +124,7 @@ export async function fetchCatchListings(): Promise<CollectedJobPosting[]> {
 
     for (let page = 1; page <= MAX_PAGES_PER_KEYWORD; page++) {
       console.log(`    페이지 ${page}...`);
-      await sleep(MIN_DELAY_MS.catch);
+      await sleep(withJitter(MIN_DELAY_MS.catch));
 
       try {
         const postings = filterRelevantPostings(

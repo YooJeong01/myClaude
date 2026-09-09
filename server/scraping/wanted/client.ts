@@ -1,5 +1,5 @@
 import { fetchWithRetry } from '../common/http';
-import { sleep, MIN_DELAY_MS } from '../common/rate-limit';
+import { sleep, withJitter, MIN_DELAY_MS } from '../common/rate-limit';
 import { filterRelevantPostings } from '../common/role-filter';
 import { ScrapeError } from '../common/types';
 import { SCRAPER_USER_AGENT } from '../common/user-agent';
@@ -98,7 +98,7 @@ export async function fetchWantedListings(): Promise<CollectedJobPosting[]> {
 
   for (let page = 0; page < MAX_PAGES; page++) {
     console.log(`    페이지 ${page + 1}...`);
-    await sleep(MIN_DELAY_MS.wanted);
+    await sleep(withJitter(MIN_DELAY_MS.wanted));
 
     try {
       const pagePostings = await fetchWantedPage(page);
