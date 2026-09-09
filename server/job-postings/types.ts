@@ -5,7 +5,14 @@
  */
 
 /** 채용공고 수집 출처 */
-export type JobPostingSource = 'scrape_saramin' | 'scrape_jobkorea' | 'scrape_catch' | 'email';
+export type JobPostingSource =
+  | 'scrape_saramin'
+  | 'scrape_jobkorea'
+  | 'scrape_catch'
+  | 'scrape_wanted'
+  | 'scrape_jumpit'
+  | 'scrape_zighang'
+  | 'email';
 
 /** 고용 형태 */
 export type EmploymentType = '정규직' | '계약직' | '인턴' | '파견' | '프리랜서' | '기타';
@@ -32,6 +39,8 @@ export interface CollectedJobPosting {
   deadline?: Date | string;
   url?: string;
   rawText?: string;
+  // DB 컬럼에는 저장하지 않고 role-filter 판정에만 사용한다.
+  techStacks?: string[];
 }
 
 /** 수집 결과 통계 */

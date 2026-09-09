@@ -1,0 +1,8 @@
+2026-09-09 07:10 KST - T42 완료: source 제약 마이그레이션/타입 확장 커밋 183faac (`tsc --noEmit`, `pnpm lint` 통과)
+2026-09-09 07:20 KST - T43 완료: 원티드 JSON API 스크래퍼 커밋 c18c4b7 (`tsc --noEmit`, `pnpm lint` 통과)
+2026-09-09 07:28 KST - T44 완료: 점핏 JSON API 스크래퍼 커밋 2897941 (`tsc --noEmit`, `pnpm lint` 통과)
+2026-09-09 07:36 KST - T45 완료: 지행 공개 JSON API 스크래퍼 커밋 b76648f (`tsc --noEmit`, `pnpm lint` 통과)
+2026-09-09 07:42 KST - T47 완료: techStacks 직무 필터 반영 커밋 0b4d4d8 (`tsc --noEmit`, `pnpm lint`, `verify-role-filter` 통과)
+2026-09-09 07:52 KST - T46 완료: dedup 정규화 마이그레이션/리포트 스크립트 커밋 0c69f7f (`tsc --noEmit`, `pnpm lint` 통과)
+2026-09-09 08:18 KST - T45 수정: 지행 API base/path 조합 수정 커밋 a076da0 (`tsc --noEmit`, `pnpm lint` 통과)
+2026-09-09 08:25 KST - T48 완료: Day 7 검증 리포트 커밋 4bcae8a (`tsc --noEmit`, `pnpm lint`, `verify-role-filter` 통과; `pnpm build` 미완료 기록)
