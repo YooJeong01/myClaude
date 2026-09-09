@@ -136,8 +136,16 @@ generated 컬럼 표현식 교체 (drop → re-add, generated 컬럼은 `alter .
 - Codex 가 T42~T48 전부 커밋 후 프로세스 OOM 종료 → Claude 검증·병합 (`fe84277`).
 - 원티드·점핏·지행 스크래퍼 로컬 실행 정상 (수집·파싱·필터). DB insert 는 T42 마이그레이션 실행 후.
 - 상세: `artifacts/ai-notes/2026-09-09 day7 진행.md`.
-- **사용자**: 마이그레이션 2개 실행 → 원티드·점핏·지행 저장 활성화 + 크로스-사이트 중복 제거.
-- 백로그: `scrape-postings.yml` 에 새 스크래퍼 3개 job 추가 (현재 GHA 는 사람인·잡코리아·캐치만).
+- **사용자**: `more_scrape_sources.sql` 실행 완료 (2026-09-09). 원티드·점핏·지행 로컬 수집 확인
+  (원티드 36 / 점핏 27 / 지행 21). `dedup_normalization.sql` 은 아직 미실행 — 크로스-사이트 중복이
+  실제로 안 잡혀서(최소 정규화) 급하지 않음.
+- `scrape-postings.yml` 에 `scrape-api-sites` job (matrix: wanted/jumpit/zighang) 추가 완료 (`a8f1dc2`).
+- **Day 7 마무리 완료.** 잡코리아(RSC SPA)만 보류.
+
+### 후속 버그 수정 (2026-09-09 오후)
+- 사람인 파서 셀렉터 전면 교정 (`abf423e`) — 회사명 957건 "기업정보" 버그. 상세는
+  `ai-notes/2026-09-09 day7 진행.md` 하단.
+- dedup `role_norm` 최소화 + 스크래핑 강도 완화 (기본 3페이지 + 지터) (`ada281f`).
 
 - `pnpm exec tsc --noEmit` / `pnpm lint`(eslint + steiger) / `pnpm build` 그린.
 - `verify-role-filter.ts` 통과.
