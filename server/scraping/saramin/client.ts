@@ -29,8 +29,9 @@ export async function fetchSaraminListings(): Promise<CollectedJobPosting[]> {
     for (let page = 1; page <= MAX_PAGES_PER_KEYWORD; page++) {
       try {
         const url = new URL(SARAMIN_SEARCH_ENDPOINT, SARAMIN_BASE_URL);
-        url.searchParams.set('searchType', 'search');
-        url.searchParams.set('searchKeyword', keyword);
+        // 사람인 검색 파라미터는 `searchword`. (기존 `searchKeyword` 는 무시돼
+        // 키워드 없는 전체 목록이 나왔고, 그래서 무관 공고가 대량 유입됐다.)
+        url.searchParams.set('searchword', keyword);
         url.searchParams.set('recruitPage', page.toString());
 
         console.log(`    페이지 ${page}...`);
