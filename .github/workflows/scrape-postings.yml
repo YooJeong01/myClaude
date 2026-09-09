@@ -66,3 +66,25 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SCRAPE_OWNER_USER_ID: ${{ secrets.SCRAPE_OWNER_USER_ID }}
           SCRAPE_SEARCH_KEYWORDS: ${{ secrets.SCRAPE_SEARCH_KEYWORDS }}
+
+  # 원티드·점핏·지행 — JSON API 스크래퍼 (Playwright 불필요, 개발 직군은 API 파라미터로 필터).
+  scrape-api-sites:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        site: [wanted, jumpit, zighang]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsx server/jobs/scrape-${{ matrix.site }}.ts
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SCRAPE_OWNER_USER_ID: ${{ secrets.SCRAPE_OWNER_USER_ID }}
