@@ -26,7 +26,7 @@
 
 ---
 
-## T42. `source` 제약 + 타입 확장
+## T42. `source` 제약 + 타입 확장 [완료 2026-09-09 · 마이그레이션 실행 대기]
 
 ### 42-1. 마이그레이션 — `supabase/migrations/<ts>_more_scrape_sources.sql`
 `job_postings_source_check` 제약을 확장:
@@ -43,7 +43,7 @@ alter table public.job_postings add constraint job_postings_source_check
 `CollectedJobPosting` 에 `techStacks?: string[]` 추가(T47 용). `server/job-postings/persist.ts` 는
 `techStacks` 를 저장하지 않아도 됨(현재 스키마에 컬럼 없음) — role-filter 판정에만 쓰고 버림. 명시적으로 주석.
 
-## T43. 원티드 스크래퍼 — `server/scraping/wanted/`
+## T43. 원티드 스크래퍼 [완료 2026-09-09 · 로컬 25건] — `server/scraping/wanted/`
 
 **API (인증 불필요, JSON):**
 ```
@@ -68,7 +68,7 @@ GET https://www.wanted.co.kr/api/chaos/navigation/v1/results
   `fetchWantedListings()` → `insertCollectedJobPostings(admin, userId, postings, 'scrape_wanted')`.
   (`scrape-catch.ts` 그대로 복제)
 
-## T44. 점핏 스크래퍼 — `server/scraping/jumpit/`
+## T44. 점핏 스크래퍼 [완료 2026-09-09 · 로컬 17건] — `server/scraping/jumpit/`
 
 **API (인증 불필요, JSON):**
 ```
@@ -84,7 +84,7 @@ GET https://jumpit-api.saramin.co.kr/api/positions?page=<n>&sort=relation
 **모듈**: T43 과 동일 구조. `server/jobs/scrape-jumpit.ts`.
 `techStacks` 를 `CollectedJobPosting.techStacks` 로 채워 넘김.
 
-## T45. 지행 스크래퍼 — `server/scraping/zighang/`
+## T45. 지행 스크래퍼 [완료 2026-09-09 · api.zighang.com/api/recruitments/v3, 로컬 9건] — `server/scraping/zighang/`
 
 **주의: 지행(`zighang.com/recruitment`)은 Next.js 앱. 공개 API 미확인.**
 - 먼저 탐색: `/_next/data/<buildId>/recruitment.json`, 페이지 네트워크 탭의 XHR, 또는 RSC 청크.
@@ -92,7 +92,7 @@ GET https://jumpit-api.saramin.co.kr/api/positions?page=<n>&sort=relation
   (잡코리아처럼 RSC-only 면 fragile 스크래퍼 만들지 말 것.)
 - 찾으면 T43/T44 와 동일 구조로 구현.
 
-## T46. 크로스-사이트 중복 제거 — 정규화 강화
+## T46. 크로스-사이트 중복 제거 — 정규화 강화 [완료 2026-09-09 · 마이그레이션 실행 대기]
 
 ### 문제
 현재 `job_postings` 의 dedup:
@@ -121,7 +121,7 @@ generated 컬럼 표현식 교체 (drop → re-add, generated 컬럼은 `alter .
 크로스-사이트 중복 현황 리포트 + `--delete`(중복군에서 최신 1건만 남김) dry-run 스크립트.
 (`audit-postings.ts` 패턴)
 
-## T47. role-filter 에 techStacks 반영
+## T47. role-filter 에 techStacks 반영 [완료 2026-09-09 · verify 28/28]
 
 - `classifyRole(role, text?, techStacks?)` 로 시그니처 확장 — techStacks 를 `combined` 에 합쳐서 판정.
   `["React","TypeScript"]` 있으면 STRONG_FRONTEND "react" 매치 → relevant.
@@ -130,7 +130,14 @@ generated 컬럼 표현식 교체 (drop → re-add, generated 컬럼은 `alter .
 - `verify-role-filter.ts` 에 techStacks 케이스 추가
   (예: role="개발자" + techStacks=["Vue"] → relevant).
 
-## T48. 검증
+## T48. 검증 [완료 2026-09-09 · tsc·lint·verify 그린, build 는 호스트 메모리로 미실행]
+
+### 완료 요약 (2026-09-09 새벽)
+- Codex 가 T42~T48 전부 커밋 후 프로세스 OOM 종료 → Claude 검증·병합 (`fe84277`).
+- 원티드·점핏·지행 스크래퍼 로컬 실행 정상 (수집·파싱·필터). DB insert 는 T42 마이그레이션 실행 후.
+- 상세: `artifacts/ai-notes/2026-09-09 day7 진행.md`.
+- **사용자**: 마이그레이션 2개 실행 → 원티드·점핏·지행 저장 활성화 + 크로스-사이트 중복 제거.
+- 백로그: `scrape-postings.yml` 에 새 스크래퍼 3개 job 추가 (현재 GHA 는 사람인·잡코리아·캐치만).
 
 - `pnpm exec tsc --noEmit` / `pnpm lint`(eslint + steiger) / `pnpm build` 그린.
 - `verify-role-filter.ts` 통과.
