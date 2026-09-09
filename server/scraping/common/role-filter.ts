@@ -6,9 +6,11 @@
  *  - "review"     — 약한 신호(개발자·엔지니어·웹 단독 등). 관련 가능성이 있어 저장하되 사용자 확인 대상.
  *  - "irrelevant" — 블랙리스트(영업·생산·간호 등) 또는 아무 신호 없음. 버림.
  *
- * 판정 순서: 블랙리스트 → 강한 신호 → 약한 신호 → 없음.
- * 블랙리스트는 "명백히 다른 직군"만 담는다. 백엔드·앱·데이터처럼 인접한 개발 직무는
- * 블랙리스트에 넣지 않는다 — 강한 신호가 없으면 "review" 로 남겨 사용자가 판단한다.
+ * 판정 순서: 확정 프론트엔드 신호 → 블랙리스트 → 강한 신호 → 약한 신호 → 없음.
+ * "확정 프론트엔드"(프론트엔드·퍼블리셔·React·풀스택 등)는 블랙리스트보다 먼저 봐서
+ * "풀스택(프론트+백엔드)" 같은 공고가 '백엔드' 때문에 탈락하지 않게 한다.
+ * 백엔드·모바일·인프라·게임 등 다른 개발 직군은 블랙리스트에 넣는다(사용자 범위: 프론트엔드/웹/퍼블리싱).
+ * AI·데이터 계열은 블랙리스트에 넣지 않아 "review" 로 남는다(사용자가 관심 있음).
  */
 
 export type RoleRelevance = "relevant" | "review" | "irrelevant";
@@ -107,7 +109,26 @@ const WEAK = [
   "개발 인턴",
   "개발인턴",
   "신입 개발",
-  "주니어 개발"
+  "주니어 개발",
+  // AI·데이터 계열 (사용자가 관심 → review 로 남김)
+  "ai 엔지니어",
+  "ai엔지니어",
+  "ai 개발",
+  "ml 엔지니어",
+  "머신러닝",
+  "딥러닝",
+  "데이터 엔지니어",
+  "데이터엔지니어",
+  "data engineer",
+  "데이터 분석",
+  "data analyst",
+  "분석가",
+  "생성형 ai",
+  "generative ai",
+  "llm",
+  "ax 엔지니어",
+  "추천 모델",
+  "추천모델"
 ];
 
 /** 블랙리스트 — 명백히 다른 직군만. 부분 문자열. 전부 소문자. */
@@ -218,11 +239,92 @@ const BLACKLIST = [
   "법무사",
   "노무사",
   "회계사",
-  "데이터 분석",
-  "데이터분석",
   "데이터 라벨링",
-  "머신러닝",
-  "인공지능 학습"
+  "인공지능 학습 데이터"
+  // 데이터 분석/머신러닝/AI 엔지니어는 블랙리스트에서 뺌 — 사용자가 AI·데이터 계열은 "review" 로 보고 싶어함.
+];
+
+/** 확정 프론트엔드 신호 — 블랙리스트보다 먼저 검사. 전부 소문자. */
+const STRONG_FRONTEND = [
+  "프론트엔드",
+  "프론트 엔드",
+  "프론트엔트",
+  "프론트 개발",
+  "프론트개발",
+  "front-end",
+  "front end",
+  "frontend",
+  "웹 퍼블리",
+  "웹퍼블리",
+  "퍼블리셔",
+  "퍼블리싱",
+  "마크업",
+  "markup",
+  "리액트",
+  "react",
+  "reactjs",
+  "react.js",
+  "vue",
+  "vuejs",
+  "vue.js",
+  "nuxt",
+  "svelte",
+  "풀스택",
+  "풀 스택",
+  "fullstack",
+  "full-stack",
+  "full stack",
+  "웹 개발",
+  "웹개발",
+  "웹 프로그래",
+  "웹프로그래"
+];
+
+/** 사용자 범위(프론트엔드/웹/퍼블리싱) 밖의 다른 개발 직군 — 블랙리스트. */
+const OTHER_DEV_BLACKLIST = [
+  "백엔드",
+  "back-end",
+  "back end",
+  "backend",
+  "서버 개발",
+  "서버개발",
+  "서버 엔지니어",
+  "devops",
+  "데브옵스",
+  "인프라 엔지니어",
+  "인프라 운영",
+  "infra engineer",
+  "sre",
+  "site reliability",
+  "kubernetes",
+  "k8s",
+  "cloud 운영",
+  "클라우드 운영",
+  "시스템 운영",
+  "시스템 개발·운영",
+  "시스템 개발/운영",
+  "네트워크 엔지니어",
+  "보안 엔지니어",
+  "안드로이드",
+  "android",
+  "ios 개발",
+  "ios 엔지니어",
+  "flutter",
+  "react native",
+  "모바일 앱",
+  "모바일앱",
+  "앱 개발자",
+  "임베디드",
+  "펌웨어",
+  "게임 클라이언트",
+  "게임 서버",
+  "게임 개발",
+  "unity",
+  "unreal",
+  "언리얼",
+  "erp",
+  "sap ",
+  "그룹웨어"
 ];
 
 function hasToken(text: string, token: string): boolean {
@@ -234,15 +336,27 @@ function hasToken(text: string, token: string): boolean {
 export function classifyRole(role: string, text?: string): RoleRelevance {
   const combined = `${role} ${text ?? ""}`.toLowerCase();
 
+  // 1. 명백히 다른 직군(영업·생산·상담·간호…) — 무엇보다 우선
   if (BLACKLIST.some((kw) => combined.includes(kw))) {
     return "irrelevant";
   }
+  // 2. 확정 프론트엔드 신호 — 다른 개발 직군(3번)보다 우선
+  //    ("풀스택(프론트+백엔드)" 같은 공고가 '백엔드' 때문에 탈락하지 않도록)
+  if (STRONG_FRONTEND.some((kw) => combined.includes(kw))) {
+    return "relevant";
+  }
+  // 3. 프론트엔드가 아닌 다른 개발 직군(백엔드·모바일·인프라·게임·ERP) — 사용자 범위 밖
+  if (OTHER_DEV_BLACKLIST.some((kw) => combined.includes(kw))) {
+    return "irrelevant";
+  }
+  // 4. 나머지 강한 신호 (TypeScript·JavaScript·웹 서비스 개발 등)
   if (
     STRONG.some((kw) => combined.includes(kw)) ||
     STRONG_TOKENS.some((tok) => hasToken(combined, tok))
   ) {
     return "relevant";
   }
+  // 5. 약한 신호 → 확인 필요
   if (WEAK.some((kw) => combined.includes(kw))) {
     return "review";
   }
