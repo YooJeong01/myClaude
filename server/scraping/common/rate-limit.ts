@@ -10,7 +10,8 @@ export const MIN_DELAY_MS = {
   jobkorea: 3000, // Playwright 네비게이션
   catch: 3000, // Playwright 네비게이션
   wanted: 1500, // JSON API
-  jumpit: 1500 // JSON API
+  jumpit: 1500, // JSON API
+  zighang: 1500 // JSON API
 } as const;
 
 export async function sleep(ms: number): Promise<void> {
