@@ -333,8 +333,9 @@ function hasToken(text: string, token: string): boolean {
   return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, "i").test(text);
 }
 
-export function classifyRole(role: string, text?: string): RoleRelevance {
-  const combined = `${role} ${text ?? ""}`.toLowerCase();
+export function classifyRole(role: string, text?: string, techStacks?: string[]): RoleRelevance {
+  const stackText = techStacks?.filter(Boolean).join(" ") ?? "";
+  const combined = `${role} ${text ?? ""} ${stackText}`.toLowerCase();
 
   // 1. 명백히 다른 직군(영업·생산·상담·간호…) — 무엇보다 우선
   if (BLACKLIST.some((kw) => combined.includes(kw))) {
@@ -364,15 +365,15 @@ export function classifyRole(role: string, text?: string): RoleRelevance {
 }
 
 /** 이전 이분법 호환. "review" 는 관련으로 취급(저장 대상). */
-export function isRelevantRole(role: string, text?: string): boolean {
-  return classifyRole(role, text) !== "irrelevant";
+export function isRelevantRole(role: string, text?: string, techStacks?: string[]): boolean {
+  return classifyRole(role, text, techStacks) !== "irrelevant";
 }
 
 export function filterRelevantPostings<
-  T extends { role: string; rawText?: string }
+  T extends { role: string; rawText?: string; techStacks?: string[] }
 >(postings: T[], source: string): T[] {
   const filtered = postings.filter(
-    (posting) => classifyRole(posting.role, posting.rawText) !== "irrelevant"
+    (posting) => classifyRole(posting.role, posting.rawText, posting.techStacks) !== "irrelevant"
   );
   const removed = postings.length - filtered.length;
   if (removed > 0) {

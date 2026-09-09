@@ -7,6 +7,7 @@ import {
 type Case = {
   role: string;
   text?: string;
+  techStacks?: string[];
   expected: RoleRelevance;
 };
 
@@ -20,6 +21,8 @@ const cases: Case[] = [
   { role: "FE 엔지니어", expected: "relevant" },
   { role: "웹 개발 (TypeScript)", expected: "relevant" },
   { role: "백엔드 개발자", text: "React, Next.js 경험 우대", expected: "relevant" }, // 본문 프론트엔드 신호 우선
+  { role: "개발자", techStacks: ["Vue"], expected: "relevant" },
+  { role: "개발자", techStacks: ["React", "TypeScript"], expected: "relevant" },
   // AI·데이터 계열 → review (사용자 관심)
   { role: "AI SW 엔지니어", expected: "review" },
   { role: "데이터 엔지니어", expected: "review" },
@@ -50,10 +53,10 @@ function assert(cond: unknown, message: string): asserts cond {
 
 let pass = 0;
 for (const item of cases) {
-  const actual = classifyRole(item.role, item.text);
+  const actual = classifyRole(item.role, item.text, item.techStacks);
   assert(
     actual === item.expected,
-    `"${item.role}"${item.text ? ` (+본문)` : ""}: expected ${item.expected}, actual ${actual}`
+    `"${item.role}"${item.text ? ` (+본문)` : ""}${item.techStacks ? ` (+스택 ${item.techStacks.join(", ")})` : ""}: expected ${item.expected}, actual ${actual}`
   );
   pass += 1;
   console.log(`✓ ${item.role} → ${actual}`);
