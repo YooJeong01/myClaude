@@ -5,3 +5,4 @@
 2026-09-09 07:42 KST - T47 완료: techStacks 직무 필터 반영 커밋 0b4d4d8 (`tsc --noEmit`, `pnpm lint`, `verify-role-filter` 통과)
 2026-09-09 07:52 KST - T46 완료: dedup 정규화 마이그레이션/리포트 스크립트 커밋 0c69f7f (`tsc --noEmit`, `pnpm lint` 통과)
 2026-09-09 08:18 KST - T45 수정: 지행 API base/path 조합 수정 커밋 a076da0 (`tsc --noEmit`, `pnpm lint` 통과)
+2026-09-09 08:25 KST - T48 완료: Day 7 검증 리포트 커밋 4bcae8a (`tsc --noEmit`, `pnpm lint`, `verify-role-filter` 통과; `pnpm build` 미완료 기록)
