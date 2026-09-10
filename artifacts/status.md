@@ -1,6 +1,6 @@
 # 상태 보드
 
-- last update: 2026-09-10 (by plan) — 다중 에이전트 워크플로 구축
+- last update: 2026-09-10 (by plan) — 구조 세우기 커밋 완료, 병합 대기
 
 ## 현재 페이즈
 
@@ -8,8 +8,8 @@
 
 ## 작업 트리
 
-- holder: plan
-- branch: `chore/agent-workflow-setup`
+- holder: (없음 — 사용자 병합 대기)
+- branch: `chore/agent-workflow-setup` (3커밋, `main` 대상 클린 병합 확인)
 - base: `main` @ e2f979a
 
 ## 파이프라인
@@ -18,7 +18,7 @@
 |---|---|---|---|---|---|---|
 | Day 1~7 (수집·매칭·리포트·스크래퍼) | done | – | done | – | done | ✅ |
 | 배포 (my-claude-ruby.vercel.app) | done | – | – | – | – | ✅ |
-| agent-workflow-setup | in progress | – | – | – | – | – |
+| agent-workflow-setup | done | – | – | – | – | 병합 대기 |
 | redesign: design-system | – | – | – | – | – | – |
 | redesign: screens | – | – | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
