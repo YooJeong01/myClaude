@@ -2,7 +2,22 @@
   "permissions": {
     "allow": [
       "Bash(codex exec:*)",
-      "Bash(codex e:*)"
+      "Bash(codex e:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm exec tsc:*)",
+      "Bash(pnpm exec steiger:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm test:e2e:*)",
+      "Bash(pnpm exec playwright:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)",
+      "Bash(git switch:*)",
+      "Bash(git branch:*)",
+      "Bash(git merge --no-commit --no-ff:*)",
+      "Bash(git rebase main)"
     ]
   },
   "hooks": {
