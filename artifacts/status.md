@@ -1,20 +1,16 @@
 # 상태 보드
 
-- last update: 2026-09-13 21:40 (by plan) — 화면 리스타일 1차 라운드 T1~T5 완료(Codex 커밋 + plan 검증), review 대기
-
-**주의**: Codex가 이번 라운드 완료 직후 ChatGPT usage limit에 걸려 중단됨(OOM 아님, 새 실패 유형 —
-"try again at 11:38 PM"). 커밋 자체는 5개 다 깨끗하게 들어갔고, plan이 이어받아 tsc/lint/dev부팅
-검증 + 완료 문서 작성함. 상세: `artifacts/handover/2026-09-13-21-40-claude-redesign-screens-done.md`.
+- last update: 2026-09-14 00:18 (by plan) — 화면 리스타일 리뷰 완료(should-fix 4건), Codex 재개해서 위임
 
 ## 현재 페이즈
 
-**redesign — 화면 리스타일 1차 라운드 구현 완료, code-review + 육안 확인 대기.** ⚠️ 이 브랜치는 이번
-라운드가 끝나도 병합 보류 — 남은 화면(experiences/analyses-index/login/job-postings)까지 끝나야 한다
+**redesign — 화면 리스타일 1차 라운드 리뷰 완료, should-fix 반영 중.** ⚠️ 이 브랜치는 이번 라운드가
+끝나도 병합 보류 — 남은 화면(experiences/analyses-index/login/job-postings)까지 끝나야 한다
 (`.agents/design.md` 참조).
 
 ## 작업 트리
 
-- holder: (비어 있음)
+- holder: implement (codex) — should-fix 4건 반영 중 (usage limit 풀려서 재개)
 - branch: `main` @ a39901c 기준 `feat/design-system` (2026-09-13)
 - base: `main` @ a39901c
 
@@ -28,14 +24,14 @@
 | Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0, should-fix 반영) | – | ✅ |
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
 | redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 완료(diff 직접 확인) | – | 보류(화면과 묶어서) |
-| redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | done(5커밋, tsc/lint/dev부팅 확인) | 대기 | 대기(육안) | 보류 |
+| redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | should-fix 4건 반영 중 (Codex) | 완료(blocker 0, should-fix 4) | 대기(육안) | 보류 |
 | redesign: screens 2차(experiences·analyses-index·login·job-postings·analysis-history) | – | 미작성 | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (없음 — T1~T5 구현 완료, code-review 필요. Codex는 usage limit으로 못 씀 — 재개 가능 시각
-  "11:38 PM" 이후. **완료돼도 아직 병합 요청 안 함** — 위 경고 참조)
+- (없음 — Codex가 리뷰 should-fix 4건 반영 중(usage limit 풀림). **완료돼도 아직 병합 요청 안 함**
+  — 위 경고 참조)
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
