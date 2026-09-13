@@ -2,6 +2,9 @@ import Link from "next/link";
 
 import type { CompanyAnalysis } from "@/entities/company-analysis";
 import { Button } from "@/shared/ui/button";
+import { Card } from "@/shared/ui/card";
+import { Tag } from "@/shared/ui/tag";
+import { css } from "../../../../styled-system/css";
 
 import { AnalysisSourcesView } from "./sources";
 
@@ -22,17 +25,26 @@ export function CompanyAnalysisReport({
   const result = analysis.result;
 
   return (
-    <article className="space-y-6">
-      <header className="border-b pb-5">
-        <p className="text-sm font-medium text-muted-foreground">
+    <article className={css({ display: "grid", gap: 6 })}>
+      <header className={css({ borderBottomWidth: "1px", borderColor: "border", pb: 5 })}>
+        <p className={css({ color: "textMuted", fontWeight: 500, textStyle: "sm" })}>
           {dateFormatter.format(new Date(analysis.createdAt))}
         </p>
-        <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div
+          className={css({
+            alignItems: { md: "flex-start" },
+            display: "flex",
+            flexDirection: { base: "column", md: "row" },
+            gap: 4,
+            justifyContent: "space-between",
+            mt: 2
+          })}
+        >
           <div>
-            <h1 className="text-3xl font-semibold tracking-normal">
+            <h1 className={css({ textStyle: "3xl" })}>
               {analysis.companyName}
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className={css({ color: "textMuted", mt: 2, textStyle: "sm" })}>
               {analysis.role}
             </p>
             {result.estimated_size ? (
@@ -42,7 +54,14 @@ export function CompanyAnalysisReport({
               />
             ) : null}
           </div>
-          <div className="flex flex-col gap-2 sm:items-end">
+          <div
+            className={css({
+              alignItems: { md: "flex-end" },
+              display: "flex",
+              flexDirection: "column",
+              gap: 2
+            })}
+          >
             {action}
             <Button asChild>
               <Link href={`/dashboard/analyses/${analysis.id}/motivation`}>
@@ -69,7 +88,7 @@ export function CompanyAnalysisReport({
         <BulletList items={result.risks} />
       </ReportSection>
       <ReportSection title="지원동기 매칭 소재">
-        <p className="mb-3 text-sm font-medium text-primary">
+        <p className={css({ color: "link", fontWeight: 500, mb: 3, textStyle: "sm" })}>
           지원동기 매칭에 쓰이는 항목입니다.
         </p>
         <BulletList items={result.talking_points} />
@@ -82,12 +101,21 @@ export function CompanyAnalysisReport({
 
 function SizeBadge({ basis, label }: { basis: string; label: string }) {
   return (
-    <div className="mt-3 inline-flex max-w-full flex-col rounded-md border bg-secondary px-3 py-2 text-secondary-foreground">
-      <span className="text-xs font-semibold">{label} 추정</span>
-      <span className="mt-1 text-xs leading-5 text-muted-foreground">
-        {basis}
-      </span>
-    </div>
+    <Tag
+      className={css({
+        alignItems: "flex-start",
+        flexDirection: "column",
+        h: "auto",
+        maxW: "full",
+        mt: 3,
+        py: 2,
+        whiteSpace: "normal"
+      })}
+      variant="yellow"
+    >
+      <span className={css({ fontSize: "12px", fontWeight: 700 })}>{label} 추정</span>
+      <span className={css({ mt: 1, textStyle: "xs" })}>{basis}</span>
+    </Tag>
   );
 }
 
@@ -99,12 +127,12 @@ function ReportSection({
   title: string;
 }) {
   return (
-    <section className="rounded-md border bg-card p-5 text-card-foreground">
-      <h2 className="text-lg font-semibold tracking-normal">{title}</h2>
-      <div className="mt-3 text-sm leading-6 text-muted-foreground">
+    <Card className={css({ p: 5 })}>
+      <h2 className={css({ textStyle: "lg" })}>{title}</h2>
+      <div className={css({ color: "textMuted", mt: 3, textStyle: "sm" })}>
         {children}
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -114,7 +142,7 @@ function BulletList({ items }: { items: string[] }) {
   }
 
   return (
-    <ul className="list-disc space-y-2 pl-5">
+    <ul className={css({ display: "grid", gap: 2, listStyleType: "disc", pl: 5 })}>
       {items.map((item) => (
         <li key={item}>{item}</li>
       ))}

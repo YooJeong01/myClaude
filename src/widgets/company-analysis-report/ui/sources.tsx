@@ -1,4 +1,6 @@
 import type { AnalysisSources } from "@server/analysis/types";
+import { Card } from "@/shared/ui/card";
+import { css } from "../../../../styled-system/css";
 
 type SourcesProps = {
   sources: AnalysisSources;
@@ -6,11 +8,12 @@ type SourcesProps = {
 
 export function AnalysisSourcesView({ sources }: SourcesProps) {
   return (
-    <details className="rounded-md border bg-card p-4 text-card-foreground">
-      <summary className="cursor-pointer text-sm font-medium">근거 보기</summary>
-      <div className="mt-4 space-y-5 text-sm leading-6 text-muted-foreground">
+    <Card className={css({ p: 4 })}>
+      <details>
+      <summary className={css({ cursor: "pointer", fontWeight: 500, textStyle: "sm" })}>근거 보기</summary>
+      <div className={css({ color: "textMuted", display: "grid", gap: 5, mt: 4, textStyle: "sm" })}>
         <section>
-          <h3 className="font-medium text-foreground">DART</h3>
+          <h3 className={css({ color: "text", fontWeight: 500 })}>DART</h3>
           <p>
             {sources.dart
               ? `${sources.dart.bsnsYear} / ${sources.dart.fsDiv}`
@@ -37,7 +40,8 @@ export function AnalysisSourcesView({ sources }: SourcesProps) {
           title="컨센서스"
         />
       </div>
-    </details>
+      </details>
+    </Card>
   );
 }
 
@@ -52,25 +56,30 @@ function SourceLinks({
 }) {
   return (
     <section>
-      <h3 className="font-medium text-foreground">{title}</h3>
+      <h3 className={css({ color: "text", fontWeight: 500 })}>{title}</h3>
       {items.length > 0 ? (
-        <ul className="mt-2 space-y-2">
+        <ul className={css({ display: "grid", gap: 2, mt: 2 })}>
           {items.map((item) => (
             <li key={`${item.href}-${item.label}`}>
               <a
-                className="text-primary underline-offset-4 hover:underline"
+                className={css({
+                  color: "link",
+                  textDecoration: "none",
+                  textUnderlineOffset: "4px",
+                  _hover: { textDecoration: "underline" }
+                })}
                 href={item.href}
                 rel="noreferrer"
                 target="_blank"
               >
                 {item.label}
               </a>
-              <p className="text-xs text-muted-foreground">{item.meta}</p>
+              <p className={css({ color: "textMuted", textStyle: "xs" })}>{item.meta}</p>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="mt-2">{emptyText}</p>
+        <p className={css({ mt: 2 })}>{emptyText}</p>
       )}
     </section>
   );

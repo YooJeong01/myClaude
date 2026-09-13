@@ -11,6 +11,7 @@ import { SaveToggle } from "@/features/toggle-saved-posting";
 import { createSupabaseServerClient } from "@/shared/api-server";
 import { AnalysisHistoryList } from "@/widgets/analysis-history";
 import { MirroredCompanyAnalysisReport } from "@/widgets/company-analysis-report";
+import { css } from "../../../../../styled-system/css";
 
 type AnalysisPageProps = {
   params: Promise<{ id: string }>;
@@ -36,12 +37,11 @@ export default async function AnalysisPage({ params }: AnalysisPageProps) {
     : new Set<string>();
 
   return (
-    <main className="min-h-screen bg-background px-6 py-8">
-      <div className="mx-auto max-w-5xl space-y-8">
+    <div className={css({ display: "flex", flexDirection: "column", gap: 8 })}>
         <MirroredCompanyAnalysisReport
           action={
             analysis ? (
-              <div className="flex flex-wrap gap-2">
+              <div className={css({ display: "flex", flexWrap: "wrap", gap: 2 })}>
                 <RunAnalysisButton
                   disabledWhenOffline
                   jobPostingIdOverride={analysis.jobPostingId}
@@ -72,13 +72,12 @@ export default async function AnalysisPage({ params }: AnalysisPageProps) {
         />
         {analysis ? (
           <section>
-            <h2 className="mb-4 text-lg font-semibold tracking-normal">
+            <h2 className={css({ mb: 4, textStyle: "lg" })}>
               지난 분석
             </h2>
             <AnalysisHistoryList analyses={history} currentId={analysis.id} />
           </section>
         ) : null}
-      </div>
-    </main>
+    </div>
   );
 }
