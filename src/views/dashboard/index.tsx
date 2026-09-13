@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import { listRecentAnalyses } from "@/entities/company-analysis";
@@ -10,8 +9,6 @@ import {
   type JobPosting
 } from "@/entities/job-posting";
 import { listSavedPostingIds } from "@/entities/saved-posting";
-import { getUser } from "@/entities/session";
-import { signOut } from "@/features/auth";
 import { AddJobPostingForm } from "@/features/add-job-posting";
 import { submitJobPosting } from "@/features/add-job-posting/lib/submit.server";
 import { RunAnalysisButton } from "@/features/run-analysis";
@@ -19,6 +16,9 @@ import { JobPostingFilterForm } from "@/features/search-job-postings";
 import { SaveToggle } from "@/features/toggle-saved-posting";
 import { createSupabaseServerClient } from "@/shared/api-server";
 import { Button } from "@/shared/ui/button";
+import { Card } from "@/shared/ui/card";
+import { Tag } from "@/shared/ui/tag";
+import { css } from "../../../styled-system/css";
 
 const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
   dateStyle: "medium"
@@ -35,11 +35,6 @@ type DashboardViewProps = {
 };
 
 export async function DashboardView({ searchParams }: DashboardViewProps) {
-  const user = await getUser();
-  if (!user) {
-    redirect("/");
-  }
-
   const filters = normalizeFilters(searchParams);
   const supabase = await createSupabaseServerClient();
   const [postingResult, experiences, analyses, savedPostingIds] = await Promise.all([
@@ -63,95 +58,120 @@ export async function DashboardView({ searchParams }: DashboardViewProps) {
   );
 
   return (
-    <main className="min-h-screen bg-background px-6 py-8">
-      <div className="mx-auto max-w-5xl">
-        <header className="border-b pb-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div className={css({ display: "flex", flexDirection: "column", gap: 6 })}>
+        <header
+          className={css({
+            borderBottomWidth: "1px",
+            borderColor: "border",
+            pb: 5
+          })}
+        >
+          <div
+            className={css({
+              alignItems: { md: "flex-start" },
+              display: "flex",
+              flexDirection: { base: "column", md: "row" },
+              gap: 4,
+              justifyContent: "space-between"
+            })}
+          >
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                {user.email ?? "로그인 사용자"}
-              </p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-normal">
+              <h1 className={css({ textStyle: "3xl" })}>
                 공고 대시보드
               </h1>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Button asChild variant="secondary">
+            <div className={css({ display: "flex", flexWrap: "wrap", gap: 2 })}>
+              <Button asChild size="sm" variant="outline">
                 <Link href="/dashboard/analyses">기업분석 목록</Link>
               </Button>
-              <Button asChild variant="secondary">
+              <Button asChild size="sm" variant="outline">
                 <Link href="/dashboard/calendar">채용 캘린더</Link>
               </Button>
-              <form action={signOut}>
-                <Button type="submit" variant="secondary">
-                  로그아웃
-                </Button>
-              </form>
             </div>
           </div>
         </header>
 
-        <section className="grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-          <div className="rounded-md border bg-card p-5 text-card-foreground">
-            <div className="mb-5">
-              <h2 className="text-lg font-semibold tracking-normal">
+        <section
+          className={css({
+            display: "grid",
+            gap: 6,
+            gridTemplateColumns: { base: "1fr", md: "minmax(0, 1fr) 22rem" }
+          })}
+        >
+          <Card className={css({ p: 5 })}>
+            <div className={css({ mb: 5 })}>
+              <h2 className={css({ textStyle: "lg" })}>
                 수동 공고 입력
               </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className={css({ color: "textMuted", mt: 1, textStyle: "sm" })}>
                 URL이나 본문 중 하나를 넣으면 저장할 수 있습니다.
               </p>
             </div>
             <AddJobPostingForm submitAction={submitJobPosting} />
-          </div>
+          </Card>
 
-          <aside className="rounded-md border bg-card p-5 text-card-foreground">
-            <div className="space-y-5">
+          <Card className={css({ p: 5 })}>
+            <div className={css({ display: "grid", gap: 5 })}>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className={css({ color: "textMuted", fontWeight: 500, textStyle: "sm" })}>
                   저장된 공고
                 </p>
-                <p className="mt-2 text-3xl font-semibold tracking-normal">
+                <p className={css({ mt: 2, textStyle: "3xl" })}>
                   {postingResult.total}
                 </p>
               </div>
-              <div className="border-t pt-5">
-                <p className="text-sm font-medium text-muted-foreground">
+              <div className={css({ borderColor: "border", borderTopWidth: "1px", pt: 5 })}>
+                <p className={css({ color: "textMuted", fontWeight: 500, textStyle: "sm" })}>
                   북마크한 공고
                 </p>
-                <p className="mt-2 text-3xl font-semibold tracking-normal">
+                <p className={css({ mt: 2, textStyle: "3xl" })}>
                   {savedPostingIds.size}
                 </p>
-                <Button asChild className="mt-4 w-full" variant="secondary">
+                <Button asChild className={css({ mt: 4, w: "full" })} variant="secondary">
                   <Link href="/dashboard/calendar">캘린더</Link>
                 </Button>
               </div>
-              <div className="border-t pt-5">
-                <p className="text-sm font-medium text-muted-foreground">
+              <div className={css({ borderColor: "border", borderTopWidth: "1px", pt: 5 })}>
+                <p className={css({ color: "textMuted", fontWeight: 500, textStyle: "sm" })}>
                   내 경험
                 </p>
-                <p className="mt-2 text-3xl font-semibold tracking-normal">
+                <p className={css({ mt: 2, textStyle: "3xl" })}>
                   {experiences.length}
                 </p>
-                <Button asChild className="mt-4 w-full" variant="secondary">
+                <Button asChild className={css({ mt: 4, w: "full" })} variant="secondary">
                   <Link href="/dashboard/experiences">경험 관리</Link>
                 </Button>
               </div>
             </div>
-          </aside>
+          </Card>
         </section>
 
-        <section className="pb-8">
-          <div className="mb-4 space-y-4">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold tracking-normal">공고 목록</h2>
-              <p className="text-sm text-muted-foreground">
+        <section className={css({ pb: 8 })}>
+          <div className={css({ display: "grid", gap: 4, mb: 4 })}>
+            <div
+              className={css({
+                alignItems: "center",
+                display: "flex",
+                gap: 3,
+                justifyContent: "space-between"
+              })}
+            >
+              <h2 className={css({ textStyle: "lg" })}>공고 목록</h2>
+              <p className={css({ color: "textMuted", textStyle: "sm" })}>
                 전체 {postingResult.total}건 중 {postings.length}건
               </p>
             </div>
             <JobPostingFilterForm defaultValues={filters} />
           </div>
           {postings.length > 0 ? (
-            <div className="divide-y rounded-md border bg-card">
+            <Card
+              className={css({
+                "& > article + article": {
+                  borderColor: "border",
+                  borderTopWidth: "1px"
+                }
+              })}
+            >
               {postings.map((posting) => (
                 <JobPostingListItem
                   key={posting.id}
@@ -160,15 +180,15 @@ export async function DashboardView({ searchParams }: DashboardViewProps) {
                   posting={posting}
                 />
               ))}
-            </div>
+            </Card>
           ) : (
-            <div className="rounded-md border bg-card p-6 text-sm leading-6 text-muted-foreground">
+            <Card className={css({ color: "textMuted", p: 6, textStyle: "sm" })}>
               아직 저장된 공고가 없습니다.
-            </div>
+            </Card>
           )}
           {postingResult.nextCursor ? (
-            <div className="mt-5 flex justify-center">
-              <Button asChild variant="secondary">
+            <div className={css({ display: "flex", justifyContent: "center", mt: 5 })}>
+              <Button asChild variant="outline">
                 <Link
                   href={{
                     pathname: "/dashboard",
@@ -181,8 +201,7 @@ export async function DashboardView({ searchParams }: DashboardViewProps) {
             </div>
           ) : null}
         </section>
-      </div>
-    </main>
+    </div>
   );
 }
 
@@ -196,26 +215,57 @@ function JobPostingListItem({
   posting: JobPosting;
 }) {
   return (
-    <article className="p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-sm text-muted-foreground">
+    <article className={css({ p: 4 })}>
+      <div
+        className={css({
+          display: "flex",
+          flexDirection: { base: "column", md: "row" },
+          gap: 3,
+          justifyContent: "space-between",
+          alignItems: { md: "flex-start" }
+        })}
+      >
+        <div className={css({ minW: 0 })}>
+          <p className={css({ color: "textMuted", textStyle: "sm" })}>
             {posting.companyNameRaw ?? "회사명 미입력"}
           </p>
-          <h3 className="mt-1 truncate text-base font-semibold tracking-normal">
+          <h3
+            className={css({
+              mt: 1,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              textStyle: "lg",
+              whiteSpace: "nowrap"
+            })}
+          >
             {posting.role}
           </h3>
         </div>
-        <span className="w-fit rounded-md bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+        <Tag className={css({ w: "fit-content" })} size="sm" variant="gray">
           {posting.employmentType}
-        </span>
+        </Tag>
       </div>
-      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
+      <div
+        className={css({
+          color: "textMuted",
+          columnGap: 4,
+          display: "flex",
+          flexWrap: "wrap",
+          mt: 3,
+          rowGap: 2,
+          textStyle: "sm"
+        })}
+      >
         <span>등록 {formatDate(posting.createdAt)}</span>
         <span>마감 {posting.deadline ? formatDate(posting.deadline) : "미정"}</span>
         {posting.url ? (
           <a
-            className="text-primary underline-offset-4 hover:underline"
+            className={css({
+              color: "link",
+              textDecoration: "none",
+              textUnderlineOffset: "4px",
+              _hover: { textDecoration: "underline" }
+            })}
             href={posting.url}
             rel="noreferrer"
             target="_blank"
@@ -225,14 +275,19 @@ function JobPostingListItem({
         ) : null}
         {latestAnalysis ? (
           <Link
-            className="text-primary underline-offset-4 hover:underline"
+            className={css({
+              color: "link",
+              textDecoration: "none",
+              textUnderlineOffset: "4px",
+              _hover: { textDecoration: "underline" }
+            })}
             href={`/dashboard/analyses/${latestAnalysis.id}`}
           >
             최근 분석 {formatDate(latestAnalysis.createdAt)}
           </Link>
         ) : null}
       </div>
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className={css({ display: "flex", flexWrap: "wrap", gap: 2, mt: 4 })}>
         <RunAnalysisButton posting={posting} />
         <SaveToggle initialSaved={initialSaved} jobPostingId={posting.id} />
       </div>
