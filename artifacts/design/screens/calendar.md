@@ -2,9 +2,9 @@
 
 - 대상: `app/(app)/dashboard/calendar/page.tsx`, `src/widgets/saved-calendar/ui/calendar-view.tsx`.
 - 선행: `app-shell.md`.
-- 목업 참조: `Calendar.dc.html` (월간 그리드 + 우측 "이번 달 일정" 리스트, D-day 배지 색 — 실제로는
-  `react-big-calendar` 라이브러리를 쓰고 있어서 목업처럼 순수 커스텀 마크업이 아니다. 아래 "react-
-  big-calendar 테마 오버라이드" 섹션이 핵심.)
+- 목업 참조: `Calendar.dc.html` (v1, 월간 그리드 + 우측 "이번 달 일정" 리스트 — v2로 대체됨, 아래 참고).
+- **2026-09-14 v2 — 사용자 요청으로 iOS 기본 캘린더풍으로 갱신.** "react-big-calendar 테마 오버라이드"
+  섹션이 아래 새 절로 교체됨. 페이지 래퍼/`SelectedPostingPanel`/반응형 절은 그대로 유효.
 
 ## 페이지 (`calendar/page.tsx`)
 
@@ -18,25 +18,64 @@
 
 - `h-[680px] rounded-md border bg-card p-3` → `Card`에 `h: "680px", p: 3` 지정(고정 높이는 유지).
 
-## react-big-calendar 테마 오버라이드 (핵심)
+## iOS 기본 캘린더풍 v2 (핵심, 2026-09-14 갱신)
 
-`react-big-calendar`는 자체 클래스(`.rbc-*`)로 DOM을 그려서 `Card`/`Tag`처럼 컴포넌트를 바로 못 바꾼다.
-`src/app/globals.css`(Panda 스타일시트 import 아래)에 **전역 오버라이드 블록**을 추가해서 색만 우리
-토큰에 맞춘다 — 구조는 안 건드림. Panda 토큰을 CSS에서 쓰려면 `var(--colors-xxx)` 형태(Panda가
-`:root`에 생성하는 CSS 변수)를 참조하거나, semantic token의 실제 값을 그대로 하드코딩(다크모드 대응
-필요하면 `.dark .rbc-...` 블록도 같이). 최소 오버라이드 대상:
+목표: 픽셀 단위 완전 복제가 아니라 **iOS 캘린더의 가장 특징적인 요소**를 이 프로젝트 톤(노션풍
+모노톤 + 절제된 accent)으로 가져온다 — 그리드선 최소화, "오늘"은 빨간 원 배지, 일정은 칸을 채우는
+색 블록이 아니라 날짜 아래 작은 점(dot), 요일 헤더는 작고 옅은 회색(일요일만 빨간 톤).
+`react-big-calendar`는 DOM 구조가 고정돼 있어(`.rbc-*` 클래스) 완전한 복제는 안 되니, 라이브러리
+제약 안에서 최대한 가깝게 — 완벽히 안 되는 부분은 완료 문서에 한계로 남긴다.
 
-- `.rbc-today` (오늘 셀 배경) → `surface` 톤.
-- `.rbc-off-range-bg` (다른 달 셀) → `bg`보다 살짝 어둡게(예: `surface`의 절반 투명도).
-- `.rbc-header`, `.rbc-month-view`, `.rbc-day-bg` 테두리 → `border` 토큰 색으로, 두께 1px.
-- `.rbc-toolbar button` (월 이동 등 기본 툴바 버튼) → `Button` 프리미티브 톤에 맞춰 재정의(배경/보더/
-  라디우스/호버) — 정확히 `Button variant="outline" size="icon"`처럼 보이게.
-- `.rbc-event` (일정 이벤트 pill) → 기본은 `tagBlue` 톤(배경/텍스트), 마감 임박(사용자가 만든
-  `toSavedCalendarEvents`가 마감 기준으로 분류한다면 그 값 기준) 이벤트는 `tagRed` 톤 — 분류 로직이
-  이미 있는지 `src/widgets/saved-calendar/lib/to-events.ts`를 implement가 확인, 없으면 이번 라운드는
-  전부 `tagBlue` 톤 하나로 통일하고 마감 임박 색 분기는 다음 라운드로 미뤄도 됨(스펙 이탈 아님, 명시만).
-- 폰트: 전역 body 폰트(프리텐다드)가 이미 상속되는지 확인, `react-big-calendar`가 자체 폰트를 강제하면
-  `.rbc-calendar { fontFamily: inherit }` 추가.
+### 그리드 — 테두리 최소화
+
+- `.rbc-month-view`, `.rbc-day-bg`, `.rbc-header` 사이 보더를 **거의 안 보이게**: 색은 `border` 토큰
+  그대로 두되, 굵기 대신 존재감을 낮추는 쪽으로(가로줄만 아주 얇게 남기고 세로 셀 구분선은 없애는
+  것도 검토 — `border-right` 제거하고 `border-bottom`만 유지하면 iOS 느낌에 더 가깝다).
+- `.rbc-off-range-bg`(다른 달 날짜): 배경색 대신 **숫자 자체를 `textFaint` 톤으로 옅게** — iOS는 셀
+  배경을 안 칠하고 날짜 숫자만 흐리게 한다. `.rbc-off-range` 텍스트 색을 `textFaint`로.
+- `.rbc-today` 셀 배경 오버라이드(`surface` 톤 칠하기)는 **제거** — 대신 아래 "오늘 배지"로 대체.
+
+### 요일 헤더
+
+- `.rbc-header`: 배경 없이, `textStyle: xs`, `color: textFaint`, `fontWeight: 600`,
+  `textTransform: uppercase`, `letterSpacing: 0.03em` 정도로 작고 옅게.
+- 일요일 컬럼만 살짝 빨간 톤(`tagRed.text`) — `react-big-calendar`가 요일 헤더에 요일 인덱스를
+  클래스로 안 주면, `culture`/`formats.dayFormat` 커스터마이즈나 `components.header` 오버라이드로
+  일요일에만 다른 스타일 span을 렌더해야 할 수 있다 — 간단히 안 되면 이 항목은 생략하고 done 문서에
+  "라이브러리 제약으로 생략" 명시(우선순위 낮음, 핵심은 아래 두 개).
+
+### 오늘 배지 (가장 중요한 요소)
+
+- `.rbc-now .rbc-button-link`(오늘 날짜 숫자 링크) — 지름 28~32px 원형 배지로: `display:flex,
+  alignItems:center, justifyContent:center, width/height:28px, borderRadius:50%, background:
+  var(--colors-tag-red-text)(진한 빨강 계열, 다크모드는 --colors-tag-red-text 다크값이 자동), color:
+  white(또는 --colors-primary-text 라이트 기준), fontWeight:700`. 날짜 셀 자체 배경은 그대로(흰/검
+  배경 유지) — 배지만 숫자 주위에 뜬다.
+
+### 일정 = 점(dot), 색 블록 아님 (두 번째로 중요)
+
+- 현재 `.rbc-event`가 파란 알약 모양 배경+텍스트인데, 이걸 **작은 원형 점**으로 바꾼다. 텍스트(회사명
+  등)는 점 위에 안 보이고, `title` 속성(네이티브 툴팁)이나 클릭 시 `SelectedPostingPanel`로 대체한다.
+- 구현 방법: `<Calendar>`에 `components={{ event: DotEvent }}` prop 추가(react-big-calendar가 지원하는
+  커스텀 렌더 — 이벤트 텍스트 대신 작은 `<span>` 점 하나만 렌더). `DotEvent`는
+  `saved-calendar/ui/` 안에 작게 만들어라(별도 slice 안 만듦, 같은 위젯 폴더).
+  - 점 크기 6~8px, `borderRadius:"999px"`.
+  - 색: 마감 임박(사용자가 만든 `toSavedCalendarEvents`의 분류 기준이 있으면 그거 기준) →
+    `tagRed.text`, 나머지(지원 예정) → `tagBlue.text`. 분류 로직이 없으면 이번 라운드는 전부
+    `tagBlue.text` 점 하나로 통일하고 done 문서에 명시(스펙 이탈 아님).
+  - 하루에 이벤트가 여러 개면 점을 가로로 나란히(최대 3~4개, 넘으면 RBC 기본 "+N" 동작에 맡김).
+  - RBC가 이벤트 없는 기본 렌더에 할당하는 행 높이가 점 하나 기준으론 과할 수 있다 — `.rbc-row-content`/
+    `.rbc-event`류에 `minHeight` 줄이는 CSS도 같이 조정해서 날짜 셀이 불필요하게 늘어나지 않게.
+
+### 월 이동 툴바
+
+- 기존 `.rbc-toolbar button`(보더 박스 버튼) 스타일은 **유지**(iOS는 텍스트 화살표만 쓰지만, 이건
+  우선순위 낮은 폴리시 항목 — 시간 되면 prev/next 버튼만 `border:none, background:transparent`로
+  가볍게 만들어 chevron-only 느낌 내되, 안 되면 지금 스타일 그대로 둬도 스펙 이탈 아님).
+
+### 폰트
+
+- 전역 body 폰트(프리텐다드) 상속 확인 — 기존과 동일.
 
 ## `SelectedPostingPanel` (`calendar-view.tsx:59-88`)
 
@@ -63,5 +102,9 @@
 
 ## 상태 / 터치 타깃
 
-- 이벤트 클릭 시 `SelectedPostingPanel` 노출 — 기존 로직 유지.
-- `.rbc-toolbar button`도 44px 터치 타깃 확보(기본 라이브러리 버튼이 작으면 CSS로 min-height 보정).
+- 이벤트 클릭 시 `SelectedPostingPanel` 노출 — 기존 로직 유지. `DotEvent`로 바뀌어도 클릭 핸들러는
+  RBC가 이벤트 wrapper에 그대로 붙이니 `onSelectEvent`는 안 건드림.
+- 점(dot) 자체는 6~8px로 작지만, 클릭 가능한 실제 영역은 RBC가 잡아주는 이벤트 wrapper 크기를 따른다
+  — 너무 작으면(예: 20px 미만) `.rbc-event`에 `minHeight`/`padding`으로 클릭 영역만 살짝 넓혀줘도 됨
+  (점은 시각적으로만 작게, 클릭 영역은 44px에 가깝게 — 안 되면 우선순위 낮은 폴리시 항목으로 명시).
+- `.rbc-toolbar button`도 44px 터치 타깃 유지.
