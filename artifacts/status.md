@@ -1,19 +1,22 @@
 # 상태 보드
 
-- last update: 2026-09-14 01:20 (by codex) — 2차 라운드 T6~T10 구현 완료, 리뷰·QA 대기
+- last update: 2026-09-14 07:12 (by plan) — 사용자가 실기로 발견한 사이드바 폴딩 버그, 근본원인
+  확인 + Codex 위임
 
-**야간 자율 세션 구현 완료** — plan이 남긴 2차 라운드 스펙(login·experiences·analyses-index·
-job-postings·analysis-history)을 Codex가 구현 완료함. 완료 문서:
-`artifacts/handover/2026-09-14-01-20-codex-redesign-screens-round2-done.md`.
+**버그 발견**: 사용자가 앱 실행해서 확인 — 사이드바 접었을 때 라벨이 안 사라짐(정렬만 바뀜).
+근본원인: `responsiveValue()` 헬퍼가 Panda `css()`에 런타임 값을 직접 넘겨서, Panda가 해당 CSS를
+아예 생성 못 함(빌드타임 정적분석 한계 — 공식 문서로 확인). 상세: `artifacts/handover/
+2026-09-14-07-12-review-sidebar-dynamic-css-bug.md`. `.agents/workflow.md` §6-11에 재발 방지
+규칙 추가함.
 
 ## 현재 페이즈
 
-**redesign — 전체 11개 화면 스펙 작성 완료, 2차 라운드(5화면) 구현 완료.** ⚠️ 이 브랜치는 병합 보류
-— 사용자가 깨어나서 최종 검증·리뷰·병합 승인해야 한다.
+**redesign — 전체 11개 화면 스펙·2차 라운드 구현 완료 상태에서, 사이드바 폴딩 버그 수정 진행 중.**
+⚠️ 이 브랜치는 병합 보류 — 이 버그 수정 + 전체 육안 재확인 끝나야 병합 후보.
 
 ## 작업 트리
 
-- holder: 비움 — 다음 역할(plan/code-review/qa) 대기
+- holder: implement (codex) — 사이드바 동적 CSS 버그 수정
 - branch: `main` @ a39901c 기준 `feat/design-system` (2026-09-13)
 - base: `main` @ a39901c
 
@@ -29,11 +32,12 @@ job-postings·analysis-history)을 Codex가 구현 완료함. 완료 문서:
 | redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 완료(diff 직접 확인) | – | 보류(화면과 묶어서) |
 | redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | done(should-fix 4건 반영, `c7a831d`) | 수정 전 리뷰 완료(blocker 0, should-fix 4) | 대기(육안) | 보류 |
 | redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`) | 대기 | 대기(육안) | 보류 |
+| redesign: 사이드바 폴딩 버그(동적 css() 값) | done(근본원인 확인) | – | 진행중 (Codex) | – | – | 보류 |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (없음 — 2차 라운드(T6~T10) 구현 완료. **아직 병합 요청 안 함** — 위 경고 참조)
+- (없음 — Codex가 사이드바 버그 수정 중. **아직 병합 요청 안 함** — 위 경고 참조)
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -56,7 +60,10 @@ job-postings·analysis-history)을 Codex가 구현 완료함. 완료 문서:
 
 ## 다음 액션
 
-- plan/code-review/qa: 2차 라운드 구현 결과 확인. plan이 tsc/lint 재확인 + code-review + 이어서 육안 확인.
+- implement(Codex): 사이드바 동적 css() 버그 수정 진행 중. 위임:
+  `artifacts/handover/2026-09-14-07-12-review-sidebar-dynamic-css-bug.md`.
+- plan/code-review/qa: 2차 라운드(T6~T10) + 사이드바 수정 결과 확인. tsc/lint 재확인 + code-review +
+  실제 브라우저 육안 확인(이번엔 특히 사이드바 폴딩 직접 눌러서 확인).
 - 전체 완료되면: qa 라운드(E2E 회귀 + 반응형/다크) → 사용자에게 최종 병합 요청.
 - 사용자 기상 후: 자동 로그인 방식(세션연장/체크박스/구글OAuth) 확인 필요 — login.md는 이미 작성됐지만
   OAuth 버튼은 그 결정 이후 별도 추가.
