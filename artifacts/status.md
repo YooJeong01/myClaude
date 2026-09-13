@@ -8,8 +8,9 @@
 
 ## 작업 트리
 
-- holder: (없음 — 사용자 병합 대기)
-- branch: `chore/agent-workflow-setup` (5커밋, `main` 대상 클린 병합 확인)
+- holder: plan — `feat/remove-gmail-jobkorea` 스펙 작성 → Codex 위임 중
+- branch: `chore/agent-workflow-setup` (5커밋, `main` 대상 클린 병합 확인, 사용자 병합 대기 — 변화 없음)
+  - 그 위에 `feat/remove-gmail-jobkorea` 신설 (2026-09-13, Gmail 이메일 수집 + 잡코리아 스크래퍼 제거)
 - base: `main` @ e2f979a
 
 ## 파이프라인
@@ -21,6 +22,7 @@
 | agent-workflow-setup | done | – | – | – | – | 병합 대기 |
 | redesign: design-system | – | – | – | – | – | – |
 | redesign: screens | – | – | – | – | – | – |
+| Gmail/잡코리아 제거 | done | – | 진행중 (Codex) | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
