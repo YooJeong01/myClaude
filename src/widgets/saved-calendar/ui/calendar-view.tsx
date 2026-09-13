@@ -63,7 +63,7 @@ function SelectedPostingPanel({ event }: { event: SavedCalendarEvent }) {
   const excerpt = posting.rawText?.slice(0, 300) ?? "저장된 본문이 없습니다.";
 
   return (
-    <Card className={css({ p: 5 })}>
+    <Card as="aside" className={css({ p: 5 })}>
       <div
         className={css({
           alignItems: { md: "flex-start" },

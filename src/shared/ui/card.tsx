@@ -10,12 +10,20 @@ const cardStyle = css({
   color: "text"
 });
 
-export type CardProps = React.HTMLAttributes<HTMLDivElement>;
+export type CardProps = React.HTMLAttributes<HTMLElement> & {
+  as?: "div" | "aside";
+};
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, ...props }, ref) => (
-    <div className={cn(cardStyle, className)} ref={ref} {...props} />
-  )
+const Card = React.forwardRef<HTMLElement, CardProps>(
+  ({ as, className, ...props }, ref) => {
+    const Comp: React.ElementType = as ?? "div";
+
+    return React.createElement(Comp, {
+      className: cn(cardStyle, className),
+      ref,
+      ...props
+    });
+  }
 );
 Card.displayName = "Card";
 

@@ -30,11 +30,34 @@ type AppSidebarProps = {
 
 export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
   const pathname = usePathname() ?? "";
-  const [collapsed, setCollapsed] = useState(false);
+  const [manualCollapsed, setManualCollapsed] = useState<boolean | null>(null);
+  const [viewportCollapsed, setViewportCollapsed] = useState<boolean | null>(null);
 
   useEffect(() => {
-    setCollapsed(window.matchMedia("(max-width: 767px)").matches);
+    const mql = window.matchMedia("(max-width: 767px)");
+    const handleChange = () => setViewportCollapsed(mql.matches);
+
+    handleChange();
+    mql.addEventListener("change", handleChange);
+
+    return () => mql.removeEventListener("change", handleChange);
   }, []);
+
+  const collapsed = manualCollapsed ?? viewportCollapsed;
+  const isCollapsed = collapsed ?? false;
+  const responsiveValue = <CollapsedValue, ExpandedValue>(
+    collapsedValue: CollapsedValue,
+    expandedValue: ExpandedValue
+  ) => {
+    if (manualCollapsed !== null) {
+      return manualCollapsed ? collapsedValue : expandedValue;
+    }
+    if (viewportCollapsed !== null) {
+      return viewportCollapsed ? collapsedValue : expandedValue;
+    }
+
+    return { base: collapsedValue, md: expandedValue };
+  };
 
   return (
     <aside
@@ -51,7 +74,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
         transitionDuration: "fast",
         transitionProperty: "width",
         transitionTimingFunction: "standard",
-        w: collapsed ? "sidebarCollapsed" : "sidebarExpanded"
+        w: responsiveValue("sidebarCollapsed", "sidebarExpanded")
       })}
     >
       <div
@@ -83,7 +106,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
         <span
           className={css({
             color: "text",
-            display: collapsed ? "none" : "inline",
+            display: responsiveValue("none", "inline"),
             fontSize: "14px",
             fontWeight: 800,
             minW: 0,
@@ -95,14 +118,16 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
           myClaude
         </span>
         <Button
-          aria-label={collapsed ? "사이드바 펼치기" : "사이드바 접기"}
+          aria-label={isCollapsed ? "사이드바 펼치기" : "사이드바 접기"}
           className={css({ ml: "auto" })}
-          onClick={() => setCollapsed((value) => !value)}
+          onClick={() =>
+            setManualCollapsed((value) => !(value ?? viewportCollapsed ?? false))
+          }
           size="icon"
           type="button"
           variant="ghost"
         >
-          {collapsed ? (
+          {isCollapsed ? (
             <ChevronRight aria-hidden="true" className={css({ h: 4, w: 4 })} />
           ) : (
             <ChevronLeft aria-hidden="true" className={css({ h: 4, w: 4 })} />
@@ -128,9 +153,9 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
                   fontSize: "14px",
                   fontWeight: active ? 700 : 600,
                   gap: 3,
-                  justifyContent: collapsed ? "center" : "flex-start",
+                  justifyContent: responsiveValue("center", "flex-start"),
                   minH: "touchTarget",
-                  px: collapsed ? 0 : 3,
+                  px: responsiveValue(0, 3),
                   textDecoration: "none",
                   transitionDuration: "fast",
                   transitionProperty: "background, color",
@@ -141,10 +166,10 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
               )}
               href={item.href}
               key={item.href}
-              title={collapsed ? item.label : undefined}
+              title={isCollapsed ? item.label : undefined}
             >
               <Icon aria-hidden="true" className={css({ flexShrink: 0, h: 5, w: 5 })} />
-              <span className={css({ display: collapsed ? "none" : "inline" })}>
+              <span className={css({ display: responsiveValue("none", "inline") })}>
                 {item.label}
               </span>
             </Link>
@@ -176,7 +201,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
         <span
           className={css({
             color: "textMuted",
-            display: collapsed ? "none" : "block",
+            display: responsiveValue("none", "block"),
             minW: 0,
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -189,7 +214,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
         <div
           className={css({
             display: "grid",
-            ml: collapsed ? 0 : "auto",
+            ml: responsiveValue(0, "auto"),
             placeItems: "center",
             "& svg": { h: 4, w: 4 }
           })}

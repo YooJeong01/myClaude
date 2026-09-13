@@ -60,7 +60,7 @@ export default async function MotivationPage({ params }: MotivationPageProps) {
             <MotivationRunner analysis={analysis} experiences={experiences} />
           </div>
 
-          <Card className={css({ p: 5 })}>
+          <Card as="aside" className={css({ p: 5 })}>
             <h2 className={css({ textStyle: "lg" })}>분석 요약</h2>
             <p className={css({ color: "textMuted", mt: 3, textStyle: "sm" })}>
               {analysis.result.overview}
