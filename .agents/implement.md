@@ -17,9 +17,9 @@ Codex CLI. plan이 `codex exec --approve-for-me -C "C:/myClaude" "<지시>"` (�
   `app/**` 라우트, `supabase/migrations/**`(파일만, 실행 안 함), `e2e/**`, Day 8 셸 파일
   (`capacitor.config.ts`, `src-tauri/**`, `ios/**`, `android/**`), `package.json`(스펙이 명시한 패키지만).
 - **R**: `artifacts/**`(자기 progress/done/blocked 제외), `.agents/**`, `artifacts/design/**`(소비).
-- **안 만짐**: `src/shared/ui/**`, `src/app/globals.css`, `tailwind.config.ts`, `src/shared/lib/utils.ts`의
-  `cn` — 리디자인 페이즈에는 design 소유. 오프-페이즈에 프리미티브가 꼭 필요하면 디자인 시스템 스펙의
-  토큰·variant 관례를 따라 **추가만** 하고 done 문서에 명시.
+- **안 만짐**: `src/shared/ui/**`, `src/app/globals.css`, `panda.config.ts`, `src/shared/lib/utils.ts`의
+  `cn`/`cx` — 리디자인 페이즈에는 design 소유. 오프-페이즈에 프리미티브가 꼭 필요하면 디자인 시스템 스펙의
+  토큰·variant 관례(Panda recipe)를 따라 **추가만** 하고 done 문서에 명시.
 
 ## 입력
 

@@ -28,7 +28,7 @@ W = 이 역할만 쓴다 / R = 읽기만 / – = 관여 안 함
 | `artifacts/design/**` | R | R | **W** | R | R |
 | `artifacts/test-reports/**` | R | R | R | R | **W** |
 | `artifacts/status.md` | **W** (페이즈·블로킹) | W (자기 행) | W (자기 행) | W (자기 행) | W (자기 행) |
-| `src/shared/ui/**`, `src/app/globals.css`, `tailwind.config.ts` | R | R (오프-페이즈 add-only) | **W** (리디자인 페이즈) | R | R |
+| `src/shared/ui/**`, `src/app/globals.css`, `panda.config.ts` | R | R (오프-페이즈 add-only) | **W** (리디자인 페이즈) | R | R |
 | `src/features\|widgets\|views/**`, `app/**` | R | **W** | R (읽기만) | R | R |
 | `server/**`, `supabase/migrations/**`, `e2e/**` | R | **W** | – | R | R |
 | `.agents/**`, `.claude/**`, `AGENTS.md`, `CLAUDE.md` | **W** | – | – | – | – |
