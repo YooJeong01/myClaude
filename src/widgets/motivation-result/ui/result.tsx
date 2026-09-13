@@ -1,4 +1,6 @@
 import type { MotivationDraft } from "@/entities/motivation-draft";
+import { Card } from "@/shared/ui/card";
+import { css } from "../../../../styled-system/css";
 
 const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
   dateStyle: "medium",
@@ -13,52 +15,62 @@ export function MotivationResultView({ draft }: MotivationResultViewProps) {
   const result = draft.result;
 
   return (
-    <article className="space-y-6">
-      <header className="border-b pb-5">
-        <p className="text-sm font-medium text-muted-foreground">
+    <article className={css({ display: "grid", gap: 6 })}>
+      <header className={css({ borderBottomWidth: "1px", borderColor: "border", pb: 5 })}>
+        <p className={css({ color: "textMuted", fontWeight: 500, textStyle: "sm" })}>
           {dateFormatter.format(new Date(draft.createdAt))}
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-normal">
+        <h1 className={css({ mt: 2, textStyle: "3xl" })}>
           지원동기 소재 초안
         </h1>
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+        <p className={css({ color: "textMuted", mt: 3, textStyle: "sm" })}>
           제출용 완성문이 아니라, 기업분석과 경험이 실제로 맞닿는 지점을
           정리한 예시 흐름입니다.
         </p>
       </header>
 
       {result.angles.length > 0 ? (
-        <section className="grid gap-4">
+        <section className={css({ display: "grid", gap: 4 })}>
           {result.angles.map((angle) => (
-            <div className="rounded-md border bg-card p-5 text-card-foreground" key={angle.point}>
-              <p className="text-sm font-medium text-primary">{angle.point}</p>
-              <h2 className="mt-2 text-lg font-semibold tracking-normal">
+            <Card className={css({ p: 5 })} key={angle.point}>
+              <p className={css({ color: "link", fontWeight: 500, textStyle: "sm" })}>{angle.point}</p>
+              <h2 className={css({ mt: 2, textStyle: "lg" })}>
                 {angle.matched_experience}
               </h2>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              <p className={css({ color: "textMuted", mt: 3, textStyle: "sm" })}>
                 {angle.connection}
               </p>
-              <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
+              <ul
+                className={css({
+                  color: "textMuted",
+                  display: "grid",
+                  gap: 2,
+                  listStyleType: "disc",
+                  mt: 4,
+                  pl: 5,
+                  textStyle: "sm"
+                })}
+              >
                 {angle.draft_sentences.map((sentence) => (
                   <li key={sentence}>{sentence}</li>
                 ))}
               </ul>
-            </div>
+            </Card>
           ))}
         </section>
       ) : (
-        <div className="rounded-md border bg-card p-5 text-sm leading-6 text-muted-foreground">
+        <Card className={css({ color: "textMuted", p: 5, textStyle: "sm" })}>
           맞닿는 각도를 찾지 못했습니다. 더 구체적인 경험을 추가한 뒤 다시
           시도하세요.
-        </div>
+        </Card>
       )}
 
-      <section className="rounded-md border bg-card p-5 text-card-foreground">
-        <h2 className="text-lg font-semibold tracking-normal">예시 흐름</h2>
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+      <Card className={css({ p: 5 })}>
+        <h2 className={css({ textStyle: "lg" })}>예시 흐름</h2>
+        <p className={css({ color: "textMuted", mt: 3, textStyle: "sm" })}>
           {result.summary_paragraph}
         </p>
-      </section>
+      </Card>
     </article>
   );
 }
