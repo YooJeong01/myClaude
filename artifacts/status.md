@@ -1,7 +1,7 @@
 # 상태 보드
 
-- last update: 2026-09-14 08:20 (by plan) — 캘린더 iOS풍 작업은 다른 세션이 이어감, 이 세션은 손 뗌.
-  종합 인수인계 문서 작성 완료.
+- last update: 2026-09-14 08:35 (by plan) — 신규 트랙(공고 목록 필터·페이지네이션) 계획 완료,
+  Codex 위임 직전. `feat/design-system`은 그대로 커밋된 채 보류 상태 유지(별개 브랜치).
 
 **이 세션은 여기서 중단.** 캘린더 iOS풍 재작업(`artifacts/design/screens/calendar.md` "iOS 기본
 캘린더풍 v2", 위임: `artifacts/handover/2026-09-14-08-10-claude-calendar-ios-delegation.md`)은
@@ -11,14 +11,25 @@
 
 ## 현재 페이즈
 
-**redesign — 전체 화면 완료 상태에서 사이드바 버그 2차 수정 완료 + 캘린더 iOS풍 재작업 스펙 준비 중.**
-⚠️ 이 브랜치는 병합 보류 — 전부 끝나야 병합 후보.
+**두 트랙 병행 진행 중 (서로 다른 브랜치):**
+1. redesign(`feat/design-system`) — 전체 화면 완료 상태에서 사이드바 버그 2차 수정 완료 + 캘린더
+   iOS풍 재작업 스펙 준비 중. ⚠️ 병합 보류 — 전부 끝나야 병합 후보.
+2. job-listing-filters(`feat/job-listing-filters`, 신규) — 대시보드 공고 목록 페이지네이션·마감
+   필터 반전·D-day 배지·신입/경력 필터. plan 완료, Codex 위임 직전.
+
+**⚠️ 파일 겹침 주의**: 두 브랜치 모두 `src/views/dashboard/index.tsx`,
+`src/features/search-job-postings/ui/filter-form.tsx`를 건드린다. 어느 쪽이든 먼저 `main`에 병합될
+때 나머지 한쪽은 리베이스/충돌 해결이 필요하다 — 병합 전 plan이 충돌 사전점검할 것.
 
 ## 작업 트리
 
-- holder: (비어 있음)
-- branch: `main` @ a39901c 기준 `feat/design-system` (2026-09-13)
+- holder: codex (`feat/job-listing-filters`, `codex exec --approve-for-me` 백그라운드) — 작업
+  폴더가 이 브랜치로 체크아웃되어 있는 동안 다른 세션은 이 폴더에서 git 작업(체크아웃/커밋/heavy
+  프로세스)을 하지 말 것. `feat/design-system`을 이어서 작업하려는 세션은 holder가 비워진 뒤
+  `git checkout feat/design-system`으로 복귀(커밋된 클린 상태라 데이터 손실 없음).
+- branch: `main` @ a39901c 기준 새 브랜치 `feat/job-listing-filters` (2026-09-14)
 - base: `main` @ a39901c
+- 위임 문서: `artifacts/handover/2026-09-14-08-35-claude-job-listing-filters-delegation.md`
 
 ## 파이프라인
 
@@ -35,11 +46,14 @@
 | redesign: 사이드바 폴딩 버그 1차(동적 css() 값) | done | – | done (`13ebd29`) | 대기 | 대기(육안) | 보류 |
 | redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | done (`25f4052`) | 대기 | 대기(육안) | 보류 |
 | redesign: 캘린더 iOS풍 재작업 | – | 스펙 작성 중 | – | – | – | 보류 |
+| job-listing-filters (페이지네이션·마감필터·D-day·신입경력) | done | – | 위임 직전(codex) | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (없음 — 사이드바 코드 수정 완료. **아직 병합 요청 안 함** — 위 경고 참조)
+- (사이드바 관련: 없음 — 사이드바 코드 수정 완료. **아직 병합 요청 안 함** — 위 경고 참조)
+- (job-listing-filters: 없음 — 사용자 확인 후 `pnpm dev` 종료, `codex exec` 디스패치함. 아래
+  "작업 트리" 참고)
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
