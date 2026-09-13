@@ -16,3 +16,80 @@ body {
     system-ui,
     sans-serif;
 }
+
+.rbc-calendar {
+  color: var(--colors-text);
+  font-family: inherit;
+}
+
+.rbc-month-view,
+.rbc-header,
+.rbc-day-bg {
+  border-color: var(--colors-border);
+}
+
+.rbc-header {
+  padding: 8px 4px;
+  color: var(--colors-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.rbc-off-range-bg {
+  background: color-mix(in srgb, var(--colors-surface) 52%, transparent);
+}
+
+.rbc-today {
+  background: var(--colors-surface);
+}
+
+.rbc-toolbar {
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.rbc-toolbar button {
+  min-height: 44px;
+  border: 1px solid var(--colors-border-strong);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--colors-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.rbc-toolbar button:hover,
+.rbc-toolbar button:focus {
+  background: var(--colors-surface);
+  color: var(--colors-text);
+}
+
+.rbc-toolbar button.rbc-active,
+.rbc-toolbar button.rbc-active:hover,
+.rbc-toolbar button.rbc-active:focus {
+  border-color: var(--colors-primary);
+  background: var(--colors-primary);
+  color: var(--colors-primary-text);
+  box-shadow: none;
+}
+
+.rbc-event,
+.rbc-day-slot .rbc-background-event {
+  border: 0;
+  border-radius: 999px;
+  background: var(--colors-tag-blue-bg);
+  color: var(--colors-tag-blue-text);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.rbc-event:focus {
+  outline: 2px solid var(--colors-link);
+  outline-offset: 2px;
+}

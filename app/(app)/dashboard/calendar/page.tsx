@@ -5,7 +5,9 @@ import { listSavedPostingsWithDetail } from "@/entities/saved-posting";
 import { getUser } from "@/entities/session";
 import { createSupabaseServerClient } from "@/shared/api-server";
 import { Button } from "@/shared/ui/button";
+import { Card } from "@/shared/ui/card";
 import { CalendarView } from "@/widgets/saved-calendar";
+import { css } from "../../../../styled-system/css";
 
 export default async function DashboardCalendarPage() {
   const user = await getUser();
@@ -17,22 +19,32 @@ export default async function DashboardCalendarPage() {
   const savedPostings = await listSavedPostingsWithDetail(supabase);
 
   return (
-    <main className="min-h-screen bg-background px-6 py-8">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <header className="flex flex-col gap-4 border-b pb-5 sm:flex-row sm:items-start sm:justify-between">
+    <div className={css({ display: "grid", gap: 6 })}>
+        <header
+          className={css({
+            alignItems: { md: "flex-start" },
+            borderBottomWidth: "1px",
+            borderColor: "border",
+            display: "flex",
+            flexDirection: { base: "column", md: "row" },
+            gap: 4,
+            justifyContent: "space-between",
+            pb: 5
+          })}
+        >
           <div>
-            <p className="text-sm font-medium text-muted-foreground">
+            <p className={css({ color: "textMuted", fontWeight: 500, textStyle: "sm" })}>
               북마크한 공고
             </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-normal">
+            <h1 className={css({ mt: 2, textStyle: "3xl" })}>
               채용 캘린더
             </h1>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild variant="secondary">
+          <div className={css({ display: "flex", flexWrap: "wrap", gap: 2 })}>
+            <Button asChild size="sm" variant="outline">
               <Link href="/dashboard">대시보드</Link>
             </Button>
-            <Button asChild variant="secondary">
+            <Button asChild size="sm" variant="outline">
               <Link href="/dashboard/analyses">기업분석 목록</Link>
             </Button>
           </div>
@@ -41,11 +53,10 @@ export default async function DashboardCalendarPage() {
         {savedPostings.length > 0 ? (
           <CalendarView savedPostings={savedPostings} />
         ) : (
-          <div className="rounded-md border bg-card p-6 text-sm leading-6 text-muted-foreground">
+          <Card className={css({ color: "textMuted", p: 6, textStyle: "sm" })}>
             북마크한 공고가 없습니다.
-          </div>
+          </Card>
         )}
-      </div>
-    </main>
+    </div>
   );
 }
