@@ -1,17 +1,17 @@
 # 상태 보드
 
-- last update: 2026-09-13 21:03 (by plan) — should-fix 3건 diff 직접 확인, 리뷰 완료 처리
+- last update: 2026-09-13 21:10 (by plan) — 화면 리스타일 1차 라운드(T1~T5) 스펙 작성 + Codex 위임
 
 ## 현재 페이즈
 
-**redesign — Panda CSS 파운데이션 구현 완료, review 대기.** ⚠️ 이 브랜치는 완료돼도 화면 리스타일과 묶어서
-병합할 때까지 main 병합 보류 (Tailwind 제거로 기존 화면이 일시적으로 무스타일이 되기 때문 —
-`.agents/design.md`, 이 브랜치 위임 문서 참조).
+**redesign — 화면 리스타일 1차 라운드 진행 중** (app-shell·dashboard·analysis-detail·motivation·
+calendar). ⚠️ 이 브랜치는 이번 라운드가 끝나도 병합 보류 — 남은 화면(experiences/analyses-index/
+login/job-postings)까지 끝나야 한다 (`.agents/design.md` 참조).
 
 ## 작업 트리
 
-- holder: (비어 있음)
-- branch: `main` @ a39901c 기준 `feat/design-system` 신설 (2026-09-13)
+- holder: implement (codex) — `feat/design-system`, redesign T1~T5
+- branch: `main` @ a39901c 기준 `feat/design-system` (2026-09-13)
 - base: `main` @ a39901c
 
 ## 파이프라인
@@ -24,12 +24,13 @@
 | Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0, should-fix 반영) | – | ✅ |
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
 | redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 완료(diff 직접 확인) | – | 보류(화면과 묶어서) |
-| redesign: screens | done(README 목록) | 진행 필요 | – | – | – | – |
+| redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | 진행중 (Codex) | – | – | 보류 |
+| redesign: screens 2차(experiences·analyses-index·login·job-postings·analysis-history) | – | 미작성 | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (없음 — 리뷰 should-fix 3건 반영 완료. **이 브랜치는 완료돼도 아직 병합 요청 안 함** — 위 경고 참조)
+- (없음 — Codex가 화면 리스타일 T1~T5 진행 중. **완료돼도 아직 병합 요청 안 함** — 위 경고 참조)
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -52,9 +53,10 @@
 
 ## 다음 액션
 
-- design: 화면별 `screens/<screen>.md` 스펙 작성(dashboard·기업분석·지원동기·캘린더 먼저, login은
-  자동 로그인 방식 확정 후) → implement가 같은 브랜치 계열에서 화면까지 적용 → 그제서야 사용자 병합.
-- login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).
+- implement(Codex): T1~T5 진행 중. 위임: `artifacts/handover/2026-09-13-21-10-claude-redesign-screens-delegation.md`.
+- 완료되면: code-review → 육안 확인(라이트/다크·반응형).
+- 이후: 2차 라운드 스펙(experiences/analyses-index/job-postings/analysis-history) 작성.
+  login은 자동 로그인 방식 확정 후.
 
 ## 참고
 
