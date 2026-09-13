@@ -1,6 +1,6 @@
 # 상태 보드
 
-- last update: 2026-09-13 20:15 (by plan) — 사용자 지시로 3개 브랜치 순서대로 main 병합 (push 전)
+- last update: 2026-09-13 20:20 (by plan) — 사용자 지시로 3개 브랜치 순서대로 main 병합 + push 완료 확인 (origin/main @ 6fc7687)
 
 ## 현재 페이즈
 
@@ -10,9 +10,9 @@
 ## 작업 트리
 
 - holder: (없음)
-- branch: `main` — 이번에 3개 병합 반영 (`chore/agent-workflow-setup` → `fix/session-refresh` →
-  `feat/remove-gmail-jobkorea`, `artifacts/status.md` 충돌 1건 수동 정리)
-- base: `main` (push 예정)
+- branch: `main` — 3개 병합 반영 완료, push 완료 (`chore/agent-workflow-setup` → `fix/session-refresh` →
+  `feat/remove-gmail-jobkorea`, `artifacts/status.md` 충돌 1건 수동 정리). 로컬 브랜치 3개는 병합 확인 후 삭제.
+- base: `main` @ 6fc7687
 
 ## 파이프라인
 
@@ -52,7 +52,6 @@
 
 ## 다음 액션
 
-- 사용자/plan: `git push` (이번 병합 3개 반영).
 - design: `artifacts/design/design-system.md` 정식 작성 → `feat/design-system` 브랜치에서 Panda 도입
   (Pretendard 자체 호스팅 포함). 랜딩 화면 스펙은 작성 안 함.
 - login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).
