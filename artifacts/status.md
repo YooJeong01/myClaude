@@ -1,6 +1,11 @@
 # 상태 보드
 
-- last update: 2026-09-13 (by codex) — Gmail/잡코리아 제거 구현 완료, review 대기
+- last update: 2026-09-13 20:00 (by plan) — Gmail/잡코리아 제거 code-review 완료 (blocker 0)
+
+**참고**: 이 파일은 브랜치마다 사본이 갈라진다(git 파일, 병합 전까지). 아래는
+`feat/remove-gmail-jobkorea` 기준. 같은 `chore/agent-workflow-setup` 위에 형제 브랜치
+`fix/session-refresh`(getClaims→getUser 버그수정, 완료·review 대기)가 따로 있음 — 그쪽 최신 상태는
+그 브랜치의 status.md 참고.
 
 ## 현재 페이즈
 
@@ -8,9 +13,9 @@
 
 ## 작업 트리
 
-- holder: 비어 있음 — `feat/remove-gmail-jobkorea` 구현 완료, review 대기
-- branch: `chore/agent-workflow-setup` (5커밋, `main` 대상 클린 병합 확인, 사용자 병합 대기 — 변화 없음)
-  - 그 위에 `feat/remove-gmail-jobkorea` 신설 (2026-09-13, Gmail 이메일 수집 + 잡코리아 스크래퍼 제거)
+- holder: 비어 있음 — `feat/remove-gmail-jobkorea` code-review 완료(blocker 0, should-fix 2), 병합 준비
+- branch: `chore/agent-workflow-setup` (9커밋, `main` 대상 클린 병합 확인, 사용자 병합 대기 — 변화 없음)
+  - 위에 `feat/remove-gmail-jobkorea`(review 완료)와 `fix/session-refresh`(review 대기) 둘 다 신설
 - base: `main` @ e2f979a
 
 ## 파이프라인
@@ -20,14 +25,16 @@
 | Day 1~7 (수집·매칭·리포트·스크래퍼) | done | – | done | – | done | ✅ |
 | 배포 (my-claude-ruby.vercel.app) | done | – | – | – | – | ✅ |
 | agent-workflow-setup | done | – | – | – | – | 병합 대기 |
+| Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0) | – | – |
+| session-refresh 버그수정 (getClaims→getUser) | done | – | done | 대기 | – | – |
 | redesign: design-system | – | – | – | – | – | – |
 | redesign: screens | – | – | – | – | – | – |
-| Gmail/잡코리아 제거 | done | – | done | 대기 | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
 - 사용자: `chore/agent-workflow-setup` 리뷰 → `git merge --no-ff` → push (새 병합 규약 첫 실행).
+  `feat/remove-gmail-jobkorea`·`fix/session-refresh` 둘 다 이 브랜치 위에 얹혀 있어 순서상 먼저 필요.
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -50,7 +57,8 @@
 
 ## 다음 액션
 
-- code-review: `feat/remove-gmail-jobkorea` diff 리뷰
+- implement: `feat/remove-gmail-jobkorea` should-fix 2건 반영 (`server/scraping/common/browser.ts` 삭제,
+  `rate-limit.ts`의 `MIN_DELAY_MS.jobkorea` 삭제) — 리뷰 문서: `artifacts/handover/2026-09-13-19-35-claude-review-remove-gmail-jobkorea.md`
 - design: `artifacts/design/design-system.md` 정식 작성 → `feat/design-system`에서 Panda 도입
   (Pretendard 자체 호스팅 포함). 랜딩 화면 스펙은 작성 안 함.
 - login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).

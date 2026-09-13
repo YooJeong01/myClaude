@@ -1,6 +1,6 @@
 # 위임 — Gmail 이메일 수집 + 잡코리아 스크래퍼 제거
 
-브랜치: `feat/remove-gmail-jobkorea` (base: `chore/agent-workflow-setup`, 5커밋 위)
+브랜치: `feat/remove-gmail-jobkorea` (base: `chore/agent-workflow-setup`, 9커밋 위)
 대상: implement (Codex, `codex exec --approve-for-me`)
 
 ## 배경
