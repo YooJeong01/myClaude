@@ -1,0 +1,31 @@
+# 완료 — Gmail 이메일 수집 + 잡코리아 스크래퍼 제거
+
+- 브랜치: `feat/remove-gmail-jobkorea`
+- 커밋:
+  - `347184d` `[chore] Gmail 수집과 잡코리아 스크래퍼 제거`
+  - `e0dda81` `[chore] googleapis 의존성 제거`
+- 삭제:
+  - `server/gmail/**`
+  - `server/jobs/collect-email-postings.ts`
+  - `server/jobs/gmail-authorize.ts`
+  - `server/scraping/jobkorea/**`
+  - `server/jobs/scrape-jobkorea.ts`
+  - `.github/workflows/collect-email.yml`
+- 수정:
+  - `.github/workflows/scrape-postings.yml`: `scrape-jobkorea` job 제거
+  - `.env.example`: Gmail OAuth env 4개 제거
+  - `package.json`, `pnpm-lock.yaml`: `googleapis` 제거
+- 유지:
+  - `server/job-postings/types.ts`의 `email`, `scrape_jobkorea` source 타입 유지
+  - `src/features/search-job-postings/ui/filter-form.tsx`의 이메일/잡코리아 필터 옵션 유지
+  - `supabase/migrations/**` 변경 없음
+- 검증:
+  - `pnpm exec tsc --noEmit` 통과
+  - `pnpm lint` 통과
+  - `pnpm build` 통과
+  - 삭제된 모듈/import 문자열 검색 결과 없음
+- 새 패키지/env: 없음
+- E2E: 해당 소스 전용 시나리오 없음으로 미실행
+- 주의:
+  - `main` 병합·push 하지 않음
+  - 기존 미추적 `.claude/settings.local.json`은 보존
