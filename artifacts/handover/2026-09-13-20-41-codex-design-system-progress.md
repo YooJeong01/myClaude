@@ -1,0 +1,2 @@
+- e234f17 — T1~T4: Tailwind/shadcn 설정 제거, Panda/Pretendard 도입, codegen/cssgen 훅, 글로벌 CSS 교체.
+- a2f84b5 — T5: Panda recipe 기반 button 재작성, tag/card 프리미티브 추가, cn()을 Panda cx 기반으로 교체.

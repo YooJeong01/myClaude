@@ -1,16 +1,16 @@
 # 상태 보드
 
-- last update: 2026-09-13 20:21 (by plan) — Panda CSS 파운데이션 위임, Codex 착수
+- last update: 2026-09-13 20:41 (by codex) — Panda CSS 파운데이션 구현 완료, 병합 보류
 
 ## 현재 페이즈
 
-**redesign — Panda CSS 파운데이션 진행 중.** ⚠️ 이 브랜치는 완료돼도 화면 리스타일과 묶어서
+**redesign — Panda CSS 파운데이션 구현 완료, review 대기.** ⚠️ 이 브랜치는 완료돼도 화면 리스타일과 묶어서
 병합할 때까지 main 병합 보류 (Tailwind 제거로 기존 화면이 일시적으로 무스타일이 되기 때문 —
 `.agents/design.md`, 이 브랜치 위임 문서 참조).
 
 ## 작업 트리
 
-- holder: implement (codex) — `feat/design-system`
+- holder: (비어 있음) — 다음 역할 review/design 대기
 - branch: `main` @ a39901c 기준 `feat/design-system` 신설 (2026-09-13)
 - base: `main` @ a39901c
 
@@ -23,13 +23,13 @@
 | agent-workflow-setup | done | – | – | – | – | ✅ |
 | Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0, should-fix 반영) | – | ✅ |
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
-| redesign: design-system (파운데이션) | done | done(스펙) | 진행중 (Codex) | – | – | 보류(화면과 묶어서) |
+| redesign: design-system (파운데이션) | done | done(스펙) | done (`e234f17`, `a2f84b5`) | 대기 | – | 보류(화면과 묶어서) |
 | redesign: screens | done(README 목록) | 진행 필요 | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (없음 — Codex 진행 중, 완료되면 알림. **이 브랜치는 완료돼도 아직 병합 요청 안 함** — 위 경고 참조)
+- (없음 — 파운데이션 구현 완료. **이 브랜치는 완료돼도 아직 병합 요청 안 함** — 위 경고 참조)
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -52,9 +52,9 @@
 
 ## 다음 액션
 
-- implement(Codex): `feat/design-system` 진행 중 — Tailwind/shadcn 제거 + Panda 설치 + 토큰 +
-  프리미티브 3개(button/tag/card). 위임: `artifacts/handover/2026-09-13-20-21-claude-design-system-delegation.md`.
-- 완료되면: code-review → design이 화면별 `screens/<screen>.md` 스펙 작성 → implement가 같은 브랜치
+- code-review: `feat/design-system` 파운데이션 커밋 리뷰. 완료 문서:
+  `artifacts/handover/2026-09-13-20-41-codex-design-system-done.md`.
+- 이후: design이 화면별 `screens/<screen>.md` 스펙 작성 → implement가 같은 브랜치
   계열에서 화면까지 적용 → 그제서야 사용자 병합 (파운데이션 단독 병합 안 함).
 - login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).
 
