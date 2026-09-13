@@ -4,6 +4,7 @@ import { Bookmark, BookmarkCheck, Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/shared/ui/button";
+import { css } from "../../../../styled-system/css";
 
 import { toggleSavedPosting } from "../lib/actions.server";
 
@@ -55,7 +56,10 @@ export function SaveToggle({
         {isSaved ? "북마크됨" : "북마크"}
       </Button>
       {error ? (
-        <p className="mt-2 text-sm text-destructive" role="alert">
+        <p
+          className={css({ color: "tagRed.text", mt: 2, textStyle: "sm" })}
+          role="alert"
+        >
           {error}
         </p>
       ) : null}

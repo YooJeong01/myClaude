@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 
 import { EMPLOYMENT_TYPES, type EmploymentType } from "@/entities/job-posting";
+import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
+import { cardStyle } from "@/shared/ui/card";
+import { Input, inputStyle } from "@/shared/ui/input";
+import { css } from "../../../../styled-system/css";
 
 const JOB_POSTING_SOURCES = [
   { value: "", label: "전체 출처" },
@@ -25,9 +29,6 @@ type FilterFormProps = {
   };
 };
 
-const fieldClassName =
-  "h-10 rounded-md border bg-background px-3 text-sm outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20";
-
 export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
   const router = useRouter();
 
@@ -46,17 +47,27 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
 
   return (
     <form
-      className="grid gap-3 rounded-md border bg-card p-4 md:grid-cols-[minmax(0,1fr)_10rem_10rem_auto_auto]"
+      className={cn(
+        cardStyle,
+        css({
+          display: "grid",
+          gap: 3,
+          gridTemplateColumns: {
+            base: "1fr",
+            md: "minmax(0, 1fr) 10rem 10rem auto auto"
+          },
+          p: 4
+        })
+      )}
       onSubmit={handleSubmit}
     >
-      <input
-        className={fieldClassName}
+      <Input
         defaultValue={defaultValues.q}
         name="q"
         placeholder="회사명 또는 직무 검색"
       />
       <select
-        className={fieldClassName}
+        className={cn(inputStyle, css({ w: "full" }))}
         defaultValue={defaultValues.employmentType}
         name="employmentType"
       >
@@ -68,7 +79,7 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
         ))}
       </select>
       <select
-        className={fieldClassName}
+        className={cn(inputStyle, css({ w: "full" }))}
         defaultValue={defaultValues.source}
         name="source"
       >
@@ -78,7 +89,16 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
           </option>
         ))}
       </select>
-      <label className="flex h-10 items-center gap-2 text-sm font-medium">
+      <label
+        className={css({
+          alignItems: "center",
+          display: "flex",
+          fontWeight: 500,
+          gap: 2,
+          minH: "touchTarget",
+          textStyle: "sm"
+        })}
+      >
         <input
           className="size-4"
           defaultChecked={defaultValues.onlyOpen}

@@ -6,13 +6,12 @@ import { useRef, useState, useTransition, type FormEvent } from "react";
 
 import { EMPLOYMENT_TYPES, type EmploymentType } from "@/entities/job-posting";
 import type { NewJobPostingInput } from "@/entities/job-posting";
+import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
-
-const inputClassName =
-  "h-10 w-full rounded-md border bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-60";
-
-const textareaClassName =
-  "min-h-36 w-full rounded-md border bg-background px-3 py-2 text-sm leading-6 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-60";
+import { Card } from "@/shared/ui/card";
+import { Input, inputStyle } from "@/shared/ui/input";
+import { Textarea } from "@/shared/ui/textarea";
+import { css } from "../../../../styled-system/css";
 
 type SubmitState = {
   error: string | null;
@@ -133,13 +132,30 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
   }
 
   return (
-    <form ref={formRef} className="space-y-5" onSubmit={handleSubmit}>
-      <div className="rounded-md border bg-muted/30 p-4">
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <label className="flex-1 space-y-2 text-sm font-medium">
+    <form
+      ref={formRef}
+      className={css({ display: "grid", gap: 5 })}
+      onSubmit={handleSubmit}
+    >
+      <Card className={css({ bg: "surface", p: 4 })}>
+        <div
+          className={css({
+            display: "flex",
+            flexDirection: { base: "column", md: "row" },
+            gap: 3
+          })}
+        >
+          <label
+            className={css({
+              display: "grid",
+              flex: 1,
+              gap: 2,
+              fontWeight: 500,
+              textStyle: "sm"
+            })}
+          >
             <span>URL로 채우기</span>
-            <input
-              className={inputClassName}
+            <Input
               disabled={isPending || isParsingUrl}
               onChange={(event) => setParseUrl(event.target.value)}
               placeholder="https://..."
@@ -148,7 +164,7 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
             />
           </label>
           <Button
-            className="sm:mt-7"
+            className={css({ mt: { md: 7 } })}
             disabled={isPending || isParsingUrl}
             onClick={handleParseUrl}
             type="button"
@@ -162,32 +178,36 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
             URL로 채우기
           </Button>
         </div>
-      </div>
+      </Card>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="space-y-2 text-sm font-medium">
+      <div
+        className={css({
+          display: "grid",
+          gap: 4,
+          gridTemplateColumns: { base: "1fr", md: "repeat(2, minmax(0, 1fr))" }
+        })}
+      >
+        <label className={css({ display: "grid", gap: 2, fontWeight: 500, textStyle: "sm" })}>
           <span>회사명</span>
-          <input
-            className={inputClassName}
+          <Input
             disabled={isPending}
             name="companyNameRaw"
             placeholder="예: ESTsoft"
           />
         </label>
-        <label className="space-y-2 text-sm font-medium">
+        <label className={css({ display: "grid", gap: 2, fontWeight: 500, textStyle: "sm" })}>
           <span>직무</span>
-          <input
-            className={inputClassName}
+          <Input
             disabled={isPending}
             name="role"
             placeholder="예: 프론트엔드 개발자"
             required
           />
         </label>
-        <label className="space-y-2 text-sm font-medium">
+        <label className={css({ display: "grid", gap: 2, fontWeight: 500, textStyle: "sm" })}>
           <span>고용형태</span>
           <select
-            className={inputClassName}
+            className={cn(inputStyle, css({ w: "full" }))}
             defaultValue="기타"
             disabled={isPending}
             name="employmentType"
@@ -199,10 +219,9 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
             ))}
           </select>
         </label>
-        <label className="space-y-2 text-sm font-medium">
+        <label className={css({ display: "grid", gap: 2, fontWeight: 500, textStyle: "sm" })}>
           <span>마감일</span>
-          <input
-            className={inputClassName}
+          <Input
             disabled={isPending}
             name="deadline"
             type="date"
@@ -210,10 +229,9 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
         </label>
       </div>
 
-      <label className="block space-y-2 text-sm font-medium">
+      <label className={css({ display: "grid", gap: 2, fontWeight: 500, textStyle: "sm" })}>
         <span>공고 URL</span>
-        <input
-          className={inputClassName}
+        <Input
           disabled={isPending}
           name="url"
           placeholder="https://..."
@@ -221,28 +239,40 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
         />
       </label>
 
-      <label className="block space-y-2 text-sm font-medium">
+      <label className={css({ display: "grid", gap: 2, fontWeight: 500, textStyle: "sm" })}>
         <span>공고 본문</span>
-        <textarea
-          className={textareaClassName}
+        <Textarea
+          className={css({ minH: "144px" })}
           disabled={isPending}
           name="rawText"
           placeholder="URL이 없다면 공고 본문을 붙여넣으세요."
         />
       </label>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        className={css({
+          alignItems: { md: "center" },
+          display: "flex",
+          flexDirection: { base: "column", md: "row" },
+          gap: 3,
+          justifyContent: { md: "space-between" }
+        })}
+      >
         <p
           aria-live="polite"
-          className="min-h-5 text-sm text-muted-foreground"
+          className={css({ color: "textMuted", minH: 5, textStyle: "sm" })}
         >
           {state.error ? (
-            <span className="text-destructive">{state.error}</span>
+            <span className={css({ color: "tagRed.text" })}>{state.error}</span>
           ) : (
             state.success
           )}
         </p>
-        <Button className="w-full sm:w-auto" disabled={isPending} type="submit">
+        <Button
+          className={css({ w: { base: "full", md: "auto" } })}
+          disabled={isPending}
+          type="submit"
+        >
           {isPending ? (
             <Loader2 aria-hidden="true" className="size-4 animate-spin" />
           ) : (
