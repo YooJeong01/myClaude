@@ -45,19 +45,6 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
 
   const collapsed = manualCollapsed ?? viewportCollapsed;
   const isCollapsed = collapsed ?? false;
-  const responsiveValue = <CollapsedValue, ExpandedValue>(
-    collapsedValue: CollapsedValue,
-    expandedValue: ExpandedValue
-  ) => {
-    if (manualCollapsed !== null) {
-      return manualCollapsed ? collapsedValue : expandedValue;
-    }
-    if (viewportCollapsed !== null) {
-      return viewportCollapsed ? collapsedValue : expandedValue;
-    }
-
-    return { base: collapsedValue, md: expandedValue };
-  };
 
   return (
     <aside
@@ -73,9 +60,13 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
         p: 3,
         transitionDuration: "fast",
         transitionProperty: "width",
-        transitionTimingFunction: "standard",
-        w: responsiveValue("sidebarCollapsed", "sidebarExpanded")
+        transitionTimingFunction: "standard"
       })}
+      style={{
+        width: isCollapsed
+          ? "var(--sizes-sidebar-collapsed)"
+          : "var(--sizes-sidebar-expanded)"
+      }}
     >
       <div
         className={css({
@@ -106,7 +97,6 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
         <span
           className={css({
             color: "text",
-            display: responsiveValue("none", "inline"),
             fontSize: "14px",
             fontWeight: 800,
             minW: 0,
@@ -114,6 +104,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
             textOverflow: "ellipsis",
             whiteSpace: "nowrap"
           })}
+          style={{ display: isCollapsed ? "none" : "inline" }}
         >
           myClaude
         </span>
@@ -153,9 +144,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
                   fontSize: "14px",
                   fontWeight: active ? 700 : 600,
                   gap: 3,
-                  justifyContent: responsiveValue("center", "flex-start"),
                   minH: "touchTarget",
-                  px: responsiveValue(0, 3),
                   textDecoration: "none",
                   transitionDuration: "fast",
                   transitionProperty: "background, color",
@@ -166,10 +155,14 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
               )}
               href={item.href}
               key={item.href}
+              style={{
+                justifyContent: isCollapsed ? "center" : "flex-start",
+                paddingInline: isCollapsed ? "0" : "var(--spacing-3)"
+              }}
               title={isCollapsed ? item.label : undefined}
             >
               <Icon aria-hidden="true" className={css({ flexShrink: 0, h: 5, w: 5 })} />
-              <span className={css({ display: responsiveValue("none", "inline") })}>
+              <span style={{ display: isCollapsed ? "none" : "inline" }}>
                 {item.label}
               </span>
             </Link>
@@ -201,23 +194,23 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
         <span
           className={css({
             color: "textMuted",
-            display: responsiveValue("none", "block"),
             minW: 0,
             overflow: "hidden",
             textOverflow: "ellipsis",
             textStyle: "sm",
             whiteSpace: "nowrap"
           })}
+          style={{ display: isCollapsed ? "none" : "block" }}
         >
           {email}
         </span>
         <div
           className={css({
             display: "grid",
-            ml: responsiveValue(0, "auto"),
             placeItems: "center",
             "& svg": { h: 4, w: 4 }
           })}
+          style={{ marginLeft: isCollapsed ? "0" : "auto" }}
         >
           {logoutSlot}
         </div>
