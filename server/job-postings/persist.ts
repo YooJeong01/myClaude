@@ -6,6 +6,7 @@
  */
 import { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../supabase/types';
+import { endOfDayKstToIso } from './kst-deadline';
 import type { CollectedJobPosting, InsertResult, JobPostingSource } from './types';
 
 const BATCH_SIZE = 100;
@@ -39,13 +40,30 @@ export async function insertCollectedJobPostings(
         }
       };
 
+      const parseDeadline = (dateStr?: string | Date): string | null => {
+        if (!dateStr) return null;
+        if (dateStr instanceof Date) return dateStr.toISOString();
+
+        const value = dateStr.trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+          return endOfDayKstToIso(value);
+        }
+
+        try {
+          return new Date(value).toISOString();
+        } catch {
+          console.warn(`  ⚠ 마감일 파싱 실패: "${dateStr}"`);
+          return null;
+        }
+      };
+
       return {
         user_id: userId,
         company_name_raw: p.companyNameRaw,
         role: p.role,
         employment_type: p.employmentType,
         posted_at: parseDate(p.postedAt),
-        deadline: parseDate(p.deadline),
+        deadline: parseDeadline(p.deadline),
         url: p.url || null,
         raw_text: p.rawText || null,
         source

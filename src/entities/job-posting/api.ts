@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/shared/api";
 
+import { endOfDayKstToIso } from "@server/job-postings/kst-deadline";
 import type {
   CareerLevel,
   EmploymentType,
@@ -57,7 +58,7 @@ export async function insertJobPosting(
       employment_type: input.employmentType,
       career_level: input.careerLevel ?? null,
       posted_at: input.postedAt || null,
-      deadline: input.deadline || null,
+      deadline: input.deadline ? endOfDayKstToIso(input.deadline) : null,
       source: "manual",
       url: input.url?.trim() || null,
       raw_text: input.rawText?.trim() || null
