@@ -1,22 +1,21 @@
 # 상태 보드
 
-- last update: 2026-09-14 07:26 (by implement/codex) — 사이드바 폴딩 동적 CSS 버그 수정 완료
-  (`13ebd29`), tsc/lint 통과. 브라우저 클릭 검증은 로컬 Next dev `.next/trace` EPERM으로 미검증.
+- last update: 2026-09-14 08:05 (by plan) — 사이드바 토글 접근불가 버그(2차) 근본원인 확인 + 위임,
+  캘린더 iOS풍 재요청 접수
 
-**버그 발견**: 사용자가 앱 실행해서 확인 — 사이드바 접었을 때 라벨이 안 사라짐(정렬만 바뀜).
-근본원인: `responsiveValue()` 헬퍼가 Panda `css()`에 런타임 값을 직접 넘겨서, Panda가 해당 CSS를
-아예 생성 못 함(빌드타임 정적분석 한계 — 공식 문서로 확인). 상세: `artifacts/handover/
-2026-09-14-07-12-review-sidebar-dynamic-css-bug.md`. `.agents/workflow.md` §6-11에 재발 방지
-규칙 추가함.
+**연쇄 버그**: 어제 저녁 사이드바 깜빡임 fix가 "실제로 접히게" 만들면서, 별개로 있던 터치타깃 44px
+fix와 합쳐져 접었을 때 토글 버튼이 좁은 폭(64px)에 안 들어가 화면 밖으로 잘려나감(계산으로 확인:
+필요 88px vs 가용 40px). 상세: `artifacts/handover/2026-09-14-08-05-review-sidebar-toggle-unreachable.md`.
+**신규 요청**: 캘린더를 iOS 기본 캘린더풍(디자인+색 전부)으로 — 스펙 작성 중, 별도 태스크로 이어감.
 
 ## 현재 페이즈
 
-**redesign — 전체 11개 화면 스펙·2차 라운드 구현 완료 + 사이드바 폴딩 버그 코드 수정 완료.**
-⚠️ 이 브랜치는 병합 보류 — 전체 육안 재확인 끝나야 병합 후보.
+**redesign — 전체 화면 완료 상태에서 사이드바 버그 2차 수정 중 + 캘린더 iOS풍 재작업 스펙 준비 중.**
+⚠️ 이 브랜치는 병합 보류 — 전부 끝나야 병합 후보.
 
 ## 작업 트리
 
-- holder: (비움)
+- holder: implement (codex) — 사이드바 토글 접근불가 수정
 - branch: `main` @ a39901c 기준 `feat/design-system` (2026-09-13)
 - base: `main` @ a39901c
 
@@ -32,7 +31,9 @@
 | redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 완료(diff 직접 확인) | – | 보류(화면과 묶어서) |
 | redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | done(should-fix 4건 반영, `c7a831d`) | 수정 전 리뷰 완료(blocker 0, should-fix 4) | 대기(육안) | 보류 |
 | redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`) | 대기 | 대기(육안) | 보류 |
-| redesign: 사이드바 폴딩 버그(동적 css() 값) | done(근본원인 확인) | – | done (`13ebd29`, 브라우저 실측은 dev trace EPERM으로 미검증) | 대기 | 대기(육안) | 보류 |
+| redesign: 사이드바 폴딩 버그 1차(동적 css() 값) | done | – | done (`13ebd29`) | 대기 | 대기(육안) | 보류 |
+| redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | 진행중 (Codex) | – | – | 보류 |
+| redesign: 캘린더 iOS풍 재작업 | – | 스펙 작성 중 | – | – | – | 보류 |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
