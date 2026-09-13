@@ -74,7 +74,7 @@ const buttonVariants = cva({
       }
     },
     size: {
-      sm: { h: "8", minHeight: "8", px: "3" },
+      sm: { h: "8", px: "3" },
       default: { h: "10", px: "4" },
       lg: { h: "11", px: "5" },
       icon: { h: "10", minWidth: "10", p: "0", w: "10" }
