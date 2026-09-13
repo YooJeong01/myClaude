@@ -6,6 +6,7 @@
  */
 import { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../supabase/types';
+import { extractCareerLevel } from './career-level';
 import { endOfDayKstToIso } from './kst-deadline';
 import type { CollectedJobPosting, InsertResult, JobPostingSource } from './types';
 
@@ -62,6 +63,7 @@ export async function insertCollectedJobPostings(
         company_name_raw: p.companyNameRaw,
         role: p.role,
         employment_type: p.employmentType,
+        career_level: p.careerLevel ?? extractCareerLevel(`${p.role} ${p.rawText ?? ''}`),
         posted_at: parseDate(p.postedAt),
         deadline: parseDeadline(p.deadline),
         url: p.url || null,

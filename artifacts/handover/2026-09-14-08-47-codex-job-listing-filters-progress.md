@@ -1,1 +1,3 @@
 - 8304215 `[feat] 공고 마감일 타임스탬프 마이그레이션 추가`: deadline timestamptz 마이그레이션 파일과 KST 23:59:59 변환 helper 추가. `pnpm exec tsc --noEmit`, `pnpm lint` 통과.
+- 265c31a `[feat] 공고 경력 조건 타입과 마이그레이션 추가`: career_level 마이그레이션, DB 타입, 엔티티 타입, 공개 API 반영. `pnpm exec tsc --noEmit`, `pnpm lint` 통과.
+- a350518 `[feat] 공고 마감일 KST 종료 시각 저장`: 스크래퍼 저장/수동 입력 deadline을 KST 23:59:59 ISO로 저장. `pnpm exec tsc --noEmit`, `pnpm lint` 통과.
