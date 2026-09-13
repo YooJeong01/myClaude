@@ -37,7 +37,8 @@
 
 ## 다음 액션
 
-- plan/design: `design` 스킬로 아트보드 목업(대시보드·기업분석 리포트·지원동기·캘린더·로그인) 착수.
+- 사용자: 목업 승인 (`artifacts/design/mockups/README.md` 링크, 캔버스에서 다듬기 가능).
+- 승인 후 design: `artifacts/design/design-system.md` 정식 작성 → `feat/design-system`에서 Panda 도입.
 
 ## 참고
 
