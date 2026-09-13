@@ -1,4 +1,6 @@
 import { formatRelativeDate } from "../lib/relative-date";
+import { Tag } from "@/shared/ui/tag";
+import { css } from "../../../../styled-system/css";
 
 type FreshnessBadgeProps = {
   createdAt: string;
@@ -6,8 +8,8 @@ type FreshnessBadgeProps = {
 
 export function FreshnessBadge({ createdAt }: FreshnessBadgeProps) {
   return (
-    <span className="w-fit rounded-md bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+    <Tag className={css({ w: "fit-content" })} variant="gray">
       {formatRelativeDate(createdAt)}
-    </span>
+    </Tag>
   );
 }

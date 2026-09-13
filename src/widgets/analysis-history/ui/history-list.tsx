@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import type { CompanyAnalysisSummary } from "@/entities/company-analysis";
+import { Card } from "@/shared/ui/card";
+import { css } from "../../../../styled-system/css";
 
 import { FreshnessBadge } from "./freshness-badge";
 
@@ -20,32 +22,60 @@ export function AnalysisHistoryList({
 }: AnalysisHistoryListProps) {
   if (analyses.length === 0) {
     return (
-      <div className="rounded-md border bg-card p-5 text-sm leading-6 text-muted-foreground">
+      <Card className={css({ color: "textMuted", p: 5, textStyle: "sm" })}>
         지난 분석 이력이 없습니다.
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="divide-y rounded-md border bg-card">
+    <Card
+      className={css({
+        "& > article + article": {
+          borderColor: "border",
+          borderTopWidth: "1px"
+        }
+      })}
+    >
       {analyses.map((analysis) => (
         <article
-          className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+          className={css({
+            alignItems: { md: "center" },
+            display: "flex",
+            flexDirection: { base: "column", md: "row" },
+            gap: 3,
+            justifyContent: "space-between",
+            p: 4
+          })}
           key={analysis.id}
         >
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-foreground">
+          <div className={css({ minW: 0 })}>
+            <p className={css({ color: "text", fontWeight: 500, textStyle: "sm" })}>
               {analysis.role}
               {analysis.id === currentId ? " · 현재 보고서" : ""}
             </p>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className={css({ color: "textMuted", mt: 1, textStyle: "sm" })}>
               {dateFormatter.format(new Date(analysis.createdAt))}
             </p>
           </div>
-          <div className="flex shrink-0 items-center gap-3">
+          <div
+            className={css({
+              alignItems: "center",
+              display: "flex",
+              flexShrink: 0,
+              gap: 3
+            })}
+          >
             <FreshnessBadge createdAt={analysis.createdAt} />
             <Link
-              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+              className={css({
+                color: "link",
+                fontWeight: 500,
+                textDecoration: "none",
+                textStyle: "sm",
+                textUnderlineOffset: "4px",
+                _hover: { textDecoration: "underline" }
+              })}
               href={`/dashboard/analyses/${analysis.id}`}
             >
               결과 열기
@@ -53,6 +83,6 @@ export function AnalysisHistoryList({
           </div>
         </article>
       ))}
-    </div>
+    </Card>
   );
 }
