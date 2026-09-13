@@ -13,7 +13,7 @@
 
 ## 작업 트리
 
-- holder: 비어 있음 — `feat/remove-gmail-jobkorea` code-review 완료(blocker 0, should-fix 2), 병합 준비
+- holder: implement (codex) — `feat/remove-gmail-jobkorea` should-fix 2건 반영 중 (곧 비워짐)
 - branch: `chore/agent-workflow-setup` (9커밋, `main` 대상 클린 병합 확인, 사용자 병합 대기 — 변화 없음)
   - 위에 `feat/remove-gmail-jobkorea`(review 완료)와 `fix/session-refresh`(review 대기) 둘 다 신설
 - base: `main` @ e2f979a
