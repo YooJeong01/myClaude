@@ -2,8 +2,9 @@
 
 ## 한 줄
 
-디자인 시스템(토큰·프리미티브·모션)과 화면별 시각 스펙. 토스/카카오풍(알아보기 쉽고 둥근, 친근) +
-짙은 초록 계열 자연·숲 팔레트. **스타일링은 Panda CSS 단독** (Tailwind·shadcn·Emotion 안 씀 —
+디자인 시스템(토큰·프리미티브·모션)과 화면별 시각 스펙. **노션(Notion)풍** — 미니멀·모노톤,
+브랜드 컬러 없이 절제된 블루 accent만, 얇은 보더로 카드 구분, 폴더블 왼쪽 사이드바. 폰트는
+프리텐다드(자체 호스팅). **스타일링은 Panda CSS 단독** (Tailwind·shadcn·Emotion 안 씀 —
 Panda는 빌드타임 정적 추출이라 서버 컴포넌트와 마찰이 없고, 토큰·variant를 Panda 하나로 커버한다).
 라이트+다크. **화면 파일(`src/features|widgets|views`, `app/**/page.tsx`)은 편집하지 않는다** —
 스펙만 쓰고 implement가 적용.
@@ -27,9 +28,11 @@ Claude 세션 (별도 터미널 또는 메인 세션 겸임) + `design` 스킬. 
 
 ## 입력
 
-사용자 시각 방향 (확정: 무드=토스/카카오풍, 브랜드 컬러=짙은 초록/자연 팔레트, 다크모드=라이트+다크 둘 다,
-스타일링=Panda CSS 단독, 토큰으로 나중에 색 교체 가능하게). 현재 `globals.css` + `button.tsx` + 화면
-`className=` 인벤토리(교체 대상 파악용).
+사용자 시각 방향 (확정: 무드=노션풍 모노톤, 브랜드 컬러 없음(절제된 블루 accent만), 사이드바=폴더블,
+폰트=프리텐다드, 다크모드=라이트+다크 둘 다, 스타일링=Panda CSS 단독, 토큰으로 나중에 색 교체
+가능하게). **이 방향은 목업(1차 토스/카카오풍+초록) 을 실제로 본 뒤 사용자가 정정한 결과다** —
+말로 들은 방향을 바로 코드/토큰으로 확정하지 말고, 목업으로 보여준 뒤 반응을 반영해라. 현재
+`globals.css` + `button.tsx` + 화면 `className=` 인벤토리(교체 대상 파악용).
 
 ## 작업 순서
 
@@ -50,13 +53,14 @@ Claude 세션 (별도 터미널 또는 메인 세션 겸임) + `design` 스킬. 
 Panda의 `theme.tokens`(원시값) + `theme.semanticTokens`(의미 이름, `_dark` 컨디션으로 다크 재정의) 구조로
 작성한다 — 컴포넌트는 원시값이 아니라 semantic token 이름을 참조해야 나중에 팔레트를 통째로 바꿀 수 있다.
 
-- **색** — 원시 팔레트(짙은 초록 계열 + 자연/숲 보조색, 단계별 스케일)와 `background foreground card
-  primary secondary muted accent destructive border input ring` 같은 semantic token의 라이트/다크 매핑.
-  대비비(AA) 명시.
-- **타이포** — 폰트 스택(한글 포함), 타입 스케일(예: 12/14/16/18/20/24/30/36), line-height, weight — Panda
-  `textStyles`.
+- **색** — 그레이스케일 중심 원시 팔레트 + 절제된 블루 accent, 태그용 파스텔(gray/blue/green/yellow/red)과
+  `background card border primary(거의 흑백) accent(블루) destructive` 같은 semantic token의 라이트/다크
+  매핑. 대비비(AA) 명시. 값 초안은 `artifacts/design/mockups/` 목업 소스 참고.
+- **타이포** — 프리텐다드(자체 호스팅, `public/fonts/` + `@font-face`), 타입 스케일(예:
+  12/14/16/18/20/24/30/36), line-height, weight — Panda `textStyles`.
 - **간격** — 스페이싱 스케일, 컨테이너 최대폭, 섹션 리듬 — Panda `spacing` 토큰.
-- **radius** — radius 토큰(sm/md/lg) — 토스/카카오풍은 넉넉하게 둥글게.
+- **radius** — radius 토큰(sm/md/lg) — 노션풍은 작게~중간(카드 10~14px, 버튼/인풋 8px), 태그·아바타만 pill/원형.
+- **사이드바** — 폴더블(펼침/접힘) 상태 토큰: 폭(확장/축소), 라벨 표시 여부, 전환 duration.
 - **elevation** — 그림자 토큰(얇고 낮게) — Panda `shadows`.
 - **모션** — duration/easing 토큰, 등장·전환 패턴.
 - **safe-area** — `env(safe-area-inset-*)` 토큰, `viewport-fit=cover` 전제.
@@ -82,6 +86,9 @@ Panda의 `theme.tokens`(원시값) + `theme.semanticTokens`(의미 이름, `_dar
 - Panda는 `panda codegen`으로 `styled-system/`을 생성한다 — 이건 빌드 산출물이라 `.gitignore` 처리하고
   `package.json`에 `postinstall`/`predev`로 codegen 연결.
 - FSD: 프리미티브는 `src/shared/ui/`에만. 슬라이스 `index.ts` 공개 API.
+- 프리텐다드는 Google Fonts에 없다 — `public/fonts/`에 woff2 파일 배치 + `@font-face`(라이선스 SIL OFL,
+  상업적 사용 무료). 목업 캔버스에서 Noto Sans KR로 대체 표시했던 건 그 미리보기 환경의 제약일 뿐,
+  실제 코드베이스엔 해당 안 됨.
 
 ## 출력
 
