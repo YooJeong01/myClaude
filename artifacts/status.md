@@ -1,6 +1,6 @@
 # 상태 보드
 
-- last update: 2026-09-14 08:05 (by plan) — 사이드바 토글 접근불가 버그(2차) 근본원인 확인 + 위임,
+- last update: 2026-09-14 08:15 (by Codex) — 사이드바 토글 접근불가 버그(2차) 수정 완료,
   캘린더 iOS풍 재요청 접수
 
 **연쇄 버그**: 어제 저녁 사이드바 깜빡임 fix가 "실제로 접히게" 만들면서, 별개로 있던 터치타깃 44px
@@ -10,12 +10,12 @@ fix와 합쳐져 접었을 때 토글 버튼이 좁은 폭(64px)에 안 들어�
 
 ## 현재 페이즈
 
-**redesign — 전체 화면 완료 상태에서 사이드바 버그 2차 수정 중 + 캘린더 iOS풍 재작업 스펙 준비 중.**
+**redesign — 전체 화면 완료 상태에서 사이드바 버그 2차 수정 완료 + 캘린더 iOS풍 재작업 스펙 준비 중.**
 ⚠️ 이 브랜치는 병합 보류 — 전부 끝나야 병합 후보.
 
 ## 작업 트리
 
-- holder: implement (codex) — 사이드바 토글 접근불가 수정
+- holder: (비어 있음)
 - branch: `main` @ a39901c 기준 `feat/design-system` (2026-09-13)
 - base: `main` @ a39901c
 
@@ -32,7 +32,7 @@ fix와 합쳐져 접었을 때 토글 버튼이 좁은 폭(64px)에 안 들어�
 | redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | done(should-fix 4건 반영, `c7a831d`) | 수정 전 리뷰 완료(blocker 0, should-fix 4) | 대기(육안) | 보류 |
 | redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`) | 대기 | 대기(육안) | 보류 |
 | redesign: 사이드바 폴딩 버그 1차(동적 css() 값) | done | – | done (`13ebd29`) | 대기 | 대기(육안) | 보류 |
-| redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | 진행중 (Codex) | – | – | 보류 |
+| redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | done (`25f4052`) | 대기 | 대기(육안) | 보류 |
 | redesign: 캘린더 iOS풍 재작업 | – | 스펙 작성 중 | – | – | – | 보류 |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
@@ -64,7 +64,8 @@ fix와 합쳐져 접었을 때 토글 버튼이 좁은 폭(64px)에 안 들어�
 - plan/code-review/qa: 2차 라운드(T6~T10) + 사이드바 수정 결과 확인. tsc/lint는 Codex 기준 통과.
   실제 브라우저 육안 확인 필요(이번엔 특히 사이드바 폴딩 직접 눌러서 확인). Codex 환경에서는 Next dev
   `.next/trace` EPERM으로 실측 미검증. 완료:
-  `artifacts/handover/2026-09-14-07-26-codex-sidebar-dynamic-css-fix-done.md`.
+  `artifacts/handover/2026-09-14-07-26-codex-sidebar-dynamic-css-fix-done.md`,
+  `artifacts/handover/2026-09-14-08-15-codex-sidebar-toggle-fix-done.md`.
 - 전체 완료되면: qa 라운드(E2E 회귀 + 반응형/다크) → 사용자에게 최종 병합 요청.
 - 사용자 기상 후: 자동 로그인 방식(세션연장/체크박스/구글OAuth) 확인 필요 — login.md는 이미 작성됐지만
   OAuth 버튼은 그 결정 이후 별도 추가.
