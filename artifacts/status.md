@@ -73,7 +73,8 @@
 
 ## 참고
 
-- 미실행 마이그레이션: `supabase/migrations/20260909075000_dedup_normalization.sql` (무해, 보류).
+- ~~미실행 마이그레이션~~ `supabase/migrations/20260909075000_dedup_normalization.sql` — 사용자가
+  2026-09-14 실행 완료.
 - 호스트 RAM ~1GB — `codex exec`·`pnpm build` OOM 빈번. heavy 프로세스 1개씩.
 - **교훈**: `status.md`가 브랜치마다 갈라져 있으면 병합 시 거의 항상 충돌한다. 이번에 실제로 발생
   (`feat/remove-gmail-jobkorea` 병합 시). 병합 직전엔 항상 이 파일을 수동으로 재작성해서 정리할 것 —

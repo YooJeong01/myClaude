@@ -30,7 +30,8 @@
 4. **아직 코드로 안 옮김**: 랜딩 페이지 처리(`app/(marketing)/page.tsx` 제거 or `/login` 리다이렉트,
    `middleware.ts`의 미인증 리다이렉트 대상 `/`→`/login` 변경).
 5. **Day 8**(Capacitor+Tauri, `artifacts/tasks/day8.md`)은 리디자인 전체 병합 후 착수 — 아직 시작 안 함.
-6. 미실행 마이그레이션 `supabase/migrations/20260909075000_dedup_normalization.sql` — 무해, 계속 보류.
+6. ~~미실행 마이그레이션~~ `supabase/migrations/20260909075000_dedup_normalization.sql` — **사용자가
+   2026-09-14 실행 완료.** 더 이상 미결 아님.
 
 ## 참고 문서
 
