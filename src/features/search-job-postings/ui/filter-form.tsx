@@ -4,7 +4,12 @@ import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 
-import { EMPLOYMENT_TYPES, type EmploymentType } from "@/entities/job-posting";
+import {
+  CAREER_LEVELS,
+  EMPLOYMENT_TYPES,
+  type CareerLevel,
+  type EmploymentType
+} from "@/entities/job-posting";
 import { Button } from "@/shared/ui/button";
 
 const JOB_POSTING_SOURCES = [
@@ -20,8 +25,10 @@ type FilterFormProps = {
   defaultValues: {
     q: string;
     employmentType: EmploymentType | "";
+    careerLevel: CareerLevel | "";
     source: string;
-    onlyOpen: boolean;
+    showClosed: boolean;
+    onlyClosed: boolean;
   };
 };
 
@@ -37,16 +44,20 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
     const params = new URLSearchParams();
     setParam(params, "q", String(formData.get("q") ?? ""));
     setParam(params, "employmentType", String(formData.get("employmentType") ?? ""));
+    setParam(params, "careerLevel", String(formData.get("careerLevel") ?? ""));
     setParam(params, "source", String(formData.get("source") ?? ""));
-    if (formData.get("onlyOpen") === "on") {
-      params.set("onlyOpen", "1");
+    if (formData.get("showClosed") === "on") {
+      params.set("showClosed", "1");
+    }
+    if (formData.get("onlyClosed") === "on") {
+      params.set("onlyClosed", "1");
     }
     router.push(params.size ? `/dashboard?${params.toString()}` : "/dashboard");
   }
 
   return (
     <form
-      className="grid gap-3 rounded-md border bg-card p-4 md:grid-cols-[minmax(0,1fr)_10rem_10rem_auto_auto]"
+      className="grid gap-3 rounded-md border bg-card p-4 md:grid-cols-[minmax(0,1fr)_10rem_10rem_10rem] lg:grid-cols-[minmax(0,1fr)_10rem_10rem_10rem_auto_auto_auto]"
       onSubmit={handleSubmit}
     >
       <input
@@ -69,6 +80,18 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
       </select>
       <select
         className={fieldClassName}
+        defaultValue={defaultValues.careerLevel}
+        name="careerLevel"
+      >
+        <option value="">전체 경력</option>
+        {CAREER_LEVELS.map((level) => (
+          <option key={level} value={level}>
+            {level}
+          </option>
+        ))}
+      </select>
+      <select
+        className={fieldClassName}
         defaultValue={defaultValues.source}
         name="source"
       >
@@ -81,11 +104,20 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
       <label className="flex h-10 items-center gap-2 text-sm font-medium">
         <input
           className="size-4"
-          defaultChecked={defaultValues.onlyOpen}
-          name="onlyOpen"
+          defaultChecked={defaultValues.showClosed}
+          name="showClosed"
           type="checkbox"
         />
-        마감 전
+        마감된 공고도 표시
+      </label>
+      <label className="flex h-10 items-center gap-2 text-sm font-medium">
+        <input
+          className="size-4"
+          defaultChecked={defaultValues.onlyClosed}
+          name="onlyClosed"
+          type="checkbox"
+        />
+        마감된 공고만
       </label>
       <Button type="submit">
         <Search aria-hidden="true" className="size-4" />

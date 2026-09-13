@@ -18,15 +18,17 @@ export type ListJobPostingsOptions = {
   employmentType?: EmploymentType;
   careerLevel?: CareerLevel;
   source?: string;
-  onlyOpen?: boolean;
-  cursor?: string;
+  showClosed?: boolean;
+  onlyClosed?: boolean;
+  page?: number;
   limit?: number;
 };
 
 export type ListJobPostingsResult = {
   rows: JobPosting[];
   total: number;
-  nextCursor: string | null;
+  page: number;
+  totalPages: number;
 };
 
 function mapRow(row: JobPostingRow): JobPosting {
@@ -99,14 +101,17 @@ export async function listJobPostings(
     return data.map(mapRow);
   }
 
-  const limit = opts.limit ?? 20;
-  const today = new Date().toISOString().slice(0, 10);
+  const limit = opts.limit ?? 10;
+  const page = Math.max(1, Math.floor(opts.page ?? 1));
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+  const now = new Date().toISOString();
   let query = supabase
     .from("job_postings")
     .select("*", { count: "exact" })
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
-    .limit(limit);
+    .range(from, to);
 
   const q = opts.q?.trim();
   if (q) {
@@ -117,18 +122,16 @@ export async function listJobPostings(
   if (opts.employmentType) {
     query = query.eq("employment_type", opts.employmentType);
   }
+  if (opts.careerLevel) {
+    query = query.eq("career_level", opts.careerLevel);
+  }
   if (opts.source) {
     query = query.eq("source", opts.source);
   }
-  if (opts.onlyOpen) {
-    query = query.or(`deadline.is.null,deadline.gte.${today}`);
-  }
-
-  const parsedCursor = parseCursor(opts.cursor);
-  if (parsedCursor) {
-    query = query.or(
-      `created_at.lt.${parsedCursor.createdAt},and(created_at.eq.${parsedCursor.createdAt},id.lt.${parsedCursor.id})`
-    );
+  if (opts.onlyClosed) {
+    query = query.lt("deadline", now);
+  } else if (!opts.showClosed) {
+    query = query.or(`deadline.is.null,deadline.gte.${now}`);
   }
 
   const { data, error, count } = await query;
@@ -138,32 +141,13 @@ export async function listJobPostings(
   }
 
   const rows = data.map(mapRow);
-  const last = rows.at(-1);
+  const total = count ?? rows.length;
   return {
     rows,
-    total: count ?? rows.length,
-    nextCursor: rows.length === limit && last ? formatCursor(last) : null
+    total,
+    page,
+    totalPages: Math.ceil(total / limit)
   };
-}
-
-function formatCursor(posting: JobPosting): string {
-  return Buffer.from(`${posting.createdAt}\n${posting.id}`, "utf8").toString(
-    "base64url"
-  );
-}
-
-function parseCursor(
-  cursor: string | undefined
-): { createdAt: string; id: string } | null {
-  if (!cursor) return null;
-  try {
-    const [createdAt, id] = Buffer.from(cursor, "base64url")
-      .toString("utf8")
-      .split("\n");
-    return createdAt && id ? { createdAt, id } : null;
-  } catch {
-    return null;
-  }
 }
 
 function escapeLike(value: string): string {
