@@ -10,6 +10,7 @@ export default tseslint.config(
     ignores: [
       ".next/**",
       "node_modules/**",
+      "styled-system/**",
       "dist/**",
       "coverage/**",
       "next-env.d.ts"
