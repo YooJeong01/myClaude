@@ -62,7 +62,14 @@
 
 | 컴포넌트 | 소스 | variant | size | 상태 |
 |---|---|---|---|---|
-| button | 기존 shadcn(제거 대상) → Panda/Park UI 재작성 | default(거의 흑백)·secondary·outline·ghost·link | +sm·default·lg·icon | 재작성 필요 |
-| sidebar(폴더블) | 신규 | expanded/collapsed | – | 목업에 인터랙션 패턴 있음, 컴포넌트화 필요 |
-| tag/badge | 신규 | gray·blue·green·yellow·red | sm | 신규 |
-| card / input / label / separator / skeleton / … | Park UI 검토 | | | 미생성 |
+| button | 기존 shadcn(제거) → Panda 재작성 | default(거의 흑백)·secondary·outline·ghost·link | sm·default·lg·icon | ✅ 완료(`src/shared/ui/button.tsx`) |
+| sidebar(폴더블) | 신규 | expanded/collapsed | – | ✅ 완료(`src/widgets/app-shell/`) |
+| tag/badge | 신규 | gray·blue·green·yellow·red | sm | ✅ 완료(`src/shared/ui/tag.tsx`) |
+| card | 신규 | (as prop으로 div/aside 등 태그 선택) | – | ✅ 완료(`src/shared/ui/card.tsx`) |
+| **input** | 신규 | 기본 1종 (text/email/url/date 등 네이티브 type 공용) | – | **2차 라운드에서 필요 — 미생성.** `experience-form`, `add-job-posting/form`, `login-form`,
+  `analyses/page`(검색창), `search-job-postings/filter-form`의 인라인 `inputClassName` 전부 대체 대상.
+  border/radius/포커스링 토큰화(`borderColor:border`, `borderRadius:input`, focus시 `borderColor:link`
+  + `outline:2px solid {colors.link}`). `<select>`도 같은 스타일 재사용(별도 컴포넌트 없이 style만 공유). |
+| **textarea** | 신규 | 기본 1종 | – | **미생성.** `experience-form`, `add-job-posting/form`의 `textareaClassName` 대체. input과
+  톤 통일, `minHeight` 지정(기존 `min-h-40`/`min-h-36` 유지). |
+| label / separator / skeleton / … | Park UI 검토 | | | 아직 안 씀(체크박스는 네이티브 유지, 별도 skeleton 필요한 로딩 상태 없음) |
