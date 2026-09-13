@@ -1,12 +1,13 @@
 # 상태 보드
 
-- last update: 2026-09-14 08:15 (by Codex) — 사이드바 토글 접근불가 버그(2차) 수정 완료,
-  캘린더 iOS풍 재요청 접수
+- last update: 2026-09-14 08:20 (by plan) — 캘린더 iOS풍 작업은 다른 세션이 이어감, 이 세션은 손 뗌.
+  종합 인수인계 문서 작성 완료.
 
-**연쇄 버그**: 어제 저녁 사이드바 깜빡임 fix가 "실제로 접히게" 만들면서, 별개로 있던 터치타깃 44px
-fix와 합쳐져 접었을 때 토글 버튼이 좁은 폭(64px)에 안 들어가 화면 밖으로 잘려나감(계산으로 확인:
-필요 88px vs 가용 40px). 상세: `artifacts/handover/2026-09-14-08-05-review-sidebar-toggle-unreachable.md`.
-**신규 요청**: 캘린더를 iOS 기본 캘린더풍(디자인+색 전부)으로 — 스펙 작성 중, 별도 태스크로 이어감.
+**이 세션은 여기서 중단.** 캘린더 iOS풍 재작업(`artifacts/design/screens/calendar.md` "iOS 기본
+캘린더풍 v2", 위임: `artifacts/handover/2026-09-14-08-10-claude-calendar-ios-delegation.md`)은
+**사용자가 다른 세션에서 진행시킴 — 이 세션은 dispatch 안 함.** 전체 경위·결정·충돌 해결 과정은
+`artifacts/handover/2026-09-14-08-04-claude-multiagent-redesign-handover.md` 참고 (다음 세션은
+이 문서부터 읽을 것).
 
 ## 현재 페이즈
 
