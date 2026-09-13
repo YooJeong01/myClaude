@@ -75,6 +75,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
           gap: 2,
           minH: "touchTarget"
         })}
+        style={{ justifyContent: isCollapsed ? "center" : "flex-start" }}
       >
         <div
           aria-hidden="true"
@@ -91,6 +92,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
             justifyContent: "center",
             w: 9
           })}
+          style={{ display: isCollapsed ? "none" : "inline-flex" }}
         >
           M
         </div>
@@ -110,11 +112,11 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
         </span>
         <Button
           aria-label={isCollapsed ? "사이드바 펼치기" : "사이드바 접기"}
-          className={css({ ml: "auto" })}
           onClick={() =>
             setManualCollapsed((value) => !(value ?? viewportCollapsed ?? false))
           }
           size="icon"
+          style={{ marginLeft: isCollapsed ? "0" : "auto" }}
           type="button"
           variant="ghost"
         >
@@ -180,6 +182,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
           mt: "auto",
           pt: 3
         })}
+        style={{ justifyContent: isCollapsed ? "center" : "flex-start" }}
       >
         <div
           aria-hidden="true"
@@ -190,6 +193,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
             h: 9,
             w: 9
           })}
+          style={{ display: isCollapsed ? "none" : "block" }}
         />
         <span
           className={css({

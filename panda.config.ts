@@ -67,7 +67,7 @@ export default defineConfig({
         },
         sizes: {
           touchTarget: { value: "44px" },
-          sidebarCollapsed: { value: "64px" },
+          sidebarCollapsed: { value: "72px" },
           sidebarExpanded: { value: "248px" },
           container: { value: "1280px" }
         },
