@@ -5,6 +5,8 @@ import { useState, useTransition } from "react";
 
 import type { Experience, NewExperienceInput } from "@/entities/experience";
 import { Button } from "@/shared/ui/button";
+import { Card } from "@/shared/ui/card";
+import { css } from "../../../../styled-system/css";
 
 import { ExperienceForm } from "./experience-form";
 
@@ -47,25 +49,39 @@ export function ExperienceList({
 
   if (experiences.length === 0) {
     return (
-      <div className="rounded-md border bg-card p-6 text-sm leading-6 text-muted-foreground">
+      <Card className={css({ color: "textMuted", p: 6, textStyle: "sm" })}>
         아직 저장된 경험이 없습니다.
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <p aria-live="polite" className="min-h-5 text-sm text-destructive">
+    <div className={css({ display: "grid", gap: 4 })}>
+      <p
+        aria-live="polite"
+        className={css({
+          color: "tagRed.text",
+          minH: 5,
+          textStyle: "sm"
+        })}
+      >
         {error}
       </p>
-      <div className="divide-y rounded-md border bg-card">
+      <Card
+        className={css({
+          "& > article + article": {
+            borderColor: "border",
+            borderTopWidth: "1px"
+          }
+        })}
+      >
         {experiences.map((experience) => {
           const isEditing = editingId === experience.id;
           return (
-            <article className="p-4" key={experience.id}>
+            <article className={css({ p: 4 })} key={experience.id}>
               {isEditing ? (
-                <div className="space-y-4">
-                  <div className="flex justify-end">
+                <div className={css({ display: "grid", gap: 4 })}>
+                  <div className={css({ display: "flex", justifyContent: "flex-end" })}>
                     <Button
                       onClick={() => setEditingId(null)}
                       type="button"
@@ -82,17 +98,32 @@ export function ExperienceList({
                   />
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="min-w-0">
-                      <h3 className="text-base font-semibold tracking-normal">
+                <div className={css({ display: "grid", gap: 3 })}>
+                  <div
+                    className={css({
+                      alignItems: { md: "flex-start" },
+                      display: "flex",
+                      flexDirection: { base: "column", md: "row" },
+                      gap: 3,
+                      justifyContent: { md: "space-between" }
+                    })}
+                  >
+                    <div className={css({ minW: 0 })}>
+                      <h3 className={css({ textStyle: "lg" })}>
                         {experience.title}
                       </h3>
-                      <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">
+                      <p
+                        className={css({
+                          color: "textMuted",
+                          mt: 2,
+                          textStyle: "sm",
+                          whiteSpace: "pre-wrap"
+                        })}
+                      >
                         {experience.body}
                       </p>
                     </div>
-                    <div className="flex shrink-0 gap-2">
+                    <div className={css({ display: "flex", flexShrink: 0, gap: 2 })}>
                       <Button
                         onClick={() => setEditingId(experience.id)}
                         type="button"
@@ -117,7 +148,7 @@ export function ExperienceList({
             </article>
           );
         })}
-      </div>
+      </Card>
     </div>
   );
 }
