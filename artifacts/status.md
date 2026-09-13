@@ -37,12 +37,20 @@
 - 스타일링: **Panda CSS 단독** (Tailwind·shadcn·Emotion 제거/미사용, Park UI 컴포넌트 소스 검토)
 - 토큰 우선 — 나중에 팔레트 통째로 교체 가능하게 semantic token으로
 
+## 2026-09-13 제품 스코프 결정
+
+- **랜딩 페이지 보류.** 루트(`/`)에서 바로 로그인. `app/(marketing)/page.tsx` 처리 + 미인증
+  `/dashboard/*` 리다이렉트 대상(`/` → `/login`) 변경 필요 — implement 몫, 리스타일 스코프에서 제외.
+  상세: `artifacts/design/screens/README.md`.
+- **자동 로그인 요청 — 방식 미확정.** 세션 유지 연장 / "로그인 유지" 체크박스 / 구글 OAuth 원클릭
+  중 확정 필요 (Day 9 "Google OAuth 여부"와 동일 트랙). `login.md` 스펙 작성 전에 결정.
+- **디자인 방향(v2 노션풍) 승인.** 컴포넌트별 세부 조정(버튼·태그·밀도)은 마무리 단계로 이연.
+
 ## 다음 액션
 
-- 사용자: 목업 v2 방향 확인 + "이후 컴포넌트별 세부 조정" 라운드 필요하면 지시
-  (`artifacts/design/mockups/README.md` 링크, 캔버스에서 직접 다듬기도 가능).
-- 승인 후 design: `artifacts/design/design-system.md` 정식 작성 → `feat/design-system`에서 Panda 도입
-  (Pretendard 자체 호스팅 포함).
+- design: `artifacts/design/design-system.md` 정식 작성 → `feat/design-system`에서 Panda 도입
+  (Pretendard 자체 호스팅 포함). 랜딩 화면 스펙은 작성 안 함.
+- login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).
 
 ## 참고
 

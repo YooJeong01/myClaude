@@ -13,6 +13,11 @@ design 역할이 `design` 스킬로 만든 아트보드 Artifact 링크 + 승인
 - 가정: 브랜드명 "커리어숲"은 방향 설명용 placeholder(미확정). 회사명·수치는 샘플 데이터.
 - 각 아트보드 우측 상단 Tweaks의 `dark`를 켜서 다크 모드 확인 가능. 사이드바 좌상단 화살표 클릭하면
   접기/펼치기 동작.
-- 다음: 이 방향 승인되면 컴포넌트별 세부 조정 라운드 → `design-system.md` 정식화 → Panda 파운데이션.
+- **2026-09-13 방향 승인 (컴포넌트 세부는 마무리 단계로 이연)** — 사용자가 이 v2 방향으로 진행하고,
+  버튼·태그·카드 밀도 같은 컴포넌트별 세부 조정은 나중 마무리 단계에서 하기로 함. 목업의
+  `Landing.dc.html`은 **아카이브만** — 제품 결정으로 랜딩 페이지가 보류돼 리스타일 대상 아님
+  (`artifacts/design/screens/README.md` 참조). 나머지 5개(Main·CompanyAnalysis·Motivation·Calendar·Login)가
+  리스타일 스펙의 기준.
+- 다음: `design-system.md` 정식화(진행 중) → `feat/design-system` Panda 파운데이션.
 
 승인된 방향이 `design-system.md`의 토큰·프리미티브 값의 근거가 된다.

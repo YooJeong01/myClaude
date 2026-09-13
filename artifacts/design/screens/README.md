@@ -3,11 +3,26 @@
 design 역할이 파운데이션 병합 후 화면 하나당 `<screen>.md`를 여기에 쓴다. 형식은 `.agents/design.md`
 "디자인 스펙 형식 › screens/<screen>.md" 참조. implement가 이걸 소비해 `feat/redesign-screens`에서 적용.
 
+## 2026-09-13 제품 스코프 결정 — 랜딩 페이지 보류, 로그인이 진입점
+
+사용자 결정: **랜딩 페이지 지금 필요 없음.** 루트(`/`)에서 바로 로그인하게 한다. 목업의
+`Landing.dc.html`은 아카이브만 하고(참고용) 리스타일 대상에서 제외.
+
+- 영향받는 코드(설계만 — 실제 변경은 implement): `app/(marketing)/page.tsx` 처리 방향 결정 필요
+  (제거 or `/login`으로 리다이렉트), `middleware.ts`(`src/shared/api/supabase/middleware.ts:39-44`)의
+  미인증 `/dashboard/*` 접근 시 리다이렉트 대상을 `/`(마케팅) → `/login`으로 변경.
+- **자동 로그인** 요청 있음 — 정확히 무엇을 뜻하는지 확정 필요(다음 중 하나 또는 조합, Day 9 논의):
+  ① 이미 있는 세션 유지(Supabase SSR 쿠키가 이미 처리 — 재방문 시 로그인 화면 자체를 안 보여주고
+  바로 대시보드로) ② "로그인 상태 유지" 체크박스로 세션 만료 기간 연장 ③ 구글 OAuth 원클릭
+  (로그인 목업에 이미 있는 "구글 계정으로 계속하기" 버튼 활성화 — Day 9 "Google OAuth 여부"와 동일 결정).
+  로그인 화면 스펙(`login.md`) 작성 시 이 결정이 필요하다.
+
 ## 대상 화면 (의존성 순서 — 공통 레이아웃/내비 먼저)
 
-1. `app-shell.md` — 루트 레이아웃, 내비게이션, 컨테이너 (`app/layout.tsx`, `src/app/providers.tsx`)
-2. `login.md` — `app/login/page.tsx`, `src/features/auth/ui/login-form.tsx`
-3. `marketing.md` — `app/(marketing)/page.tsx`, `src/views/hero/`
+1. `app-shell.md` — 루트 레이아웃, 폴더블 사이드바, 컨테이너 (`app/layout.tsx`, `src/app/providers.tsx`)
+2. `login.md` — 로그인이 진입점(`/`). `app/login/page.tsx`, `src/features/auth/ui/login-form.tsx`.
+   자동 로그인 방식 확정 후 작성.
+3. ~~`marketing.md`~~ — **보류.** 랜딩 페이지 불필요 결정으로 리스타일 대상에서 제외.
 4. `dashboard.md` — `app/(app)/dashboard/page.tsx`, `src/views/dashboard/`
 5. `experiences.md` — `app/(app)/dashboard/experiences/page.tsx`, `src/features/manage-experience/`
 6. `analyses-index.md` — `app/(app)/dashboard/analyses/page.tsx`
