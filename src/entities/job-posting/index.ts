@@ -9,3 +9,4 @@ export {
 } from "./model";
 export { insertJobPosting, listJobPostings } from "./api";
 export type { ListJobPostingsOptions, ListJobPostingsResult } from "./api";
+export { getDdayBadge, type DdayBadge } from "./d-day";
