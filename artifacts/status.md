@@ -1,19 +1,19 @@
 # 상태 보드
 
-- last update: 2026-09-14 00:25 (by plan) — 야간 자율 세션: 2차 라운드 스펙(전체 11화면 완료) + Codex 위임
+- last update: 2026-09-14 01:20 (by codex) — 2차 라운드 T6~T10 구현 완료, 리뷰·QA 대기
 
-**야간 자율 세션 진행 중** — 사용자가 잠든 사이 plan이 남은 화면 스펙(login·experiences·
-analyses-index·job-postings·analysis-history) 전부 작성 완료하고 Codex에게 구현 위임함. 위임 문서:
-`artifacts/handover/2026-09-14-00-25-claude-redesign-screens-round2-delegation.md`.
+**야간 자율 세션 구현 완료** — plan이 남긴 2차 라운드 스펙(login·experiences·analyses-index·
+job-postings·analysis-history)을 Codex가 구현 완료함. 완료 문서:
+`artifacts/handover/2026-09-14-01-20-codex-redesign-screens-round2-done.md`.
 
 ## 현재 페이즈
 
-**redesign — 전체 11개 화면 스펙 작성 완료, 2차 라운드(5화면) 구현 진행 중.** ⚠️ 이 브랜치는 2차
-라운드가 끝나도 병합 보류 — 사용자가 깨어나서 최종 검증·리뷰·병합 승인해야 한다.
+**redesign — 전체 11개 화면 스펙 작성 완료, 2차 라운드(5화면) 구현 완료.** ⚠️ 이 브랜치는 병합 보류
+— 사용자가 깨어나서 최종 검증·리뷰·병합 승인해야 한다.
 
 ## 작업 트리
 
-- holder: implement (codex) — 2차 라운드 T6~T10
+- holder: 비움 — 다음 역할(plan/code-review/qa) 대기
 - branch: `main` @ a39901c 기준 `feat/design-system` (2026-09-13)
 - base: `main` @ a39901c
 
@@ -28,13 +28,12 @@ analyses-index·job-postings·analysis-history) 전부 작성 완료하고 Codex
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
 | redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 완료(diff 직접 확인) | – | 보류(화면과 묶어서) |
 | redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | done(should-fix 4건 반영, `c7a831d`) | 수정 전 리뷰 완료(blocker 0, should-fix 4) | 대기(육안) | 보류 |
-| redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | 진행중 (Codex, 야간) | – | – | 보류 |
+| redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`) | 대기 | 대기(육안) | 보류 |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (없음 — Codex가 2차 라운드(T6~T10) 진행 중. 자는 동안 막히는 태스크는 blocked 문서 남기고 다음
-  태스크로 넘어가도록 지시해둠. **아직 병합 요청 안 함** — 위 경고 참조)
+- (없음 — 2차 라운드(T6~T10) 구현 완료. **아직 병합 요청 안 함** — 위 경고 참조)
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -57,8 +56,7 @@ analyses-index·job-postings·analysis-history) 전부 작성 완료하고 Codex
 
 ## 다음 액션
 
-- implement(Codex): 2차 라운드(T6~T10) 진행 중, 야간 자율.
-- 완료(또는 부분 완료)되면: plan이 tsc/lint 재확인 + code-review + 이어서 육안 확인.
+- plan/code-review/qa: 2차 라운드 구현 결과 확인. plan이 tsc/lint 재확인 + code-review + 이어서 육안 확인.
 - 전체 완료되면: qa 라운드(E2E 회귀 + 반응형/다크) → 사용자에게 최종 병합 요청.
 - 사용자 기상 후: 자동 로그인 방식(세션연장/체크박스/구글OAuth) 확인 필요 — login.md는 이미 작성됐지만
   OAuth 버튼은 그 결정 이후 별도 추가.
