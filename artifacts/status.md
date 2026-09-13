@@ -1,6 +1,6 @@
 # 상태 보드
 
-- last update: 2026-09-13 19:19 (by plan) — session-refresh 버그수정 위임, Codex 착수
+- last update: 2026-09-13 19:35 (by plan) — session-refresh 버그수정 Codex 완료, review 대기. 트리 홀더 비움
 
 **참고**: 브랜치마다 이 파일의 사본이 따로 있다(git 파일이라 병합 전까진 브랜치별로 갈라짐).
 아래는 `fix/session-refresh` 기준이지만, 다른 브랜치(`feat/remove-gmail-jobkorea`)에서 이미 끝난
@@ -12,7 +12,7 @@
 
 ## 작업 트리
 
-- holder: implement (codex) — `fix/session-refresh`
+- holder: (없음 — `fix/session-refresh` 구현 완료, tree clean, review 대기)
 - branch: `chore/agent-workflow-setup` (5커밋, main 대상 클린 병합 확인, 사용자 병합 대기 — 변화 없음)
   - 위에 `feat/remove-gmail-jobkorea`(완료, review 대기)와 `fix/session-refresh`(진행 중) 둘 다 신설
 - base: `main` @ e2f979a
@@ -25,7 +25,7 @@
 | 배포 (my-claude-ruby.vercel.app) | done | – | – | – | – | ✅ |
 | agent-workflow-setup | done | – | – | – | – | 병합 대기 |
 | Gmail/잡코리아 제거 | done | – | done | 대기 | – | – |
-| session-refresh 버그수정 (getClaims→getUser) | done | – | 진행중 (Codex) | – | – | – |
+| session-refresh 버그수정 (getClaims→getUser) | done | – | done (tsc/lint/E2E 9/9 통과) | 대기 | – | – |
 | redesign: design-system | – | – | – | – | – | – |
 | redesign: screens | – | – | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
