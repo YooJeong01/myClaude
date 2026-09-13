@@ -2,13 +2,19 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/shared/api";
 
-import type { EmploymentType, JobPosting, NewJobPostingInput } from "./model";
+import type {
+  CareerLevel,
+  EmploymentType,
+  JobPosting,
+  NewJobPostingInput
+} from "./model";
 
 type JobPostingRow = Database["public"]["Tables"]["job_postings"]["Row"];
 
 export type ListJobPostingsOptions = {
   q?: string;
   employmentType?: EmploymentType;
+  careerLevel?: CareerLevel;
   source?: string;
   onlyOpen?: boolean;
   cursor?: string;
@@ -27,6 +33,7 @@ function mapRow(row: JobPostingRow): JobPosting {
     companyNameRaw: row.company_name_raw,
     role: row.role,
     employmentType: row.employment_type as EmploymentType,
+    careerLevel: row.career_level as CareerLevel | null,
     postedAt: row.posted_at,
     deadline: row.deadline,
     source: row.source,
@@ -48,6 +55,7 @@ export async function insertJobPosting(
       company_name_raw: input.companyNameRaw?.trim() || null,
       role: input.role.trim(),
       employment_type: input.employmentType,
+      career_level: input.careerLevel ?? null,
       posted_at: input.postedAt || null,
       deadline: input.deadline || null,
       source: "manual",

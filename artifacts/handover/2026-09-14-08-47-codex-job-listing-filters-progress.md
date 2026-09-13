@@ -1,0 +1,1 @@
+- 8304215 `[feat] 공고 마감일 타임스탬프 마이그레이션 추가`: deadline timestamptz 마이그레이션 파일과 KST 23:59:59 변환 helper 추가. `pnpm exec tsc --noEmit`, `pnpm lint` 통과.

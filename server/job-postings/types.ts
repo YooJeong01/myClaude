@@ -25,6 +25,15 @@ export const EMPLOYMENT_TYPES: EmploymentType[] = [
   '기타'
 ];
 
+/** 경력 조건 */
+export type CareerLevel = '신입' | '경력' | '신입·경력' | '경력무관';
+export const CAREER_LEVELS: CareerLevel[] = [
+  '신입',
+  '경력',
+  '신입·경력',
+  '경력무관'
+];
+
 /**
  * 수집된 채용공고 (정규화된 공통 포맷).
  *
@@ -35,6 +44,7 @@ export interface CollectedJobPosting {
   companyNameRaw: string;
   role: string;
   employmentType: EmploymentType;
+  careerLevel?: CareerLevel | null;
   postedAt?: Date | string; // ISO 또는 Date
   deadline?: Date | string;
   url?: string;
