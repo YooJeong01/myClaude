@@ -1,6 +1,6 @@
 # 상태 보드
 
-- last update: 2026-09-13 20:41 (by codex) — Panda CSS 파운데이션 구현 완료, 병합 보류
+- last update: 2026-09-13 20:58 (by plan) — 파운데이션 리뷰 완료(should-fix 3건), Codex가 반영 중
 
 ## 현재 페이즈
 
@@ -10,7 +10,7 @@
 
 ## 작업 트리
 
-- holder: (비어 있음) — 다음 역할 review/design 대기
+- holder: implement (codex) — should-fix 3건 반영 중
 - branch: `main` @ a39901c 기준 `feat/design-system` 신설 (2026-09-13)
 - base: `main` @ a39901c
 
@@ -23,13 +23,13 @@
 | agent-workflow-setup | done | – | – | – | – | ✅ |
 | Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0, should-fix 반영) | – | ✅ |
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
-| redesign: design-system (파운데이션) | done | done(스펙) | done (`e234f17`, `a2f84b5`) | 대기 | – | 보류(화면과 묶어서) |
+| redesign: design-system (파운데이션) | done | done(스펙) | should-fix 3건 반영 중 (Codex) | 완료(blocker 0, should-fix 3) | – | 보류(화면과 묶어서) |
 | redesign: screens | done(README 목록) | 진행 필요 | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (없음 — 파운데이션 구현 완료. **이 브랜치는 완료돼도 아직 병합 요청 안 함** — 위 경고 참조)
+- (없음 — Codex가 리뷰 should-fix 반영 중. **이 브랜치는 완료돼도 아직 병합 요청 안 함** — 위 경고 참조)
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
