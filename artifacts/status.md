@@ -1,6 +1,6 @@
 # 상태 보드
 
-- last update: 2026-09-13 20:58 (by plan) — 파운데이션 리뷰 완료(should-fix 3건), Codex가 반영 중
+- last update: 2026-09-13 21:00 (by codex) — 파운데이션 리뷰 should-fix 3건 반영 완료, 재리뷰 대기
 
 ## 현재 페이즈
 
@@ -10,7 +10,7 @@
 
 ## 작업 트리
 
-- holder: implement (codex) — should-fix 3건 반영 중
+- holder: (비어 있음)
 - branch: `main` @ a39901c 기준 `feat/design-system` 신설 (2026-09-13)
 - base: `main` @ a39901c
 
@@ -23,13 +23,13 @@
 | agent-workflow-setup | done | – | – | – | – | ✅ |
 | Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0, should-fix 반영) | – | ✅ |
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
-| redesign: design-system (파운데이션) | done | done(스펙) | should-fix 3건 반영 중 (Codex) | 완료(blocker 0, should-fix 3) | – | 보류(화면과 묶어서) |
+| redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 재리뷰 대기 | – | 보류(화면과 묶어서) |
 | redesign: screens | done(README 목록) | 진행 필요 | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (없음 — Codex가 리뷰 should-fix 반영 중. **이 브랜치는 완료돼도 아직 병합 요청 안 함** — 위 경고 참조)
+- (없음 — 리뷰 should-fix 3건 반영 완료. **이 브랜치는 완료돼도 아직 병합 요청 안 함** — 위 경고 참조)
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -52,8 +52,8 @@
 
 ## 다음 액션
 
-- code-review: `feat/design-system` 파운데이션 커밋 리뷰. 완료 문서:
-  `artifacts/handover/2026-09-13-20-41-codex-design-system-done.md`.
+- code-review: `feat/design-system` 파운데이션 리뷰 수정 커밋 재리뷰. 완료 문서:
+  `artifacts/handover/2026-09-13-21-00-codex-design-system-review-fix-done.md`.
 - 이후: design이 화면별 `screens/<screen>.md` 스펙 작성 → implement가 같은 브랜치
   계열에서 화면까지 적용 → 그제서야 사용자 병합 (파운데이션 단독 병합 안 함).
 - login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).
