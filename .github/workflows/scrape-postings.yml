@@ -29,25 +29,6 @@ jobs:
           SCRAPE_OWNER_USER_ID: ${{ secrets.SCRAPE_OWNER_USER_ID }}
           SCRAPE_SEARCH_KEYWORDS: ${{ secrets.SCRAPE_SEARCH_KEYWORDS }}
 
-  scrape-jobkorea:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm exec tsx server/jobs/scrape-jobkorea.ts
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          SCRAPE_OWNER_USER_ID: ${{ secrets.SCRAPE_OWNER_USER_ID }}
-          SCRAPE_SEARCH_KEYWORDS: ${{ secrets.SCRAPE_SEARCH_KEYWORDS }}
-
   scrape-catch:
     runs-on: ubuntu-latest
     timeout-minutes: 15

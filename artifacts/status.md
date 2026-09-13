@@ -1,21 +1,18 @@
 # 상태 보드
 
-- last update: 2026-09-13 19:35 (by plan) — session-refresh 버그수정 Codex 완료, review 대기. 트리 홀더 비움
-
-**참고**: 브랜치마다 이 파일의 사본이 따로 있다(git 파일이라 병합 전까진 브랜치별로 갈라짐).
-아래는 `fix/session-refresh` 기준이지만, 다른 브랜치(`feat/remove-gmail-jobkorea`)에서 이미 끝난
-작업까지 plan이 수동으로 반영해 최신 상태로 맞춰둔 것.
+- last update: 2026-09-13 20:15 (by plan) — 사용자 지시로 3개 브랜치 순서대로 main 병합 (push 전)
 
 ## 현재 페이즈
 
-**redesign 진행 중 + 버그 수정 병행.** 구조 세우기(`chore/agent-workflow-setup`) 병합 대기.
+**redesign — Panda CSS 파운데이션 착수 예정.** 구조 세우기·Gmail/잡코리아 제거·session-refresh
+버그수정 전부 `main` 병합 완료.
 
 ## 작업 트리
 
-- holder: (없음 — `fix/session-refresh` 구현 완료, tree clean, review 대기)
-- branch: `chore/agent-workflow-setup` (5커밋, main 대상 클린 병합 확인, 사용자 병합 대기 — 변화 없음)
-  - 위에 `feat/remove-gmail-jobkorea`(완료, review 대기)와 `fix/session-refresh`(진행 중) 둘 다 신설
-- base: `main` @ e2f979a
+- holder: (없음)
+- branch: `main` — 이번에 3개 병합 반영 (`chore/agent-workflow-setup` → `fix/session-refresh` →
+  `feat/remove-gmail-jobkorea`, `artifacts/status.md` 충돌 1건 수동 정리)
+- base: `main` (push 예정)
 
 ## 파이프라인
 
@@ -23,17 +20,16 @@
 |---|---|---|---|---|---|---|
 | Day 1~7 (수집·매칭·리포트·스크래퍼) | done | – | done | – | done | ✅ |
 | 배포 (my-claude-ruby.vercel.app) | done | – | – | – | – | ✅ |
-| agent-workflow-setup | done | – | – | – | – | 병합 대기 |
-| Gmail/잡코리아 제거 | done | – | done | 대기 | – | – |
-| session-refresh 버그수정 (getClaims→getUser) | done | – | done (tsc/lint/E2E 9/9 통과) | 대기 | – | – |
-| redesign: design-system | – | – | – | – | – | – |
-| redesign: screens | – | – | – | – | – | – |
+| agent-workflow-setup | done | – | – | – | – | ✅ |
+| Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0, should-fix 반영) | – | ✅ |
+| session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
+| redesign: design-system | done(스켈레톤) | 진행 필요 | – | – | – | – |
+| redesign: screens | done(README 목록) | 진행 필요 | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- 사용자: `chore/agent-workflow-setup` 리뷰 → `git merge --no-ff` → push (새 병합 규약 첫 실행).
-- code-review 필요: `feat/remove-gmail-jobkorea` (아직 아무도 리뷰 안 함).
+- (없음 — 3개 브랜치 병합 완료, `git push` 대기)
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -56,10 +52,8 @@
 
 ## 다음 액션
 
-- implement(Codex): `fix/session-refresh` 진행 중 — `middleware.ts` getClaims→getUser 교체 +
-  E2E 회귀. 위임 문서: `artifacts/handover/2026-09-13-19-19-claude-session-refresh-delegation.md`.
-- code-review: `feat/remove-gmail-jobkorea` diff 리뷰 (아직 안 함).
-- design: `artifacts/design/design-system.md` 정식 작성 → `feat/design-system`에서 Panda 도입
+- 사용자/plan: `git push` (이번 병합 3개 반영).
+- design: `artifacts/design/design-system.md` 정식 작성 → `feat/design-system` 브랜치에서 Panda 도입
   (Pretendard 자체 호스팅 포함). 랜딩 화면 스펙은 작성 안 함.
 - login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).
 
@@ -67,3 +61,6 @@
 
 - 미실행 마이그레이션: `supabase/migrations/20260909075000_dedup_normalization.sql` (무해, 보류).
 - 호스트 RAM ~1GB — `codex exec`·`pnpm build` OOM 빈번. heavy 프로세스 1개씩.
+- **교훈**: `status.md`가 브랜치마다 갈라져 있으면 병합 시 거의 항상 충돌한다. 이번에 실제로 발생
+  (`feat/remove-gmail-jobkorea` 병합 시). 병합 직전엔 항상 이 파일을 수동으로 재작성해서 정리할 것 —
+  자동 병합에 맡기지 말 것.
