@@ -1,6 +1,6 @@
 # 상태 보드
 
-- last update: 2026-09-13 21:00 (by codex) — 파운데이션 리뷰 should-fix 3건 반영 완료, 재리뷰 대기
+- last update: 2026-09-13 21:03 (by plan) — should-fix 3건 diff 직접 확인, 리뷰 완료 처리
 
 ## 현재 페이즈
 
@@ -23,7 +23,7 @@
 | agent-workflow-setup | done | – | – | – | – | ✅ |
 | Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0, should-fix 반영) | – | ✅ |
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
-| redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 재리뷰 대기 | – | 보류(화면과 묶어서) |
+| redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 완료(diff 직접 확인) | – | 보류(화면과 묶어서) |
 | redesign: screens | done(README 목록) | 진행 필요 | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
@@ -52,10 +52,8 @@
 
 ## 다음 액션
 
-- code-review: `feat/design-system` 파운데이션 리뷰 수정 커밋 재리뷰. 완료 문서:
-  `artifacts/handover/2026-09-13-21-00-codex-design-system-review-fix-done.md`.
-- 이후: design이 화면별 `screens/<screen>.md` 스펙 작성 → implement가 같은 브랜치
-  계열에서 화면까지 적용 → 그제서야 사용자 병합 (파운데이션 단독 병합 안 함).
+- design: 화면별 `screens/<screen>.md` 스펙 작성(dashboard·기업분석·지원동기·캘린더 먼저, login은
+  자동 로그인 방식 확정 후) → implement가 같은 브랜치 계열에서 화면까지 적용 → 그제서야 사용자 병합.
 - login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).
 
 ## 참고
