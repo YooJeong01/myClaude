@@ -33,10 +33,11 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const { data } = await supabase.auth.getClaims();
-  const claims = data?.claims ?? null;
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
 
-  if (request.nextUrl.pathname.startsWith("/dashboard") && !claims) {
+  if (request.nextUrl.pathname.startsWith("/dashboard") && !user) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/";
     redirectUrl.search = "";

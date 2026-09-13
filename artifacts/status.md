@@ -1,15 +1,20 @@
 # 상태 보드
 
-- last update: 2026-09-13 (by plan) — 시각 방향·스타일링 스택 확정, 목업 착수 예정
+- last update: 2026-09-13 19:35 (by plan) — session-refresh 버그수정 Codex 완료, review 대기. 트리 홀더 비움
+
+**참고**: 브랜치마다 이 파일의 사본이 따로 있다(git 파일이라 병합 전까진 브랜치별로 갈라짐).
+아래는 `fix/session-refresh` 기준이지만, 다른 브랜치(`feat/remove-gmail-jobkorea`)에서 이미 끝난
+작업까지 plan이 수동으로 반영해 최신 상태로 맞춰둔 것.
 
 ## 현재 페이즈
 
-**redesign — 목업 착수 직전.** 구조 세우기(`chore/agent-workflow-setup`) 병합 대기. 시각 방향 확정 완료.
+**redesign 진행 중 + 버그 수정 병행.** 구조 세우기(`chore/agent-workflow-setup`) 병합 대기.
 
 ## 작업 트리
 
-- holder: (없음 — 사용자 병합 대기)
-- branch: `chore/agent-workflow-setup` (5커밋, `main` 대상 클린 병합 확인)
+- holder: (없음 — `fix/session-refresh` 구현 완료, tree clean, review 대기)
+- branch: `chore/agent-workflow-setup` (5커밋, main 대상 클린 병합 확인, 사용자 병합 대기 — 변화 없음)
+  - 위에 `feat/remove-gmail-jobkorea`(완료, review 대기)와 `fix/session-refresh`(진행 중) 둘 다 신설
 - base: `main` @ e2f979a
 
 ## 파이프라인
@@ -19,6 +24,8 @@
 | Day 1~7 (수집·매칭·리포트·스크래퍼) | done | – | done | – | done | ✅ |
 | 배포 (my-claude-ruby.vercel.app) | done | – | – | – | – | ✅ |
 | agent-workflow-setup | done | – | – | – | – | 병합 대기 |
+| Gmail/잡코리아 제거 | done | – | done | 대기 | – | – |
+| session-refresh 버그수정 (getClaims→getUser) | done | – | done (tsc/lint/E2E 9/9 통과) | 대기 | – | – |
 | redesign: design-system | – | – | – | – | – | – |
 | redesign: screens | – | – | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
@@ -26,6 +33,7 @@
 ## 블로킹 / 사용자 대기
 
 - 사용자: `chore/agent-workflow-setup` 리뷰 → `git merge --no-ff` → push (새 병합 규약 첫 실행).
+- code-review 필요: `feat/remove-gmail-jobkorea` (아직 아무도 리뷰 안 함).
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -48,6 +56,9 @@
 
 ## 다음 액션
 
+- implement(Codex): `fix/session-refresh` 진행 중 — `middleware.ts` getClaims→getUser 교체 +
+  E2E 회귀. 위임 문서: `artifacts/handover/2026-09-13-19-19-claude-session-refresh-delegation.md`.
+- code-review: `feat/remove-gmail-jobkorea` diff 리뷰 (아직 안 함).
 - design: `artifacts/design/design-system.md` 정식 작성 → `feat/design-system`에서 Panda 도입
   (Pretendard 자체 호스팅 포함). 랜딩 화면 스펙은 작성 안 함.
 - login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).

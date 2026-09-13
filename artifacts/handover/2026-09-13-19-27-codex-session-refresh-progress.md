@@ -1,0 +1,1 @@
+- 79c7fb1 [fix] `src/shared/api/supabase/middleware.ts` 인증 체크를 `getClaims()`에서 `getUser()` 기반으로 교체.
