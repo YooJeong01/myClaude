@@ -78,11 +78,23 @@
    `artifacts/handover/<ts>-<role>-<topic>-blocked.md`에 상황·선택지 남기고 종료.
 10. 사용자가 명시적으로 요청하지 않은 파일 생성/이동/삭제를 먼저 하지 않는다 (`AGENTS.md` 원칙 5).
 
-## 7. OOM 복구 패턴
+## 7. Codex 중단 복구 패턴
 
-이 호스트에서 `codex exec`·`pnpm build`가 가용 RAM 부족으로 자주 강제 종료된다.
-`codex exec`가 태스크 중간에 죽으면: plan이 `git log feat/<topic>`으로 마지막 커밋을 확인하고, 거기서부터
-직접 이어받아 마무리하거나 blocked 문서를 남긴다. 커밋된 데까지는 항상 복구 가능하도록 태스크별로 커밋.
+Codex가 태스크 중간에 죽는 원인은 두 가지다 — ① 이 호스트 RAM 부족으로 인한 OOM 강제종료,
+② ChatGPT/Codex 쪽 usage limit(예: "try again at 11:38 PM" 식 메시지, 특정 시각까지 재시도 불가).
+둘 다 같은 복구 순서를 따른다:
+
+1. plan이 `git log feat/<topic>`으로 마지막 커밋을 확인 — 커밋된 데까지는 항상 복구 가능하도록
+   태스크별로 커밋하는 규율(§6-1) 덕분에 중간에 끊겨도 안전하다.
+2. **1순위: Haiku 서브에이전트로 이어서 진행.** `Agent` 툴로 `model: "haiku"` 지정해서, 남은
+   태스크를 위임 문서 기준으로 이어받게 한다(같은 브랜치, 같은 규율). Codex가 죽은 시점이 usage
+   limit이면 이 방법으로 대기 없이 계속 진행할 수 있다. `.agents/README.md`의 "서브에이전트를 안
+   쓰는 이유"(격리 목적)와는 다른 상황 — 이건 병렬 실행이 아니라 **끊긴 Codex의 순차적 대체**라 그
+   근거가 적용 안 된다.
+3. **2순위: plan(Claude)이 직접 이어받아 마무리.** Haiku도 애매하거나(판단이 많이 필요한 태스크,
+   Haiku가 반복 실패) 사용 불가면, plan이 직접 코드를 이어 쓴다(핀 메모리
+   `project-claude-plans-codex-implements` 의 "Codex 사용 불가 시" 예외).
+4. 둘 다 안 되면 blocked 문서를 남기고 사용자 판단을 기다린다.
 
 ## 8. 사용자 게이트
 
