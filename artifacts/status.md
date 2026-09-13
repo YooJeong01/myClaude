@@ -1,18 +1,18 @@
 # 상태 보드
 
-- last update: 2026-09-13 20:20 (by plan) — 사용자 지시로 3개 브랜치 순서대로 main 병합 + push 완료 확인 (origin/main @ 6fc7687)
+- last update: 2026-09-13 20:21 (by plan) — Panda CSS 파운데이션 위임, Codex 착수
 
 ## 현재 페이즈
 
-**redesign — Panda CSS 파운데이션 착수 예정.** 구조 세우기·Gmail/잡코리아 제거·session-refresh
-버그수정 전부 `main` 병합 완료.
+**redesign — Panda CSS 파운데이션 진행 중.** ⚠️ 이 브랜치는 완료돼도 화면 리스타일과 묶어서
+병합할 때까지 main 병합 보류 (Tailwind 제거로 기존 화면이 일시적으로 무스타일이 되기 때문 —
+`.agents/design.md`, 이 브랜치 위임 문서 참조).
 
 ## 작업 트리
 
-- holder: (없음)
-- branch: `main` — 3개 병합 반영 완료, push 완료 (`chore/agent-workflow-setup` → `fix/session-refresh` →
-  `feat/remove-gmail-jobkorea`, `artifacts/status.md` 충돌 1건 수동 정리). 로컬 브랜치 3개는 병합 확인 후 삭제.
-- base: `main` @ 6fc7687
+- holder: implement (codex) — `feat/design-system`
+- branch: `main` @ a39901c 기준 `feat/design-system` 신설 (2026-09-13)
+- base: `main` @ a39901c
 
 ## 파이프라인
 
@@ -23,13 +23,13 @@
 | agent-workflow-setup | done | – | – | – | – | ✅ |
 | Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0, should-fix 반영) | – | ✅ |
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
-| redesign: design-system | done(스켈레톤) | 진행 필요 | – | – | – | – |
+| redesign: design-system (파운데이션) | done | done(스펙) | 진행중 (Codex) | – | – | 보류(화면과 묶어서) |
 | redesign: screens | done(README 목록) | 진행 필요 | – | – | – | – |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (없음 — 3개 브랜치 병합 완료, `git push` 대기)
+- (없음 — Codex 진행 중, 완료되면 알림. **이 브랜치는 완료돼도 아직 병합 요청 안 함** — 위 경고 참조)
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -52,8 +52,10 @@
 
 ## 다음 액션
 
-- design: `artifacts/design/design-system.md` 정식 작성 → `feat/design-system` 브랜치에서 Panda 도입
-  (Pretendard 자체 호스팅 포함). 랜딩 화면 스펙은 작성 안 함.
+- implement(Codex): `feat/design-system` 진행 중 — Tailwind/shadcn 제거 + Panda 설치 + 토큰 +
+  프리미티브 3개(button/tag/card). 위임: `artifacts/handover/2026-09-13-20-21-claude-design-system-delegation.md`.
+- 완료되면: code-review → design이 화면별 `screens/<screen>.md` 스펙 작성 → implement가 같은 브랜치
+  계열에서 화면까지 적용 → 그제서야 사용자 병합 (파운데이션 단독 병합 안 함).
 - login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).
 
 ## 참고
