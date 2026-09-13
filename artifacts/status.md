@@ -1,15 +1,15 @@
 # 상태 보드
 
-- last update: 2026-09-10 (by plan) — 구조 세우기 커밋 완료, 병합 대기
+- last update: 2026-09-13 (by plan) — 시각 방향·스타일링 스택 확정, 목업 착수 예정
 
 ## 현재 페이즈
 
-**redesign — 시작 전.** 구조 세우기(`chore/agent-workflow-setup`) 병합 대기 → 시각 방향 확정 → 목업.
+**redesign — 목업 착수 직전.** 구조 세우기(`chore/agent-workflow-setup`) 병합 대기. 시각 방향 확정 완료.
 
 ## 작업 트리
 
 - holder: (없음 — 사용자 병합 대기)
-- branch: `chore/agent-workflow-setup` (3커밋, `main` 대상 클린 병합 확인)
+- branch: `chore/agent-workflow-setup` (5커밋, `main` 대상 클린 병합 확인)
 - base: `main` @ e2f979a
 
 ## 파이프라인
@@ -26,12 +26,18 @@
 ## 블로킹 / 사용자 대기
 
 - 사용자: `chore/agent-workflow-setup` 리뷰 → `git merge --no-ff` → push (새 병합 규약 첫 실행).
-- 사용자: 리디자인 시각 방향 — 무드=토스풍 확정. 추가로 레퍼런스 앱, 브랜드/primary 색 고정 여부.
-  다크모드=라이트+다크 둘 다 확정.
+
+## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
+
+- 무드: 토스/카카오풍 (알아보기 쉽고 둥근, 친근)
+- 브랜드 컬러: 짙은 초록 계열, 자연/숲 팔레트
+- 다크모드: 라이트 + 다크 둘 다
+- 스타일링: **Panda CSS 단독** (Tailwind·shadcn·Emotion 제거/미사용, Park UI 컴포넌트 소스 검토)
+- 토큰 우선 — 나중에 팔레트 통째로 교체 가능하게 semantic token으로
 
 ## 다음 액션
 
-- plan: 이 브랜치 병합 후 → 시각 방향 받으면 design 세션에서 `design` 스킬 목업 착수.
+- plan/design: `design` 스킬로 아트보드 목업(대시보드·기업분석 리포트·지원동기·캘린더·로그인) 착수.
 
 ## 참고
 
