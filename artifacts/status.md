@@ -1,12 +1,15 @@
 # 상태 보드
 
-- last update: 2026-09-14 21:47 (by codex) — e2e 스펙 갱신 + 768px 필터폼 그리드 버그 수정 완료. tsc/lint/build/test:e2e 9/9 통과.
+- last update: 2026-09-15 00:10 (by plan) — 768px 필터폼 그리드 수정 스크린샷으로 최종 확인
+  (2열 랩 + 라벨 한 줄 정상). job-listing-filters 후속 2건 전부 완료(E2E 스펙 갱신 + career_level
+  백필). 로그인·기업분석 모아보기·사이드바 접힘도 육안 확인 완료. 분석상세/지원동기 화면은
+  캡처 스크립트 네비게이션 문제로 아직 미확인(다음 라운드).
 
 ## 현재 페이즈
 
-**`feat/design-system` — screens 2차 should-fix 반영·확인 완료, job-listing-filters 후속 2건 중
-career_level 백필 완료.** ⚠️ 남은 건 e2e 스펙 갱신(공고 페이지네이션 vacuous pass) +
-screens 1차/2차 나머지 화면 상세 육안 확인(현재는 대시보드·캘린더·경험관리 위주만 봄).
+**`feat/design-system` — job-listing-filters 병합 + 리디자인 blocker/should-fix 전부 수정·확인
+완료.** ⚠️ 남은 건 분석상세/지원동기 화면 육안 확인 + 사이드바 폴딩 실제 클릭 확인뿐 — 스코프
+거의 마무리 단계, `main` 병합 후보에 근접.
 
 병합 검증(`tsc`+`build`) 완료, `test:e2e` 9/9 통과 확인됨(캘린더 작업 이후 재검증 포함).
 
