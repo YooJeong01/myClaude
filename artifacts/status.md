@@ -1,13 +1,14 @@
 # 상태 보드
 
-- last update: 2026-09-14 17:12 (by codex) — screens 2차 code-review should-fix 4건 반영 완료.
-  커밋 `3408578`. `tsc`/`lint`/`build` 통과, 브라우저 도구는 사용 가능한 브라우저가 없어 육안 확인
-  미실행.
+- last update: 2026-09-14 17:45 (by plan) — screens 2차 should-fix 4건 중 3건(max-width 복원,
+  이메일 표시 복원, 패널 배경 분리) 스크린샷으로 확인. 에러 메시지 색상은 트리거 안 해봐서 코드
+  근거만. career_level 백필 적용 완료(376건).
 
 ## 현재 페이즈
 
-**`feat/design-system` — screens 2차 code-review should-fix 4건 반영 완료.** ⚠️ 남은 건
-screens 1차/2차 나머지 화면 상세 육안 확인 + job-listing-filters 후속 2건.
+**`feat/design-system` — screens 2차 should-fix 반영·확인 완료, job-listing-filters 후속 2건 중
+career_level 백필 완료.** ⚠️ 남은 건 e2e 스펙 갱신(공고 페이지네이션 vacuous pass) +
+screens 1차/2차 나머지 화면 상세 육안 확인(현재는 대시보드·캘린더·경험관리 위주만 봄).
 
 병합 검증(`tsc`+`build`) 완료, `test:e2e` 9/9 통과 확인됨(캘린더 작업 이후 재검증 포함).
 
