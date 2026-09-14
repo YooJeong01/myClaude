@@ -303,17 +303,22 @@ function Pagination({
       aria-label="공고 목록 페이지"
       className="mt-5 flex flex-wrap items-center justify-center gap-2"
     >
-      <Button asChild disabled={currentPage <= 1} variant="secondary">
-        <Link
-          aria-disabled={currentPage <= 1}
-          href={{
-            pathname: "/dashboard",
-            query: buildPageQuery(filters, Math.max(1, currentPage - 1))
-          }}
-        >
+      {currentPage <= 1 ? (
+        <Button disabled variant="secondary">
           이전
-        </Link>
-      </Button>
+        </Button>
+      ) : (
+        <Button asChild variant="secondary">
+          <Link
+            href={{
+              pathname: "/dashboard",
+              query: buildPageQuery(filters, currentPage - 1)
+            }}
+          >
+            이전
+          </Link>
+        </Button>
+      )}
       {pages.map((page) => (
         <Button
           asChild
@@ -331,17 +336,22 @@ function Pagination({
           </Link>
         </Button>
       ))}
-      <Button asChild disabled={currentPage >= totalPages} variant="secondary">
-        <Link
-          aria-disabled={currentPage >= totalPages}
-          href={{
-            pathname: "/dashboard",
-            query: buildPageQuery(filters, Math.min(totalPages, currentPage + 1))
-          }}
-        >
+      {currentPage >= totalPages ? (
+        <Button disabled variant="secondary">
           다음
-        </Link>
-      </Button>
+        </Button>
+      ) : (
+        <Button asChild variant="secondary">
+          <Link
+            href={{
+              pathname: "/dashboard",
+              query: buildPageQuery(filters, currentPage + 1)
+            }}
+          >
+            다음
+          </Link>
+        </Button>
+      )}
     </nav>
   );
 }

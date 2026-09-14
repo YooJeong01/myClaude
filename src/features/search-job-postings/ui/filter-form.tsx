@@ -46,18 +46,16 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
     setParam(params, "employmentType", String(formData.get("employmentType") ?? ""));
     setParam(params, "careerLevel", String(formData.get("careerLevel") ?? ""));
     setParam(params, "source", String(formData.get("source") ?? ""));
+    setParam(params, "onlyClosed", String(formData.get("onlyClosed") ?? ""));
     if (formData.get("showClosed") === "on") {
       params.set("showClosed", "1");
-    }
-    if (formData.get("onlyClosed") === "on") {
-      params.set("onlyClosed", "1");
     }
     router.push(params.size ? `/dashboard?${params.toString()}` : "/dashboard");
   }
 
   return (
     <form
-      className="grid gap-3 rounded-md border bg-card p-4 md:grid-cols-[minmax(0,1fr)_10rem_10rem_10rem] lg:grid-cols-[minmax(0,1fr)_10rem_10rem_10rem_auto_auto_auto]"
+      className="grid gap-3 rounded-md border bg-card p-4 md:grid-cols-[minmax(0,1fr)_10rem_10rem_10rem] lg:grid-cols-[minmax(0,1fr)_10rem_10rem_10rem_10rem_auto_auto]"
       onSubmit={handleSubmit}
     >
       <input
@@ -101,6 +99,14 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
           </option>
         ))}
       </select>
+      <select
+        className={fieldClassName}
+        defaultValue={defaultValues.onlyClosed ? "1" : ""}
+        name="onlyClosed"
+      >
+        <option value="">전체 마감상태</option>
+        <option value="1">마감된 공고만</option>
+      </select>
       <label className="flex h-10 items-center gap-2 text-sm font-medium">
         <input
           className="size-4"
@@ -109,15 +115,6 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
           type="checkbox"
         />
         마감된 공고도 표시
-      </label>
-      <label className="flex h-10 items-center gap-2 text-sm font-medium">
-        <input
-          className="size-4"
-          defaultChecked={defaultValues.onlyClosed}
-          name="onlyClosed"
-          type="checkbox"
-        />
-        마감된 공고만
       </label>
       <Button type="submit">
         <Search aria-hidden="true" className="size-4" />
