@@ -15,6 +15,7 @@ import {
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { css } from "../../../../styled-system/css";
+import { ThemeToggle } from "./theme-toggle";
 
 const navItems = [
   { href: "/dashboard", label: "대시보드", icon: LayoutDashboard },
@@ -208,6 +209,7 @@ export function AppSidebar({ email, logoutSlot }: AppSidebarProps) {
         >
           {email}
         </span>
+        <ThemeToggle collapsed={isCollapsed} />
         <div
           className={css({
             display: "grid",

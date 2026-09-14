@@ -119,9 +119,9 @@ body {
 
 .rbc-event,
 .rbc-day-slot .rbc-background-event {
-  border: 0;
-  background: transparent;
-  color: inherit;
+  border: 0 !important;
+  background: transparent !important;
+  color: inherit !important;
   min-height: 20px;
   padding: 0;
 }
