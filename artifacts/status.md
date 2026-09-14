@@ -16,9 +16,17 @@
 
 ## 작업 트리
 
-- holder: (없음)
+- holder: codex (캘린더 iOS풍 재작업, `codex exec --approve-for-me` 백그라운드) — 다른 세션은
+  이 폴더에서 git/heavy 프로세스 하지 말 것.
 - branch: `feat/design-system` — job-listing-filters 병합 완료.
 - base: `main` @ a39901c
+
+## 참고 (2026-09-14 진행 노트)
+
+- code-review 스킬이 서브에이전트(angle별 병렬)를 여러 개 띄우는데, Claude 세션 사용량 한도에
+  걸려 대부분 실패함(리셋 11:50 KST). 이 시간대엔 code-review/Explore 등 서브에이전트 기반
+  작업은 재시도해도 또 실패할 가능성 높음 — Codex 위임(별도 프로세스, 이 한도 무관)부터 먼저
+  진행하고, code-review는 한도 리셋 후 재시도할 것.
 
 ## 파이프라인
 
