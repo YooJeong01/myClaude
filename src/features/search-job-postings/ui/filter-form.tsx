@@ -4,7 +4,12 @@ import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 
-import { EMPLOYMENT_TYPES, type EmploymentType } from "@/entities/job-posting";
+import {
+  CAREER_LEVELS,
+  EMPLOYMENT_TYPES,
+  type CareerLevel,
+  type EmploymentType
+} from "@/entities/job-posting";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { cardStyle } from "@/shared/ui/card";
@@ -24,8 +29,10 @@ type FilterFormProps = {
   defaultValues: {
     q: string;
     employmentType: EmploymentType | "";
+    careerLevel: CareerLevel | "";
     source: string;
-    onlyOpen: boolean;
+    showClosed: boolean;
+    onlyClosed: boolean;
   };
 };
 
@@ -38,9 +45,11 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
     const params = new URLSearchParams();
     setParam(params, "q", String(formData.get("q") ?? ""));
     setParam(params, "employmentType", String(formData.get("employmentType") ?? ""));
+    setParam(params, "careerLevel", String(formData.get("careerLevel") ?? ""));
     setParam(params, "source", String(formData.get("source") ?? ""));
-    if (formData.get("onlyOpen") === "on") {
-      params.set("onlyOpen", "1");
+    setParam(params, "onlyClosed", String(formData.get("onlyClosed") ?? ""));
+    if (formData.get("showClosed") === "on") {
+      params.set("showClosed", "1");
     }
     router.push(params.size ? `/dashboard?${params.toString()}` : "/dashboard");
   }
@@ -54,7 +63,7 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
           gap: 3,
           gridTemplateColumns: {
             base: "1fr",
-            md: "minmax(0, 1fr) 10rem 10rem auto auto"
+            md: "minmax(0, 1fr) 10rem 10rem 10rem 10rem auto auto"
           },
           p: 4
         })
@@ -80,6 +89,18 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
       </select>
       <select
         className={cn(inputStyle, css({ w: "full" }))}
+        defaultValue={defaultValues.careerLevel}
+        name="careerLevel"
+      >
+        <option value="">전체 경력</option>
+        {CAREER_LEVELS.map((level) => (
+          <option key={level} value={level}>
+            {level}
+          </option>
+        ))}
+      </select>
+      <select
+        className={cn(inputStyle, css({ w: "full" }))}
         defaultValue={defaultValues.source}
         name="source"
       >
@@ -88,6 +109,14 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
             {source.label}
           </option>
         ))}
+      </select>
+      <select
+        className={cn(inputStyle, css({ w: "full" }))}
+        defaultValue={defaultValues.onlyClosed ? "1" : ""}
+        name="onlyClosed"
+      >
+        <option value="">전체 마감상태</option>
+        <option value="1">마감된 공고만</option>
       </select>
       <label
         className={css({
@@ -101,11 +130,11 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
       >
         <input
           className="size-4"
-          defaultChecked={defaultValues.onlyOpen}
-          name="onlyOpen"
+          defaultChecked={defaultValues.showClosed}
+          name="showClosed"
           type="checkbox"
         />
-        마감 전
+        마감된 공고도 표시
       </label>
       <Button type="submit">
         <Search aria-hidden="true" className="size-4" />

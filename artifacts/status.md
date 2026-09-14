@@ -1,35 +1,22 @@
 # 상태 보드
 
-- last update: 2026-09-14 08:35 (by plan) — 신규 트랙(공고 목록 필터·페이지네이션) 계획 완료,
-  Codex 위임 직전. `feat/design-system`은 그대로 커밋된 채 보류 상태 유지(별개 브랜치).
-
-**이 세션은 여기서 중단.** 캘린더 iOS풍 재작업(`artifacts/design/screens/calendar.md` "iOS 기본
-캘린더풍 v2", 위임: `artifacts/handover/2026-09-14-08-10-claude-calendar-ios-delegation.md`)은
-**사용자가 다른 세션에서 진행시킴 — 이 세션은 dispatch 안 함.** 전체 경위·결정·충돌 해결 과정은
-`artifacts/handover/2026-09-14-08-04-claude-multiagent-redesign-handover.md` 참고 (다음 세션은
-이 문서부터 읽을 것).
+- last update: 2026-09-14 10:40 (by plan) — `feat/job-listing-filters`를 `feat/design-system`으로
+  병합 완료(사용자 지시). 충돌 3건(`status.md`, `filter-form.tsx`, `dashboard/index.tsx`) 수동 해결 —
+  D-day 배지는 원래 계획대로 `Tag` 컴포넌트로 교체, 새 select/체크박스는 Panda `css()` 스타일로 전환.
+  `main` 병합은 아직 안 함(design-system 자체가 아직 review/qa 미완).
 
 ## 현재 페이즈
 
-**두 트랙 병행 진행 중 (서로 다른 브랜치):**
-1. redesign(`feat/design-system`) — 전체 화면 완료 상태에서 사이드바 버그 2차 수정 완료 + 캘린더
-   iOS풍 재작업 스펙 준비 중. ⚠️ 병합 보류 — 전부 끝나야 병합 후보.
-2. job-listing-filters(`feat/job-listing-filters`, 신규) — 대시보드 공고 목록 페이지네이션·마감
-   필터 반전·D-day 배지·신입/경력 필터. plan 완료, Codex 위임 직전.
+**`feat/design-system` 브랜치에 리디자인 + job-listing-filters 기능이 합쳐진 상태.**
+⚠️ 이 브랜치는 여전히 병합 보류 — 아래 미완료 항목 다 끝나야 `main` 병합 후보.
 
-**⚠️ 파일 겹침 주의**: 두 브랜치 모두 `src/views/dashboard/index.tsx`,
-`src/features/search-job-postings/ui/filter-form.tsx`를 건드린다. 어느 쪽이든 먼저 `main`에 병합될
-때 나머지 한쪽은 리베이스/충돌 해결이 필요하다 — 병합 전 plan이 충돌 사전점검할 것.
+병합 직후 확인 필요: `pnpm exec tsc --noEmit` + `pnpm build`로 병합 결과 검증할 것(아직 안 함).
 
 ## 작업 트리
 
-- holder: codex (`feat/job-listing-filters`, `codex exec --approve-for-me` 백그라운드) — 작업
-  폴더가 이 브랜치로 체크아웃되어 있는 동안 다른 세션은 이 폴더에서 git 작업(체크아웃/커밋/heavy
-  프로세스)을 하지 말 것. `feat/design-system`을 이어서 작업하려는 세션은 holder가 비워진 뒤
-  `git checkout feat/design-system`으로 복귀(커밋된 클린 상태라 데이터 손실 없음).
-- branch: `main` @ a39901c 기준 새 브랜치 `feat/job-listing-filters` (2026-09-14)
+- holder: (없음)
+- branch: `feat/design-system` — job-listing-filters 병합 완료.
 - base: `main` @ a39901c
-- 위임 문서: `artifacts/handover/2026-09-14-08-35-claude-job-listing-filters-delegation.md`
 
 ## 파이프라인
 
@@ -46,14 +33,19 @@
 | redesign: 사이드바 폴딩 버그 1차(동적 css() 값) | done | – | done (`13ebd29`) | 대기 | 대기(육안) | 보류 |
 | redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | done (`25f4052`) | 대기 | 대기(육안) | 보류 |
 | redesign: 캘린더 iOS풍 재작업 | – | 스펙 작성 중 | – | – | – | 보류 |
-| job-listing-filters (페이지네이션·마감필터·D-day·신입경력) | done | – | 위임 직전(codex) | – | – | – |
+| job-listing-filters (페이지네이션·마감필터·D-day·신입경력) | done | – | done | 완료(blocker 0, should-fix 4건 반영) | 완료(blocker 0) | `feat/design-system`으로 병합 완료 |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (사이드바 관련: 없음 — 사이드바 코드 수정 완료. **아직 병합 요청 안 함** — 위 경고 참조)
-- (job-listing-filters: 없음 — 사용자 확인 후 `pnpm dev` 종료, `codex exec` 디스패치함. 아래
-  "작업 트리" 참고)
+- (사이드바 관련: 없음 — 사이드바 코드 수정 완료. **아직 병합 요청 안 함**)
+- job-listing-filters 관련 후속(병합 자체를 막지는 않음, `main` 병합 전 정리 권장):
+  1. `e2e/day5-report.spec.ts`의 "공고 검색·페이지네이션" 시나리오가 옛 "더 보기"/`cursor` UI
+     기준이라 vacuous pass 상태 — implement에게 새 스펙 작성 위임 필요.
+  2. `server/jobs/backfill-career-level.ts` dry-run/apply 미실행 — 기존 1574건 `career_level`
+     비어있을 가능성 높음.
+- **`feat/design-system` 자체가 아직 `main` 병합 후보 아님** — screens 2차 review 대기, 1차/2차
+  qa 육안 확인 대기, 캘린더 iOS풍 작업 미착수.
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -76,20 +68,24 @@
 
 ## 다음 액션
 
+- **병합 직후 검증(우선)**: `pnpm exec tsc --noEmit` + `pnpm build`로 job-listing-filters 병합 후
+  회귀 없는지 확인. 특히 `src/views/dashboard/index.tsx`(Pagination + D-day Tag 배지),
+  `src/features/search-job-postings/ui/filter-form.tsx`(select 2개 추가) 두 파일은 이번에 수동으로
+  충돌 해결했으니 직접 화면도 한번 띄워서 확인 권장.
 - plan/code-review/qa: 2차 라운드(T6~T10) + 사이드바 수정 결과 확인. tsc/lint는 Codex 기준 통과.
-  실제 브라우저 육안 확인 필요(이번엔 특히 사이드바 폴딩 직접 눌러서 확인). Codex 환경에서는 Next dev
-  `.next/trace` EPERM으로 실측 미검증. 완료:
+  실제 브라우저 육안 확인 필요(사이드바 폴딩 직접 눌러서 확인). 완료:
   `artifacts/handover/2026-09-14-07-26-codex-sidebar-dynamic-css-fix-done.md`,
   `artifacts/handover/2026-09-14-08-15-codex-sidebar-toggle-fix-done.md`.
-- 전체 완료되면: qa 라운드(E2E 회귀 + 반응형/다크) → 사용자에게 최종 병합 요청.
-- 사용자 기상 후: 자동 로그인 방식(세션연장/체크박스/구글OAuth) 확인 필요 — login.md는 이미 작성됐지만
-  OAuth 버튼은 그 결정 이후 별도 추가.
+- 전체 완료되면: qa 라운드(E2E 회귀 + 반응형/다크) → 사용자에게 최종 `main` 병합 요청.
+- 사용자 기상 후: 자동 로그인 방식(세션연장/체크박스/구글OAuth) 확인 필요.
 
 ## 참고
 
+- job-listing-filters 마이그레이션 2건(`deadline` timestamptz, `career_level` 추가)은 사용자가
+  Supabase에 적용 완료 (2026-09-14).
 - ~~미실행 마이그레이션~~ `supabase/migrations/20260909075000_dedup_normalization.sql` — 사용자가
   2026-09-14 실행 완료.
 - 호스트 RAM ~1GB — `codex exec`·`pnpm build` OOM 빈번. heavy 프로세스 1개씩.
-- **교훈**: `status.md`가 브랜치마다 갈라져 있으면 병합 시 거의 항상 충돌한다. 이번에 실제로 발생
-  (`feat/remove-gmail-jobkorea` 병합 시). 병합 직전엔 항상 이 파일을 수동으로 재작성해서 정리할 것 —
-  자동 병합에 맡기지 말 것.
+- **교훈**: `status.md`가 브랜치마다 갈라져 있으면 병합 시 거의 항상 충돌한다. 이번에도 실제로
+  발생(job-listing-filters → design-system 병합). 병합 직전엔 항상 이 파일을 수동으로 재작성해서
+  정리할 것 — 자동 병합에 맡기지 말 것.

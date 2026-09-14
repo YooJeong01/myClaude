@@ -4,7 +4,10 @@ import { listRecentAnalyses } from "@/entities/company-analysis";
 import { listExperiences } from "@/entities/experience";
 import {
   EMPLOYMENT_TYPES,
+  CAREER_LEVELS,
+  getDdayBadge,
   listJobPostings,
+  type CareerLevel,
   type EmploymentType,
   type JobPosting
 } from "@/entities/job-posting";
@@ -28,9 +31,11 @@ type DashboardViewProps = {
   searchParams?: {
     q?: string;
     employmentType?: string;
+    careerLevel?: string;
     source?: string;
-    onlyOpen?: string;
-    cursor?: string;
+    showClosed?: string;
+    onlyClosed?: string;
+    page?: string;
   };
 };
 
@@ -41,10 +46,12 @@ export async function DashboardView({ searchParams }: DashboardViewProps) {
     listJobPostings(supabase, {
       q: filters.q,
       employmentType: filters.employmentType || undefined,
+      careerLevel: filters.careerLevel || undefined,
       source: filters.source || undefined,
-      onlyOpen: filters.onlyOpen,
-      cursor: filters.cursor,
-      limit: 20
+      showClosed: filters.showClosed,
+      onlyClosed: filters.onlyClosed,
+      page: filters.page,
+      limit: 10
     }),
     listExperiences(supabase),
     listRecentAnalyses(supabase),
@@ -186,20 +193,11 @@ export async function DashboardView({ searchParams }: DashboardViewProps) {
               아직 저장된 공고가 없습니다.
             </Card>
           )}
-          {postingResult.nextCursor ? (
-            <div className={css({ display: "flex", justifyContent: "center", mt: 5 })}>
-              <Button asChild variant="outline">
-                <Link
-                  href={{
-                    pathname: "/dashboard",
-                    query: buildNextQuery(filters, postingResult.nextCursor)
-                  }}
-                >
-                  더 보기
-                </Link>
-              </Button>
-            </div>
-          ) : null}
+          <Pagination
+            currentPage={postingResult.page}
+            filters={filters}
+            totalPages={postingResult.totalPages}
+          />
         </section>
     </div>
   );
@@ -214,6 +212,8 @@ function JobPostingListItem({
   latestAnalysis?: { id: string; createdAt: string };
   posting: JobPosting;
 }) {
+  const dday = getDdayBadge(posting.deadline);
+
   return (
     <article className={css({ p: 4 })}>
       <div
@@ -229,17 +229,29 @@ function JobPostingListItem({
           <p className={css({ color: "textMuted", textStyle: "sm" })}>
             {posting.companyNameRaw ?? "회사명 미입력"}
           </p>
-          <h3
+          <div
             className={css({
-              mt: 1,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              textStyle: "lg",
-              whiteSpace: "nowrap"
+              alignItems: "center",
+              display: "flex",
+              gap: 2,
+              minW: 0,
+              mt: 1
             })}
           >
-            {posting.role}
-          </h3>
+            <Tag size="sm" variant={getDdayBadgeVariant(dday.kind)}>
+              {dday.label}
+            </Tag>
+            <h3
+              className={css({
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                textStyle: "lg",
+                whiteSpace: "nowrap"
+              })}
+            >
+              {posting.role}
+            </h3>
+          </div>
         </div>
         <Tag className={css({ w: "fit-content" })} size="sm" variant="gray">
           {posting.employmentType}
@@ -302,9 +314,11 @@ function formatDate(value: string) {
 type NormalizedDashboardFilters = {
   q: string;
   employmentType: EmploymentType | "";
+  careerLevel: CareerLevel | "";
   source: string;
-  onlyOpen: boolean;
-  cursor?: string;
+  showClosed: boolean;
+  onlyClosed: boolean;
+  page: number;
 };
 
 function normalizeFilters(
@@ -315,25 +329,128 @@ function normalizeFilters(
   )
     ? (searchParams?.employmentType as EmploymentType)
     : "";
+  const careerLevel = CAREER_LEVELS.includes(
+    searchParams?.careerLevel as CareerLevel
+  )
+    ? (searchParams?.careerLevel as CareerLevel)
+    : "";
+  const page = Number.parseInt(searchParams?.page ?? "1", 10);
 
   return {
     q: searchParams?.q?.trim() ?? "",
     employmentType,
+    careerLevel,
     source: searchParams?.source?.trim() ?? "",
-    onlyOpen: searchParams?.onlyOpen === "1",
-    cursor: searchParams?.cursor
+    showClosed: searchParams?.showClosed === "1",
+    onlyClosed: searchParams?.onlyClosed === "1",
+    page: Number.isFinite(page) && page > 0 ? page : 1
   };
 }
 
-function buildNextQuery(
+function Pagination({
+  currentPage,
+  filters,
+  totalPages
+}: {
+  currentPage: number;
+  filters: NormalizedDashboardFilters;
+  totalPages: number;
+}) {
+  if (totalPages <= 1) return null;
+
+  const pages = getPageWindow(currentPage, totalPages);
+
+  return (
+    <nav
+      aria-label="공고 목록 페이지"
+      className={css({
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 2,
+        justifyContent: "center",
+        mt: 5
+      })}
+    >
+      {currentPage <= 1 ? (
+        <Button disabled variant="secondary">
+          이전
+        </Button>
+      ) : (
+        <Button asChild variant="secondary">
+          <Link
+            href={{
+              pathname: "/dashboard",
+              query: buildPageQuery(filters, currentPage - 1)
+            }}
+          >
+            이전
+          </Link>
+        </Button>
+      )}
+      {pages.map((page) => (
+        <Button
+          asChild
+          key={page}
+          variant={page === currentPage ? "default" : "secondary"}
+        >
+          <Link
+            aria-current={page === currentPage ? "page" : undefined}
+            href={{
+              pathname: "/dashboard",
+              query: buildPageQuery(filters, page)
+            }}
+          >
+            {page}
+          </Link>
+        </Button>
+      ))}
+      {currentPage >= totalPages ? (
+        <Button disabled variant="secondary">
+          다음
+        </Button>
+      ) : (
+        <Button asChild variant="secondary">
+          <Link
+            href={{
+              pathname: "/dashboard",
+              query: buildPageQuery(filters, currentPage + 1)
+            }}
+          >
+            다음
+          </Link>
+        </Button>
+      )}
+    </nav>
+  );
+}
+
+function buildPageQuery(
   filters: ReturnType<typeof normalizeFilters>,
-  cursor: string
+  page: number
 ) {
   return {
     ...(filters.q ? { q: filters.q } : {}),
     ...(filters.employmentType ? { employmentType: filters.employmentType } : {}),
+    ...(filters.careerLevel ? { careerLevel: filters.careerLevel } : {}),
     ...(filters.source ? { source: filters.source } : {}),
-    ...(filters.onlyOpen ? { onlyOpen: "1" } : {}),
-    cursor
+    ...(filters.showClosed ? { showClosed: "1" } : {}),
+    ...(filters.onlyClosed ? { onlyClosed: "1" } : {}),
+    ...(page > 1 ? { page: String(page) } : {})
   };
+}
+
+function getPageWindow(current: number, total: number, size = 5): number[] {
+  let start = Math.max(1, current - Math.floor(size / 2));
+  const end = Math.min(total, start + size - 1);
+  start = Math.max(1, end - size + 1);
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+function getDdayBadgeVariant(
+  kind: ReturnType<typeof getDdayBadge>["kind"]
+): "gray" | "blue" | "yellow" | "red" {
+  if (kind === "closed") return "red";
+  if (kind === "hours") return "yellow";
+  if (kind === "dday") return "blue";
+  return "gray";
 }

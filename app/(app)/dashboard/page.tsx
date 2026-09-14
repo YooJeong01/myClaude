@@ -4,9 +4,11 @@ type DashboardPageProps = {
   searchParams?: Promise<{
     q?: string;
     employmentType?: string;
+    careerLevel?: string;
     source?: string;
-    onlyOpen?: string;
-    cursor?: string;
+    showClosed?: string;
+    onlyClosed?: string;
+    page?: string;
   }>;
 };
 

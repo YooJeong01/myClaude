@@ -90,6 +90,7 @@ export interface Database {
           role: string;
           role_norm: string;
           employment_type: string;
+          career_level: string | null;
           posted_at: string | null;
           deadline: string | null;
           source: string;
@@ -105,6 +106,7 @@ export interface Database {
           company_name_raw?: string | null;
           role: string;
           employment_type?: string;
+          career_level?: string | null;
           posted_at?: string | null;
           deadline?: string | null;
           source?: string;
@@ -120,6 +122,7 @@ export interface Database {
           company_name_raw?: string | null;
           role?: string;
           employment_type?: string;
+          career_level?: string | null;
           posted_at?: string | null;
           deadline?: string | null;
           source?: string;
