@@ -47,6 +47,7 @@ export function CalendarView({ savedPostings }: CalendarViewProps) {
           endAccessor="end"
           events={events}
           localizer={localizer}
+          components={{ event: DotEvent }}
           onSelectEvent={(event: SavedCalendarEvent) => setSelected(event)}
           startAccessor="start"
           views={[Views.MONTH]}
@@ -55,6 +56,22 @@ export function CalendarView({ savedPostings }: CalendarViewProps) {
 
       {selected ? <SelectedPostingPanel event={selected} /> : null}
     </div>
+  );
+}
+
+function DotEvent({ event }: { event: SavedCalendarEvent; title?: string }) {
+  return (
+    <span
+      aria-label={event.title}
+      className={css({
+        bg: "tagBlue.text",
+        borderRadius: "pill",
+        display: "block",
+        h: "7px",
+        w: "7px"
+      })}
+      title={event.title}
+    />
   );
 }
 
