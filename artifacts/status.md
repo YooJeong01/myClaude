@@ -1,9 +1,11 @@
 # 상태 보드
 
-- last update: 2026-09-14 10:40 (by plan) — `feat/job-listing-filters`를 `feat/design-system`으로
-  병합 완료(사용자 지시). 충돌 3건(`status.md`, `filter-form.tsx`, `dashboard/index.tsx`) 수동 해결 —
-  D-day 배지는 원래 계획대로 `Tag` 컴포넌트로 교체, 새 select/체크박스는 Panda `css()` 스타일로 전환.
-  `main` 병합은 아직 안 함(design-system 자체가 아직 review/qa 미완).
+- last update: 2026-09-14 10:45 (by plan) — `feat/job-listing-filters`를 `feat/design-system`으로
+  병합 완료(`792b2c4`, 사용자 지시). 충돌 3건(`status.md`, `filter-form.tsx`, `dashboard/index.tsx`)
+  수동 해결 — D-day 배지는 원래 계획대로 `Tag` 컴포넌트로 교체, 새 select/체크박스는 Panda `css()`
+  스타일로 전환. 병합 후 `pnpm install`(Panda 의존성 누락 발견·설치) + tsc + build 전부 통과.
+  로컬 브랜치 `feat/job-listing-filters` 삭제(fully-merged 확인 후). `main` 병합은 아직 안 함
+  (design-system 자체가 아직 review/qa 미완).
 
 ## 현재 페이즈
 
