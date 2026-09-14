@@ -1,8 +1,6 @@
 # 상태 보드
 
-- last update: 2026-09-14 17:45 (by plan) — screens 2차 should-fix 4건 중 3건(max-width 복원,
-  이메일 표시 복원, 패널 배경 분리) 스크린샷으로 확인. 에러 메시지 색상은 트리거 안 해봐서 코드
-  근거만. career_level 백필 적용 완료(376건).
+- last update: 2026-09-14 21:47 (by codex) — e2e 스펙 갱신 + 768px 필터폼 그리드 버그 수정 완료. tsc/lint/build/test:e2e 9/9 통과.
 
 ## 현재 페이즈
 
@@ -36,7 +34,7 @@ screens 1차/2차 나머지 화면 상세 육안 확인(현재는 대시보드·
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
 | redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 완료(diff 직접 확인) | – | 보류(화면과 묶어서) |
 | redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | done(should-fix 4건 반영, `c7a831d`) | 수정 전 리뷰 완료(blocker 0, should-fix 4) | 대기(육안) | 보류 |
-| redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`, should-fix `3408578`) | 완료(blocker 0, should-fix 4 반영) | 대기(육안) | 보류 |
+| redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`, should-fix `3408578`, 768px 필터폼 fix `eaf6dc5`, E2E spec `b00a800`) | 완료(blocker 0, should-fix 4 반영) | 대기(육안) | 보류 |
 | redesign: 사이드바 폴딩 버그 1차(동적 css() 값) | done | – | done (`13ebd29`) | 대기 | 대기(육안) | 보류 |
 | redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | done (`25f4052`) | 대기 | 대기(육안) | 보류 |
 | redesign: 캘린더 iOS풍 재작업 | done | done | done (`7ad12dc`, blocker fix `0cea55a`) | 대기 | 대기(육안 재확인) | 보류 |
@@ -47,8 +45,8 @@ screens 1차/2차 나머지 화면 상세 육안 확인(현재는 대시보드·
 
 - (사이드바 관련: 없음 — 사이드바 코드 수정 + 다크모드 토글 구현 완료. **아직 병합 요청 안 함**)
 - job-listing-filters 관련 후속(병합 자체를 막지는 않음, `main` 병합 전 정리 권장):
-  1. `e2e/day5-report.spec.ts`의 "공고 검색·페이지네이션" 시나리오가 옛 "더 보기"/`cursor` UI
-     기준이라 vacuous pass 상태 — implement에게 새 스펙 작성 위임 필요.
+  1. ~~`e2e/day5-report.spec.ts`의 "공고 검색·페이지네이션" 시나리오가 옛 "더 보기"/`cursor` UI
+     기준이라 vacuous pass 상태~~ — 숫자 페이지네이션 검증으로 갱신 완료(`b00a800`).
   2. `server/jobs/backfill-career-level.ts` dry-run/apply 미실행 — 기존 1574건 `career_level`
      비어있을 가능성 높음.
 - **`feat/design-system` 자체가 아직 `main` 병합 후보 아님** — screens 2차 review 대기, 1차/2차
@@ -75,10 +73,8 @@ screens 1차/2차 나머지 화면 상세 육안 확인(현재는 대시보드·
 
 ## 다음 액션
 
-- **병합 직후 검증(우선)**: `pnpm exec tsc --noEmit` + `pnpm build`로 job-listing-filters 병합 후
-  회귀 없는지 확인. 특히 `src/views/dashboard/index.tsx`(Pagination + D-day Tag 배지),
-  `src/features/search-job-postings/ui/filter-form.tsx`(select 2개 추가) 두 파일은 이번에 수동으로
-  충돌 해결했으니 직접 화면도 한번 띄워서 확인 권장.
+- **완료된 검증**: `pnpm exec tsc --noEmit` + `pnpm lint` + `pnpm build` + `pnpm test:e2e` 9/9 통과.
+  특히 `e2e/day5-report.spec.ts` 7번은 `2페이지 이동=true`, `1페이지 이전버튼 비활성=true`로 확인됨.
 - plan/code-review/qa: 2차 라운드(T6~T10) should-fix 4건 반영 완료(`3408578`) + 사이드바/캘린더/다크모드 수정 결과 확인.
   tsc/lint/build는 Codex 기준 통과. 실제 브라우저 육안 확인 필요(사이드바 폴딩 직접 눌러서 확인,
   캘린더 iOS풍 시각 확인, 테마 토글 persistence 확인). 완료:
