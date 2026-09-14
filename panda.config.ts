@@ -100,6 +100,7 @@ export default defineConfig({
           text: { value: { base: "{colors.gray800}", _dark: "{colors.gray200}" } },
           textMuted: { value: { base: "{colors.gray600}", _dark: "{colors.gray495}" } },
           textFaint: { value: { base: "{colors.gray500}", _dark: "{colors.gray650}" } },
+          dangerText: { value: { base: "#C0392B", _dark: "#FF6B6B" } },
           primary: { value: { base: "{colors.black}", _dark: "{colors.gray200}" } },
           primaryText: { value: { base: "{colors.white}", _dark: "{colors.black}" } },
           activeBg: { value: { base: "{colors.gray150}", _dark: "{colors.gray875}" } },

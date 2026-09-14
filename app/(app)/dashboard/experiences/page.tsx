@@ -23,7 +23,16 @@ export default async function ExperiencesPage() {
   const experiences = await listExperiences(supabase);
 
   return (
-    <div className={css({ display: "flex", flexDirection: "column", gap: 6 })}>
+    <div
+      className={css({
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+        maxW: "1024px",
+        mx: "auto",
+        w: "full"
+      })}
+    >
         <header
           className={css({
             borderBottomWidth: "1px",
@@ -34,6 +43,9 @@ export default async function ExperiencesPage() {
           <h1 className={css({ textStyle: "3xl" })}>
             내 경험
           </h1>
+          <p className={css({ color: "textMuted", mt: 2, textStyle: "sm" })}>
+            {user.email ?? "로그인 사용자"}
+          </p>
         </header>
 
         <section

@@ -122,7 +122,7 @@ export function ExperienceForm({
           {message ? (
             <span
               className={css({
-                color: message.type === "error" ? "tagRed.text" : "textMuted"
+                color: message.type === "error" ? "dangerText" : "textMuted"
               })}
             >
               {message.text}

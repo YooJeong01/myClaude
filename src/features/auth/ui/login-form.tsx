@@ -88,7 +88,7 @@ export function LoginForm({ requestAction, errorMessage }: LoginFormProps) {
           {message ? (
             <span
               className={css({
-                color: message.type === "error" ? "tagRed.text" : "textMuted"
+                color: message.type === "error" ? "dangerText" : "textMuted"
               })}
             >
               {message.text}

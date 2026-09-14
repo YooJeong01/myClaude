@@ -60,7 +60,7 @@ export function ExperienceList({
       <p
         aria-live="polite"
         className={css({
-          color: "tagRed.text",
+          color: "dangerText",
           minH: 5,
           textStyle: "sm"
         })}

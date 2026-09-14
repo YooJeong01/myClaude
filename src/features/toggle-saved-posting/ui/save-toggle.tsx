@@ -57,7 +57,7 @@ export function SaveToggle({
       </Button>
       {error ? (
         <p
-          className={css({ color: "tagRed.text", mt: 2, textStyle: "sm" })}
+          className={css({ color: "dangerText", mt: 2, textStyle: "sm" })}
           role="alert"
         >
           {error}

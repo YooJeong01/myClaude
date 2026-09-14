@@ -137,7 +137,7 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
       className={css({ display: "grid", gap: 5 })}
       onSubmit={handleSubmit}
     >
-      <Card className={css({ bg: "surface", p: 4 })}>
+      <Card className={css({ p: 4 })} variant="surface">
         <div
           className={css({
             display: "flex",
@@ -263,7 +263,7 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
           className={css({ color: "textMuted", minH: 5, textStyle: "sm" })}
         >
           {state.error ? (
-            <span className={css({ color: "tagRed.text" })}>{state.error}</span>
+            <span className={css({ color: "dangerText" })}>{state.error}</span>
           ) : (
             state.success
           )}

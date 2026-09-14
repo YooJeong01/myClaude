@@ -44,7 +44,16 @@ export default async function AnalysesPage({
   });
 
   return (
-    <div className={css({ display: "flex", flexDirection: "column", gap: 6 })}>
+    <div
+      className={css({
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+        maxW: "1152px",
+        mx: "auto",
+        w: "full"
+      })}
+    >
         <header
           className={css({
             alignItems: { md: "flex-start" },

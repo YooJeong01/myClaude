@@ -3,23 +3,28 @@ import { css } from "../../../styled-system/css";
 import { cn } from "@/shared/lib/utils";
 
 const cardStyle = css({
-  bg: "bgElevated",
   borderColor: "border",
   borderRadius: "card",
   borderWidth: "1px",
   color: "text"
 });
 
+const cardBgStyles = {
+  elevated: css({ bg: "bgElevated" }),
+  surface: css({ bg: "surface" })
+};
+
 export type CardProps = React.HTMLAttributes<HTMLElement> & {
   as?: "div" | "aside";
+  variant?: keyof typeof cardBgStyles;
 };
 
 const Card = React.forwardRef<HTMLElement, CardProps>(
-  ({ as, className, ...props }, ref) => {
+  ({ as, className, variant = "elevated", ...props }, ref) => {
     const Comp: React.ElementType = as ?? "div";
 
     return React.createElement(Comp, {
-      className: cn(cardStyle, className),
+      className: cn(cardStyle, cardBgStyles[variant], className),
       ref,
       ...props
     });
@@ -27,4 +32,6 @@ const Card = React.forwardRef<HTMLElement, CardProps>(
 );
 Card.displayName = "Card";
 
-export { Card, cardStyle };
+const elevatedCardStyle = cn(cardStyle, cardBgStyles.elevated);
+
+export { Card, elevatedCardStyle as cardStyle };
