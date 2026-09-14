@@ -1,15 +1,15 @@
 # 상태 보드
 
-- last update: 2026-09-14 16:20 (by plan) — 육안 QA 진행, blocker 2건 발견:
-  (1) 캘린더 이벤트가 점 대신 파란 막대로 렌더(RBC 기본 CSS가 오버라이드를 이김),
-  (2) **다크모드가 앱 전체에서 전혀 작동 안 함**(`.dark` 클래스를 붙이는 로직이 어디에도 없음).
-  상세: `artifacts/test-reports/redesign-visual-qa.md`. 다크모드는 활성화 방식(시스템 자동감지 /
-  수동 토글 / 둘 다) 사용자 결정 필요 — 결정 전까지 fix 위임 보류.
+- last update: 2026-09-14 16:48 (by codex) — 육안 QA blocker 2건 수정 커밋 완료:
+  (1) 캘린더 이벤트 RBC 기본 CSS 경합 수정,
+  (2) 다크모드 시스템 자동 감지 + 수동 토글 구현.
+  커밋: `0cea55a`. 완료 보고:
+  `artifacts/handover/2026-09-14-16-48-codex-visual-qa-fixes-done.md`.
 
 ## 현재 페이즈
 
-**`feat/design-system` — job-listing-filters 병합 + 캘린더 iOS풍 작업 완료, 육안 QA에서 blocker
-2건 발견.** ⚠️ 이 브랜치는 여전히 병합 보류 — blocker 수정 + 남은 항목 다 끝나야 `main` 병합 후보.
+**`feat/design-system` — job-listing-filters 병합 + 캘린더 iOS풍 작업 + 육안 QA blocker 수정 완료.**
+⚠️ 이 브랜치는 여전히 병합 보류 — plan/qa 브라우저 재확인 + 남은 review/qa 항목 이후 `main` 병합 후보.
 
 병합 검증(`tsc`+`build`) 완료, `test:e2e` 9/9 통과 확인됨(캘린더 작업 이후 재검증 포함).
 
@@ -40,13 +40,13 @@
 | redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`) | 대기 | 대기(육안) | 보류 |
 | redesign: 사이드바 폴딩 버그 1차(동적 css() 값) | done | – | done (`13ebd29`) | 대기 | 대기(육안) | 보류 |
 | redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | done (`25f4052`) | 대기 | 대기(육안) | 보류 |
-| redesign: 캘린더 iOS풍 재작업 | done | done | done (`7ad12dc`) | 대기 | 대기(육안) | 보류 |
+| redesign: 캘린더 iOS풍 재작업 | done | done | done (`7ad12dc`, blocker fix `0cea55a`) | 대기 | 대기(육안 재확인) | 보류 |
 | job-listing-filters (페이지네이션·마감필터·D-day·신입경력) | done | – | done | 완료(blocker 0, should-fix 4건 반영) | 완료(blocker 0) | `feat/design-system`으로 병합 완료 |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (사이드바 관련: 없음 — 사이드바 코드 수정 완료. **아직 병합 요청 안 함**)
+- (사이드바 관련: 없음 — 사이드바 코드 수정 + 다크모드 토글 구현 완료. **아직 병합 요청 안 함**)
 - job-listing-filters 관련 후속(병합 자체를 막지는 않음, `main` 병합 전 정리 권장):
   1. `e2e/day5-report.spec.ts`의 "공고 검색·페이지네이션" 시나리오가 옛 "더 보기"/`cursor` UI
      기준이라 vacuous pass 상태 — implement에게 새 스펙 작성 위임 필요.
@@ -80,11 +80,13 @@
   회귀 없는지 확인. 특히 `src/views/dashboard/index.tsx`(Pagination + D-day Tag 배지),
   `src/features/search-job-postings/ui/filter-form.tsx`(select 2개 추가) 두 파일은 이번에 수동으로
   충돌 해결했으니 직접 화면도 한번 띄워서 확인 권장.
-- plan/code-review/qa: 2차 라운드(T6~T10) + 사이드바/캘린더 수정 결과 확인. tsc/lint는 Codex 기준 통과.
-  실제 브라우저 육안 확인 필요(사이드바 폴딩 직접 눌러서 확인, 캘린더 iOS풍 시각 확인). 완료:
+- plan/code-review/qa: 2차 라운드(T6~T10) + 사이드바/캘린더/다크모드 수정 결과 확인.
+  tsc/lint/build는 Codex 기준 통과. 실제 브라우저 육안 확인 필요(사이드바 폴딩 직접 눌러서 확인,
+  캘린더 iOS풍 시각 확인, 테마 토글 persistence 확인). 완료:
   `artifacts/handover/2026-09-14-07-26-codex-sidebar-dynamic-css-fix-done.md`,
   `artifacts/handover/2026-09-14-08-15-codex-sidebar-toggle-fix-done.md`,
-  `artifacts/handover/2026-09-14-15-04-codex-calendar-ios-done.md`.
+  `artifacts/handover/2026-09-14-15-04-codex-calendar-ios-done.md`,
+  `artifacts/handover/2026-09-14-16-48-codex-visual-qa-fixes-done.md`.
 - 전체 완료되면: qa 라운드(E2E 회귀 + 반응형/다크) → 사용자에게 최종 `main` 병합 요청.
 - 사용자 기상 후: 자동 로그인 방식(세션연장/체크박스/구글OAuth) 확인 필요.
 
