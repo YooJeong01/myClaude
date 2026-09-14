@@ -1,15 +1,17 @@
 # 상태 보드
 
-- last update: 2026-09-14 15:04 (by codex) — 캘린더 iOS풍 재작업 완료(`7ad12dc`).
-  RBC 월간 그리드/요일 헤더/오늘 배지/점 이벤트 적용, `pnpm exec tsc --noEmit` + `pnpm lint`
-  통과. 브라우저 육안 확인은 미실행(위임 문서의 dev trace EPERM 제약), 사용자가 실제 화면 재확인 필요.
+- last update: 2026-09-14 16:20 (by plan) — 육안 QA 진행, blocker 2건 발견:
+  (1) 캘린더 이벤트가 점 대신 파란 막대로 렌더(RBC 기본 CSS가 오버라이드를 이김),
+  (2) **다크모드가 앱 전체에서 전혀 작동 안 함**(`.dark` 클래스를 붙이는 로직이 어디에도 없음).
+  상세: `artifacts/test-reports/redesign-visual-qa.md`. 다크모드는 활성화 방식(시스템 자동감지 /
+  수동 토글 / 둘 다) 사용자 결정 필요 — 결정 전까지 fix 위임 보류.
 
 ## 현재 페이즈
 
-**`feat/design-system` 브랜치에 리디자인 + job-listing-filters 기능이 합쳐진 상태.**
-⚠️ 이 브랜치는 여전히 병합 보류 — 아래 미완료 항목 다 끝나야 `main` 병합 후보.
+**`feat/design-system` — job-listing-filters 병합 + 캘린더 iOS풍 작업 완료, 육안 QA에서 blocker
+2건 발견.** ⚠️ 이 브랜치는 여전히 병합 보류 — blocker 수정 + 남은 항목 다 끝나야 `main` 병합 후보.
 
-병합 직후 확인 필요: `pnpm exec tsc --noEmit` + `pnpm build`로 병합 결과 검증할 것(아직 안 함).
+병합 검증(`tsc`+`build`) 완료, `test:e2e` 9/9 통과 확인됨(캘린더 작업 이후 재검증 포함).
 
 ## 작업 트리
 
