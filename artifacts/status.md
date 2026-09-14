@@ -1,14 +1,13 @@
 # 상태 보드
 
-- last update: 2026-09-14 17:05 (by plan) — 육안 QA blocker 2건, Playwright 스크린샷으로
-  **실제 해결 확인 완료**: (1) 캘린더 이벤트가 파란 막대 대신 작은 점으로 정상 렌더(다크모드에서도
-  확인), (2) 다크모드 라이트/다크/시스템 토글이 실제로 배경·텍스트·카드 전부 전환. 커밋 `0cea55a`.
+- last update: 2026-09-14 17:12 (by codex) — screens 2차 code-review should-fix 4건 반영 완료.
+  커밋 `3408578`. `tsc`/`lint`/`build` 통과, 브라우저 도구는 사용 가능한 브라우저가 없어 육안 확인
+  미실행.
 
 ## 현재 페이즈
 
-**`feat/design-system` — job-listing-filters 병합 + 캘린더 iOS풍 작업 + 육안 QA blocker 2건 수정·
-확인 완료.** ⚠️ 남은 건 screens 2차 code-review(세션 rate limit로 보류 중, 11:50 KST 이후 재시도)
-+ screens 1차/2차 나머지 화면 상세 육안 확인 + job-listing-filters 후속 2건.
+**`feat/design-system` — screens 2차 code-review should-fix 4건 반영 완료.** ⚠️ 남은 건
+screens 1차/2차 나머지 화면 상세 육안 확인 + job-listing-filters 후속 2건.
 
 병합 검증(`tsc`+`build`) 완료, `test:e2e` 9/9 통과 확인됨(캘린더 작업 이후 재검증 포함).
 
@@ -36,7 +35,7 @@
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
 | redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 완료(diff 직접 확인) | – | 보류(화면과 묶어서) |
 | redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | done(should-fix 4건 반영, `c7a831d`) | 수정 전 리뷰 완료(blocker 0, should-fix 4) | 대기(육안) | 보류 |
-| redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`) | 대기 | 대기(육안) | 보류 |
+| redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`, should-fix `3408578`) | 완료(blocker 0, should-fix 4 반영) | 대기(육안) | 보류 |
 | redesign: 사이드바 폴딩 버그 1차(동적 css() 값) | done | – | done (`13ebd29`) | 대기 | 대기(육안) | 보류 |
 | redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | done (`25f4052`) | 대기 | 대기(육안) | 보류 |
 | redesign: 캘린더 iOS풍 재작업 | done | done | done (`7ad12dc`, blocker fix `0cea55a`) | 대기 | 대기(육안 재확인) | 보류 |
@@ -79,7 +78,7 @@
   회귀 없는지 확인. 특히 `src/views/dashboard/index.tsx`(Pagination + D-day Tag 배지),
   `src/features/search-job-postings/ui/filter-form.tsx`(select 2개 추가) 두 파일은 이번에 수동으로
   충돌 해결했으니 직접 화면도 한번 띄워서 확인 권장.
-- plan/code-review/qa: 2차 라운드(T6~T10) + 사이드바/캘린더/다크모드 수정 결과 확인.
+- plan/code-review/qa: 2차 라운드(T6~T10) should-fix 4건 반영 완료(`3408578`) + 사이드바/캘린더/다크모드 수정 결과 확인.
   tsc/lint/build는 Codex 기준 통과. 실제 브라우저 육안 확인 필요(사이드바 폴딩 직접 눌러서 확인,
   캘린더 iOS풍 시각 확인, 테마 토글 persistence 확인). 완료:
   `artifacts/handover/2026-09-14-07-26-codex-sidebar-dynamic-css-fix-done.md`,
