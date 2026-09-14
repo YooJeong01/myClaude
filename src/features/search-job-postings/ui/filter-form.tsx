@@ -63,7 +63,8 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
           gap: 3,
           gridTemplateColumns: {
             base: "1fr",
-            md: "minmax(0, 1fr) 10rem 10rem 10rem 10rem auto auto"
+            md: "repeat(2, minmax(0, 1fr))",
+            xl: "minmax(0, 1fr) 10rem 10rem 10rem 10rem auto auto"
           },
           p: 4
         })
@@ -125,7 +126,8 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
           fontWeight: 500,
           gap: 2,
           minH: "touchTarget",
-          textStyle: "sm"
+          textStyle: "sm",
+          whiteSpace: "nowrap"
         })}
       >
         <input
