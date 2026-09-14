@@ -1,15 +1,14 @@
 # 상태 보드
 
-- last update: 2026-09-14 16:48 (by codex) — 육안 QA blocker 2건 수정 커밋 완료:
-  (1) 캘린더 이벤트 RBC 기본 CSS 경합 수정,
-  (2) 다크모드 시스템 자동 감지 + 수동 토글 구현.
-  커밋: `0cea55a`. 완료 보고:
-  `artifacts/handover/2026-09-14-16-48-codex-visual-qa-fixes-done.md`.
+- last update: 2026-09-14 17:05 (by plan) — 육안 QA blocker 2건, Playwright 스크린샷으로
+  **실제 해결 확인 완료**: (1) 캘린더 이벤트가 파란 막대 대신 작은 점으로 정상 렌더(다크모드에서도
+  확인), (2) 다크모드 라이트/다크/시스템 토글이 실제로 배경·텍스트·카드 전부 전환. 커밋 `0cea55a`.
 
 ## 현재 페이즈
 
-**`feat/design-system` — job-listing-filters 병합 + 캘린더 iOS풍 작업 + 육안 QA blocker 수정 완료.**
-⚠️ 이 브랜치는 여전히 병합 보류 — plan/qa 브라우저 재확인 + 남은 review/qa 항목 이후 `main` 병합 후보.
+**`feat/design-system` — job-listing-filters 병합 + 캘린더 iOS풍 작업 + 육안 QA blocker 2건 수정·
+확인 완료.** ⚠️ 남은 건 screens 2차 code-review(세션 rate limit로 보류 중, 11:50 KST 이후 재시도)
++ screens 1차/2차 나머지 화면 상세 육안 확인 + job-listing-filters 후속 2건.
 
 병합 검증(`tsc`+`build`) 완료, `test:e2e` 9/9 통과 확인됨(캘린더 작업 이후 재검증 포함).
 
