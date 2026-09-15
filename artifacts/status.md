@@ -1,24 +1,22 @@
 # 상태 보드
 
-- last update: 2026-09-15 21:50 (by plan) — QA 3라운드 완료(분석상세/지원동기 육안 확인 +
-  사이드바 폴딩 실제 클릭 확인, 문제 0건). `redesign` 스코프 육안 QA 전부 완료.
-  `artifacts/test-reports/redesign-visual-qa-round3.md` 참고. `git status --short --branch`로
-  현재 브랜치(`feat/design-system`) 확인 후 시작함.
+- last update: 2026-09-15 22:15 (by plan) — **사용자 직접 지시로 `feat/design-system` → `main`
+  병합 완료** (충돌 0건, `git merge --no-ff`). 병합 후 `tsc --noEmit` + `pnpm build` 재검증
+  통과 확인. `main`이 `origin/main` 대비 83 commits ahead — **push는 아직 안 함, 사용자 확인
+  대기 중.**
 
 ## 현재 페이즈
 
-**`feat/design-system` — `main` 병합 후보 준비 완료.** job-listing-filters 병합, 리디자인
-blocker/should-fix 전부 반영, 분석상세·지원동기·사이드바 폴딩 육안 확인까지 전부 끝남.
-`main`(a39901c)이 base에서 안 움직여서 병합 시 충돌 없음(`git merge-base main feat/design-system`
-== `main` HEAD 확인됨). **사용자 승인 후 병합 가능한 상태 — plan이 직접 병합하지 않고 대기.**
-
-병합 검증(`tsc`+`build`) 완료, `test:e2e` 9/9 통과 확인됨(캘린더 작업 이후 재검증 포함).
+**리디자인(노션풍) + job-listing-filters 스코프가 `main`에 병합 완료.** 로컬 `main`만 앞서있고
+원격(`origin/main`)엔 아직 반영 안 됨 — push 여부 사용자 확인 필요.
 
 ## 작업 트리
 
 - holder: (empty)
-- branch: `feat/design-system` — job-listing-filters 병합 완료.
-- base: `main` @ a39901c
+- branch: `main` (병합 완료, push 대기). `feat/design-system`은 병합됐으니 정리 대상(삭제 여부
+  확인 필요, 로컬 브랜치라 위험 낮음).
+- 참고용 병합 커밋: 병합 직후 커밋 메시지 `[merge] feat/design-system — 노션풍 리디자인 +
+  job-listing-filters 병합`.
 
 ## 참고 (2026-09-14 진행 노트)
 
