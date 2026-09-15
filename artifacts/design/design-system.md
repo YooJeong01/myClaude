@@ -1,6 +1,7 @@
 # 디자인 시스템 (리빙 스펙)
 
-- 상태: **목업 v2 승인 대기.** 목업: https://claude.ai/code/artifact/5050b9ff-3403-4ca5-b667-5aa733b75f9b
+- 상태: **v2 방향 승인됨 (컴포넌트 세부는 마무리 단계로 이연). 파운데이션 구현 착수.**
+  목업: https://claude.ai/code/artifact/5050b9ff-3403-4ca5-b667-5aa733b75f9b
   (2026-09-13, v1 토스/카카오풍+초록 → 사용자가 목업 보고 v2 노션풍으로 정정).
 - 방향: **노션(Notion)풍** — 미니멀, 모노톤 위주(그레이스케일), 카드 구분은 얇은 보더(그림자 거의 안 씀),
   radius는 작게~중간(토스처럼 알약 모양까지는 안 감), 타이포 중심 위계. 라이트 + 다크 둘 다.
@@ -16,7 +17,7 @@
   컴포넌트는 항상 semantic token 이름을 참조해서 나중에 팔레트 교체가 값 하나로 되게 한다.
 - 형식 정의: `.agents/design.md` "디자인 스펙 형식" 참조.
 
-## 색 (목업 기준, design-system.md 정식 값은 목업 승인 후 확정)
+## 색 (확정 — 목업 기준)
 
 - semantic token — 라이트 / 다크:
   - `bg` `#FFFFFF` / `#191919`, `bgSidebar` `#F7F7F5` / `#202020`, `bgElevated`(카드) `#FFFFFF` / `#191919`
@@ -35,7 +36,12 @@
 ## 타이포
 
 - 폰트: 프리텐다드(자체 호스팅) — 한글+영문. 폴백 `'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif`.
-- 타입 스케일 / line-height / weight — 확정 필요.
+  **소스는 `pretendard` npm 패키지**(가변 폰트 1파일) — 직접 폰트 바이너리를 구해 넣지 말고
+  `pnpm add pretendard` 후 `pretendard/dist/web/variable/pretendardvariable.css`를 루트 레이아웃에서
+  import하는 표준 패턴 사용.
+- 타입 스케일(px): 12 / 14(본문 기본) / 16 / 18 / 20 / 24 / 30 / 36.
+- line-height: 본문 1.5, 제목 1.25~1.3.
+- weight: 400 regular · 500 medium(강조 텍스트·버튼) · 700 bold(소제목) · 800 extrabold(페이지 타이틀).
 
 ## 간격 · radius · elevation · 모션
 
@@ -49,13 +55,21 @@
 - `env(safe-area-inset-*)` 토큰, `viewport-fit=cover`.
 - 터치 타깃 ≥ 44px, hover-only 제거.
 - 브레이크포인트 360 / 768 / 1280.
-- 사이드바 폴더블 상태를 모바일 브레이크포인트에서 어떻게 다룰지(자동 접힘 등) 확정 필요.
+- 사이드바: 768px 미만에서 기본 접힘(아이콘 레일)으로 시작, 토글로 수동 펼침 가능. 완전 오프캔버스
+  (모바일 전용 드로어) 패턴은 지금 안 함 — 마무리 단계 폴리시 후보.
 
 ## 프리미티브
 
 | 컴포넌트 | 소스 | variant | size | 상태 |
 |---|---|---|---|---|
-| button | 기존 shadcn(제거 대상) → Panda/Park UI 재작성 | default(거의 흑백)·secondary·outline·ghost·link | +sm·default·lg·icon | 재작성 필요 |
-| sidebar(폴더블) | 신규 | expanded/collapsed | – | 목업에 인터랙션 패턴 있음, 컴포넌트화 필요 |
-| tag/badge | 신규 | gray·blue·green·yellow·red | sm | 신규 |
-| card / input / label / separator / skeleton / … | Park UI 검토 | | | 미생성 |
+| button | 기존 shadcn(제거) → Panda 재작성 | default(거의 흑백)·secondary·outline·ghost·link | sm·default·lg·icon | ✅ 완료(`src/shared/ui/button.tsx`) |
+| sidebar(폴더블) | 신규 | expanded/collapsed | – | ✅ 완료(`src/widgets/app-shell/`) |
+| tag/badge | 신규 | gray·blue·green·yellow·red | sm | ✅ 완료(`src/shared/ui/tag.tsx`) |
+| card | 신규 | (as prop으로 div/aside 등 태그 선택) | – | ✅ 완료(`src/shared/ui/card.tsx`) |
+| **input** | 신규 | 기본 1종 (text/email/url/date 등 네이티브 type 공용) | – | **2차 라운드에서 필요 — 미생성.** `experience-form`, `add-job-posting/form`, `login-form`,
+  `analyses/page`(검색창), `search-job-postings/filter-form`의 인라인 `inputClassName` 전부 대체 대상.
+  border/radius/포커스링 토큰화(`borderColor:border`, `borderRadius:input`, focus시 `borderColor:link`
+  + `outline:2px solid {colors.link}`). `<select>`도 같은 스타일 재사용(별도 컴포넌트 없이 style만 공유). |
+| **textarea** | 신규 | 기본 1종 | – | **미생성.** `experience-form`, `add-job-posting/form`의 `textareaClassName` 대체. input과
+  톤 통일, `minHeight` 지정(기존 `min-h-40`/`min-h-36` 유지). |
+| label / separator / skeleton / … | Park UI 검토 | | | 아직 안 씀(체크박스는 네이티브 유지, 별도 skeleton 필요한 로딩 상태 없음) |

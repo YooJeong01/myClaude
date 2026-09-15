@@ -214,10 +214,10 @@ test("6. 오프라인 전환 시 분석 페이지가 미러로 전환", async ({
 test("7. 공고 검색 + 페이지네이션", async ({ page }) => {
   await runScenario(
     "공고 검색·페이지네이션",
-    "대시보드 공고 목록이 검색어로 필터되고 커서 페이지네이션이 동작한다.",
-    "로그인 세션과 수집된 공고가 필요하다.",
-    "검색어 입력 → URL 갱신 → 결과 필터 확인, '더 보기' 있으면 클릭",
-    "검색 시 URL 에 q 파라미터가 붙고 목록이 좁혀진다.",
+    "대시보드 공고 목록이 검색어로 필터되고 숫자 페이지네이션이 동작한다.",
+    "로그인 세션과 11건 이상의 수집된 공고가 필요하다(1페이지=10건이라 2페이지 존재 확인용).",
+    "검색어 입력 → URL 갱신 → 결과 필터 확인, 2페이지 링크 클릭 → page 파라미터 확인 → 이전 버튼 비활성 확인",
+    "검색 시 URL 에 q 파라미터가 붙고 목록이 좁혀진다. 2페이지 이동 시 URL에 page=2가 붙고 목록이 갱신된다.",
     async () => {
       await login(page);
       await page.goto("/dashboard");
@@ -231,13 +231,20 @@ test("7. 공고 검색 + 페이지네이션", async ({ page }) => {
       await page.waitForURL(/[?&]q=/);
       await expect(page.getByRole("heading", { name: "공고 목록" })).toBeVisible();
 
-      const moreLink = page.getByRole("link", { name: "더 보기" });
-      const hadMore = (await moreLink.count()) > 0;
-      if (hadMore) {
-        await moreLink.click();
-        await page.waitForURL(/[?&]cursor=/);
+      await page.goto("/dashboard");
+      const prevDisabled =
+        (await page.getByRole("button", { name: "이전", disabled: true }).count()) > 0;
+      const page2Link = page.getByRole("link", { name: "2", exact: true });
+      const hasPage2 = (await page2Link.count()) > 0;
+      let page2Confirmed = false;
+      if (hasPage2) {
+        await page2Link.click();
+        await page.waitForURL(/[?&]page=2/);
+        await expect(page.getByRole("heading", { name: "공고 목록" })).toBeVisible();
+        page2Confirmed = true;
       }
-      return `검색 적용(이전: ${totalText?.trim()}), 더보기=${hadMore}`;
+
+      return `검색 적용(이전: ${totalText?.trim()}), 2페이지 이동=${page2Confirmed}, 1페이지 이전버튼 비활성=${prevDisabled}`;
     }
   );
 });
@@ -258,9 +265,9 @@ test("8. 북마크 토글 → 캘린더 반영", async ({ page }) => {
         .getByRole("button", { name: "북마크", exact: true })
         .first();
       await toggle.click();
-      await expect(
-        page.getByRole("button", { name: "북마크됨" }).first()
-      ).toBeVisible();
+      const savedToggle = page.getByRole("button", { name: "북마크됨" }).first();
+      await expect(savedToggle).toBeVisible();
+      await expect(savedToggle).toBeEnabled();
 
       await page.reload();
       const after = await readSavedCount(page);

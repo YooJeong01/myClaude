@@ -7,7 +7,12 @@ import {
 } from "@/entities/company-analysis";
 import { getUser } from "@/entities/session";
 import { createSupabaseServerClient } from "@/shared/api-server";
+import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
+import { Card, cardStyle } from "@/shared/ui/card";
+import { Input } from "@/shared/ui/input";
+import { Tag } from "@/shared/ui/tag";
+import { css } from "../../../../styled-system/css";
 
 const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
   dateStyle: "medium"
@@ -39,30 +44,56 @@ export default async function AnalysesPage({
   });
 
   return (
-    <main className="min-h-screen bg-background px-6 py-8">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <header className="flex flex-col gap-4 border-b pb-5 sm:flex-row sm:items-start sm:justify-between">
+    <div
+      className={css({
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+        maxW: "1152px",
+        mx: "auto",
+        w: "full"
+      })}
+    >
+        <header
+          className={css({
+            alignItems: { md: "flex-start" },
+            borderBottomWidth: "1px",
+            borderColor: "border",
+            display: "flex",
+            flexDirection: { base: "column", md: "row" },
+            gap: 4,
+            justifyContent: "space-between",
+            pb: 5
+          })}
+        >
           <div>
-            <p className="text-sm font-medium text-muted-foreground">
+            <p className={css({ color: "textMuted", fontWeight: 500, textStyle: "sm" })}>
               기업분석 모아보기
             </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-normal">
+            <h1 className={css({ mt: 2, textStyle: "3xl" })}>
               회사별 분석
             </h1>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild variant="secondary">
+          <div className={css({ display: "flex", flexWrap: "wrap", gap: 2 })}>
+            <Button asChild size="sm" variant="outline">
               <Link href="/dashboard">대시보드</Link>
             </Button>
-            <Button asChild variant="secondary">
+            <Button asChild size="sm" variant="outline">
               <Link href="/dashboard/calendar">채용 캘린더</Link>
             </Button>
           </div>
         </header>
 
-        <form className="flex flex-col gap-3 sm:flex-row" action="/dashboard/analyses">
-          <input
-            className="h-10 flex-1 rounded-md border bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20"
+        <form
+          action="/dashboard/analyses"
+          className={css({
+            display: "flex",
+            flexDirection: { base: "column", md: "row" },
+            gap: 3
+          })}
+        >
+          <Input
+            className={css({ flex: 1 })}
             defaultValue={q}
             name="q"
             placeholder="회사명 검색"
@@ -71,20 +102,30 @@ export default async function AnalysesPage({
         </form>
 
         {rows.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div
+            className={css({
+              display: "grid",
+              gap: 4,
+              gridTemplateColumns: {
+                base: "1fr",
+                md: "repeat(2, minmax(0, 1fr))",
+                xl: "repeat(3, minmax(0, 1fr))"
+              }
+            })}
+          >
             {rows.map((group) => (
               <CompanyAnalysisCard group={group} key={group.companyId} />
             ))}
           </div>
         ) : (
-          <div className="rounded-md border bg-card p-6 text-sm leading-6 text-muted-foreground">
+          <Card className={css({ color: "textMuted", p: 6, textStyle: "sm" })}>
             표시할 기업분석이 없습니다.
-          </div>
+          </Card>
         )}
 
         {nextCursor ? (
-          <div className="flex justify-center">
-            <Button asChild variant="secondary">
+          <div className={css({ display: "flex", justifyContent: "center" })}>
+            <Button asChild variant="outline">
               <Link
                 href={{
                   pathname: "/dashboard/analyses",
@@ -96,32 +137,42 @@ export default async function AnalysesPage({
             </Button>
           </div>
         ) : null}
-      </div>
-    </main>
+    </div>
   );
 }
 
 function CompanyAnalysisCard({ group }: { group: CompanyAnalysisGroup }) {
   return (
     <Link
-      className="block rounded-md border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+      className={cn(
+        cardStyle,
+        css({
+          display: "block",
+          p: 5,
+          textDecoration: "none",
+          transitionDuration: "fast",
+          transitionProperty: "border-color",
+          transitionTimingFunction: "standard",
+          _hover: { borderColor: "link" }
+        })
+      )}
       href={`/dashboard/analyses/${group.latest.id}`}
     >
-      <p className="text-sm text-muted-foreground">
+      <p className={css({ color: "textMuted", textStyle: "sm" })}>
         최신 분석 {dateFormatter.format(new Date(group.latest.createdAt))}
       </p>
-      <h2 className="mt-2 text-lg font-semibold tracking-normal">
+      <h2 className={css({ mt: 2, textStyle: "lg" })}>
         {group.companyName}
       </h2>
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">
+      <p className={css({ color: "textMuted", mt: 3, textStyle: "sm" })}>
         {group.latest.role}
       </p>
       {group.latest.result.estimated_size ? (
-        <p className="mt-3 w-fit rounded-md bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+        <Tag className={css({ mt: 3, w: "fit-content" })} variant="yellow">
           {group.latest.result.estimated_size.label} 추정
-        </p>
+        </Tag>
       ) : null}
-      <p className="mt-4 text-sm font-medium text-primary">
+      <p className={css({ color: "link", fontWeight: 500, mt: 4, textStyle: "sm" })}>
         {group.count}개 이력
       </p>
     </Link>

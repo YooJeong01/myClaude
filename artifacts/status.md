@@ -1,18 +1,31 @@
 # 상태 보드
 
-- last update: 2026-09-13 20:20 (by plan) — 사용자 지시로 3개 브랜치 순서대로 main 병합 + push 완료 확인 (origin/main @ 6fc7687)
+- last update: 2026-09-15 21:50 (by plan) — QA 3라운드 완료(분석상세/지원동기 육안 확인 +
+  사이드바 폴딩 실제 클릭 확인, 문제 0건). `redesign` 스코프 육안 QA 전부 완료.
+  `artifacts/test-reports/redesign-visual-qa-round3.md` 참고. `git status --short --branch`로
+  현재 브랜치(`feat/design-system`) 확인 후 시작함.
 
 ## 현재 페이즈
 
-**redesign — Panda CSS 파운데이션 착수 예정.** 구조 세우기·Gmail/잡코리아 제거·session-refresh
-버그수정 전부 `main` 병합 완료.
+**`feat/design-system` — `main` 병합 후보 준비 완료.** job-listing-filters 병합, 리디자인
+blocker/should-fix 전부 반영, 분석상세·지원동기·사이드바 폴딩 육안 확인까지 전부 끝남.
+`main`(a39901c)이 base에서 안 움직여서 병합 시 충돌 없음(`git merge-base main feat/design-system`
+== `main` HEAD 확인됨). **사용자 승인 후 병합 가능한 상태 — plan이 직접 병합하지 않고 대기.**
+
+병합 검증(`tsc`+`build`) 완료, `test:e2e` 9/9 통과 확인됨(캘린더 작업 이후 재검증 포함).
 
 ## 작업 트리
 
-- holder: (없음)
-- branch: `main` — 3개 병합 반영 완료, push 완료 (`chore/agent-workflow-setup` → `fix/session-refresh` →
-  `feat/remove-gmail-jobkorea`, `artifacts/status.md` 충돌 1건 수동 정리). 로컬 브랜치 3개는 병합 확인 후 삭제.
-- base: `main` @ 6fc7687
+- holder: (empty)
+- branch: `feat/design-system` — job-listing-filters 병합 완료.
+- base: `main` @ a39901c
+
+## 참고 (2026-09-14 진행 노트)
+
+- code-review 스킬이 서브에이전트(angle별 병렬)를 여러 개 띄우는데, Claude 세션 사용량 한도에
+  걸려 대부분 실패함(리셋 11:50 KST). 이 시간대엔 code-review/Explore 등 서브에이전트 기반
+  작업은 재시도해도 또 실패할 가능성 높음 — Codex 위임(별도 프로세스, 이 한도 무관)부터 먼저
+  진행하고, code-review는 한도 리셋 후 재시도할 것.
 
 ## 파이프라인
 
@@ -23,13 +36,23 @@
 | agent-workflow-setup | done | – | – | – | – | ✅ |
 | Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0, should-fix 반영) | – | ✅ |
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
-| redesign: design-system | done(스켈레톤) | 진행 필요 | – | – | – | – |
-| redesign: screens | done(README 목록) | 진행 필요 | – | – | – | – |
+| redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 완료(diff 직접 확인) | – | 보류(화면과 묶어서) |
+| redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | done(should-fix 4건 반영, `c7a831d`) | 수정 전 리뷰 완료(blocker 0, should-fix 4) | 완료(육안, round3) | 보류 |
+| redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`, should-fix `3408578`, 768px 필터폼 fix `eaf6dc5`, E2E spec `b00a800`) | 완료(blocker 0, should-fix 4 반영) | 완료(육안, round2+round3) | 보류 |
+| redesign: 사이드바 폴딩 버그 1차(동적 css() 값) | done | – | done (`13ebd29`) | 대기(nit만 남음, 병합 비차단) | 완료(실제 클릭, round3) | 보류 |
+| redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | done (`25f4052`) | 대기(nit만 남음, 병합 비차단) | 완료(실제 클릭, round3) | 보류 |
+| redesign: 캘린더 iOS풍 재작업 | done | done | done (`7ad12dc`, blocker fix `0cea55a`) | 대기(nit만 남음, 병합 비차단) | 완료(round2 재확인) | 보류 |
+| job-listing-filters (페이지네이션·마감필터·D-day·신입경력) | done | – | done | 완료(blocker 0, should-fix 4건 반영) | 완료(blocker 0) | `feat/design-system`으로 병합 완료 |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (없음 — 3개 브랜치 병합 완료, `git push` 대기)
+- job-listing-filters 관련 후속(병합 자체를 막지는 않음, `main` 병합 전/후 언제든 정리 가능):
+  1. `server/jobs/backfill-career-level.ts` dry-run/apply 미실행 — 기존 1574건 `career_level`
+     비어있을 가능성 높음.
+- screens 2차 리뷰 nit 6건(중복 스타일 정리 등, 병합 비차단) — 여유 있을 때 정리.
+- **`feat/design-system` 육안 QA 전부 완료 — `main` 병합 후보 상태.** 병합은 사용자 승인 필요
+  (아래 "다음 액션" 참고).
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -52,14 +75,27 @@
 
 ## 다음 액션
 
-- design: `artifacts/design/design-system.md` 정식 작성 → `feat/design-system` 브랜치에서 Panda 도입
-  (Pretendard 자체 호스팅 포함). 랜딩 화면 스펙은 작성 안 함.
-- login 화면 스펙은 자동 로그인 방식 확정 후 작성 (그 전엔 스킵하고 dashboard/analysis 등 먼저 진행 가능).
+- **완료된 검증**: `pnpm exec tsc --noEmit` + `pnpm lint` + `pnpm build` + `pnpm test:e2e` 9/9 통과.
+  분석상세·지원동기·사이드바 폴딩(실제 클릭) 육안 확인까지 완료(round3,
+  `artifacts/test-reports/redesign-visual-qa-round3.md`) — 문제 0건.
+- **다음 세션 시작점**: `feat/design-system`을 `main`으로 병합할지 **사용자에게 물어볼 것**.
+  병합 명령어(충돌 없음 확인됨, `main`이 base `a39901c`에서 안 움직임):
+  ```
+  git checkout main && git merge --no-ff feat/design-system
+  ```
+  사용자가 명시적으로 병합 지시하면 그 자리에서 실행 가능(계획된 병합 게이트 — plan이 스스로
+  판단해서 병합하는 것만 막는 것이지 사용자 직접 지시까지 막는 건 아님, `project-multi-agent-workflow`
+  메모리 참고). 병합 후 남는 후속(nit 6건, career_level 백필)은 급하지 않음.
+- 미확정 사항(병합과 무관, 다음 라운드): 자동 로그인 방식(세션연장/체크박스/구글OAuth 중 택1),
+  Day 8(Capacitor+Tauri) 착수 여부.
 
 ## 참고
 
-- 미실행 마이그레이션: `supabase/migrations/20260909075000_dedup_normalization.sql` (무해, 보류).
+- job-listing-filters 마이그레이션 2건(`deadline` timestamptz, `career_level` 추가)은 사용자가
+  Supabase에 적용 완료 (2026-09-14).
+- ~~미실행 마이그레이션~~ `supabase/migrations/20260909075000_dedup_normalization.sql` — 사용자가
+  2026-09-14 실행 완료.
 - 호스트 RAM ~1GB — `codex exec`·`pnpm build` OOM 빈번. heavy 프로세스 1개씩.
-- **교훈**: `status.md`가 브랜치마다 갈라져 있으면 병합 시 거의 항상 충돌한다. 이번에 실제로 발생
-  (`feat/remove-gmail-jobkorea` 병합 시). 병합 직전엔 항상 이 파일을 수동으로 재작성해서 정리할 것 —
-  자동 병합에 맡기지 말 것.
+- **교훈**: `status.md`가 브랜치마다 갈라져 있으면 병합 시 거의 항상 충돌한다. 이번에도 실제로
+  발생(job-listing-filters → design-system 병합). 병합 직전엔 항상 이 파일을 수동으로 재작성해서
+  정리할 것 — 자동 병합에 맡기지 말 것.

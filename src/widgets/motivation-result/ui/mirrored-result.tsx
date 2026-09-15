@@ -9,6 +9,8 @@ import {
   type MirroredDraft
 } from "@/shared/lib/offline-mirror";
 import { useOnline } from "@/shared/lib/use-online";
+import { Card } from "@/shared/ui/card";
+import { css } from "../../../../styled-system/css";
 
 import { MotivationResultView } from "./result";
 
@@ -51,18 +53,18 @@ export function MirroredMotivationResult({
 
   if (!visibleDraft) {
     return (
-      <div className="rounded-md border bg-card p-5 text-sm leading-6 text-muted-foreground">
+      <Card className={css({ color: "textMuted", p: 5, textStyle: "sm" })}>
         저장된 오프라인 지원동기 데이터를 찾지 못했습니다.
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className={css({ display: "grid", gap: 4 })}>
       {usingMirror ? (
-        <div className="rounded-md border bg-secondary p-4 text-sm font-medium text-secondary-foreground">
+        <Card className={css({ bg: "surface", fontWeight: 500, p: 4, textStyle: "sm" })}>
           오프라인 · 마지막으로 본 데이터
-        </div>
+        </Card>
       ) : null}
       <MotivationResultView draft={visibleDraft} />
     </div>

@@ -1,0 +1,5 @@
+- T6 experiences: `621c61c` — `Input`/`Textarea` 프리미티브 추가, 경험 관리 페이지·폼·리스트 리스타일. `pnpm exec tsc --noEmit` 통과, `pnpm lint` 통과.
+- T7 login: `feef154` — 로그인 페이지·매직링크 폼 리스타일, OAuth 버튼 미추가. `pnpm exec tsc --noEmit` 통과, `pnpm lint` 통과.
+- T8 analyses-index: `5bd340c` — 기업분석 목록 검색·빈 상태·카드 링크 리스타일. `pnpm exec tsc --noEmit` 통과, `pnpm lint` 통과.
+- T9 job-postings: `b2f42d7` — 공고 입력·필터·북마크 오류·분석 상태 메시지 리스타일. `pnpm exec tsc --noEmit` 통과, `pnpm lint` 통과.
+- T10 analysis-history: `0ef20fd` — 분석 이력 리스트·신선도 배지 리스타일. `pnpm exec tsc --noEmit` 통과, `pnpm lint` 통과.

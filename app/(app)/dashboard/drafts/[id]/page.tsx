@@ -23,10 +23,6 @@ export default async function DraftPage({ params }: DraftPageProps) {
   });
 
   return (
-    <main className="min-h-screen bg-background px-6 py-8">
-      <div className="mx-auto max-w-5xl">
-        <MirroredMotivationResult draft={draft} draftId={id} />
-      </div>
-    </main>
+    <MirroredMotivationResult draft={draft} draftId={id} />
   );
 }

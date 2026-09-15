@@ -7,6 +7,7 @@ import { useState, useTransition } from "react";
 import type { JobPosting } from "@/entities/job-posting";
 import { useOnline } from "@/shared/lib/use-online";
 import { Button } from "@/shared/ui/button";
+import { css } from "../../../../styled-system/css";
 
 type AnalyzeResponse = {
   error?: string;
@@ -75,7 +76,10 @@ export function RunAnalysisButton({
         )}
         {isPending ? "분석 중..." : "기업분석"}
       </Button>
-      <p aria-live="polite" className="mt-2 min-h-5 text-sm text-muted-foreground">
+      <p
+        aria-live="polite"
+        className={css({ color: "textMuted", minH: 5, mt: 2, textStyle: "sm" })}
+      >
         {isOfflineDisabled
           ? "오프라인에서는 새로 분석할 수 없습니다."
           : isPending

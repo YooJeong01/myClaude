@@ -42,9 +42,17 @@ Claude 세션 (별도 터미널 또는 메인 세션 겸임) + `design` 스킬. 
 3. `feat/design-system` 브랜치에 파운데이션 구현 — Tailwind·shadcn 제거, Panda 설치(`panda init`,
    `panda codegen`), `panda.config.ts`(토큰 + `dark` 컨디션 semantic token), `src/shared/ui/**` 프리미티브를
    Panda recipe(또는 Park UI에서 컴포넌트를 가져와) 로 재작성. 커밋마다 한글 메시지, `tsc` + `lint` 그린.
-   → code-review → qa 스모크 → plan 검증 → **사용자 병합**.
+   → code-review → qa 스모크.
+   **⚠️ 이 상태로 바로 사용자 병합하지 않는다.** Tailwind를 완전히 빼면 아직 리스타일 안 된 기존
+   화면들(`className="..."` 유틸리티 클래스)이 전부 무스타일로 깨진다 — 이 상태가 `main`에 들어가서
+   배포되면 라이브 프로덕션이 깨진다. **파운데이션과 화면 리스타일(T4·T5)을 같은 병합 단위로 묶어서,
+   최소한 배포되는 화면들이 안 깨지는 지점까지 진행한 뒤에 사용자 병합을 요청한다.**
 4. 화면별 `artifacts/design/screens/<screen>.md` 작성 (아래 형식). plan이 `artifacts/tasks/redesign.md`로 정리.
-5. 화면 구현 중/후: 시각 결과만 검토하고 qa 리포트에 주석. 화면 파일은 편집하지 않는다.
+5. 화면 구현: implement가 파운데이션과 같은 브랜치 계열에서 이어서 적용(예: `feat/design-system`에서
+   화면 태스크도 계속 커밋, 또는 그 브랜치에서 분기한 `feat/redesign-screens`를 화면 다 끝난 뒤에만
+   병합). 화면 구현 중/후 design은 시각 결과만 검토하고 qa 리포트에 주석 — 화면 파일은 편집하지 않는다.
+6. 전 화면(또는 최소 배포 대상 화면 전부)이 리스타일 완료 → code-review + qa 최종 확인 → **그제서야
+   사용자 병합**.
 
 ## 디자인 스펙 형식
 

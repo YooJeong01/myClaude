@@ -1,3 +1,5 @@
+import { type CareerLevel } from "@server/job-postings/types";
+
 export const EMPLOYMENT_TYPES = [
   "정규직",
   "계약직",
@@ -8,12 +10,14 @@ export const EMPLOYMENT_TYPES = [
 ] as const;
 
 export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number];
+export { CAREER_LEVELS, type CareerLevel } from "@server/job-postings/types";
 
 export type JobPosting = {
   id: string;
   companyNameRaw: string | null;
   role: string;
   employmentType: EmploymentType;
+  careerLevel: CareerLevel | null;
   postedAt: string | null;
   deadline: string | null;
   source: string;
@@ -26,6 +30,7 @@ export type NewJobPostingInput = {
   companyNameRaw?: string;
   role: string;
   employmentType: EmploymentType;
+  careerLevel?: CareerLevel | null;
   postedAt?: string;
   deadline?: string;
   url?: string;

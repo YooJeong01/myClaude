@@ -10,6 +10,8 @@ import { Calendar, dateFnsLocalizer, Views } from "react-big-calendar";
 
 import type { SavedPostingWithDetail } from "@/entities/saved-posting";
 import { Button } from "@/shared/ui/button";
+import { Card } from "@/shared/ui/card";
+import { css } from "../../../../styled-system/css";
 
 import {
   toSavedCalendarEvents,
@@ -37,22 +39,39 @@ export function CalendarView({ savedPostings }: CalendarViewProps) {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="h-[680px] rounded-md border bg-card p-3 text-card-foreground">
+    <div className={css({ display: "grid", gap: 6 })}>
+      <Card className={css({ h: "680px", p: 3 })}>
         <Calendar
           culture="ko"
           defaultView={Views.MONTH}
           endAccessor="end"
           events={events}
           localizer={localizer}
+          components={{ event: DotEvent }}
           onSelectEvent={(event: SavedCalendarEvent) => setSelected(event)}
           startAccessor="start"
           views={[Views.MONTH]}
         />
-      </div>
+      </Card>
 
       {selected ? <SelectedPostingPanel event={selected} /> : null}
     </div>
+  );
+}
+
+function DotEvent({ event }: { event: SavedCalendarEvent; title?: string }) {
+  return (
+    <span
+      aria-label={event.title}
+      className={css({
+        bg: "tagBlue.text",
+        borderRadius: "pill",
+        display: "block",
+        h: "7px",
+        w: "7px"
+      })}
+      title={event.title}
+    />
   );
 }
 
@@ -61,13 +80,21 @@ function SelectedPostingPanel({ event }: { event: SavedCalendarEvent }) {
   const excerpt = posting.rawText?.slice(0, 300) ?? "저장된 본문이 없습니다.";
 
   return (
-    <aside className="rounded-md border bg-card p-5 text-card-foreground">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-sm text-muted-foreground">
+    <Card as="aside" className={css({ p: 5 })}>
+      <div
+        className={css({
+          alignItems: { md: "flex-start" },
+          display: "flex",
+          flexDirection: { base: "column", md: "row" },
+          gap: 3,
+          justifyContent: "space-between"
+        })}
+      >
+        <div className={css({ minW: 0 })}>
+          <p className={css({ color: "textMuted", textStyle: "sm" })}>
             {posting.companyNameRaw ?? "회사명 미입력"}
           </p>
-          <h2 className="mt-1 text-lg font-semibold tracking-normal">
+          <h2 className={css({ mt: 1, textStyle: "lg" })}>
             {posting.role}
           </h2>
         </div>
@@ -80,9 +107,16 @@ function SelectedPostingPanel({ event }: { event: SavedCalendarEvent }) {
           </Button>
         ) : null}
       </div>
-      <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">
+      <p
+        className={css({
+          color: "textMuted",
+          mt: 4,
+          textStyle: "sm",
+          whiteSpace: "pre-wrap"
+        })}
+      >
         {excerpt}
       </p>
-    </aside>
+    </Card>
   );
 }

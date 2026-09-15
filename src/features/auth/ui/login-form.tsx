@@ -4,9 +4,8 @@ import { Loader2, Mail } from "lucide-react";
 import { useState, useTransition, type FormEvent } from "react";
 
 import { Button } from "@/shared/ui/button";
-
-const inputClassName =
-  "h-10 w-full rounded-md border bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-60";
+import { Input } from "@/shared/ui/input";
+import { css } from "../../../../styled-system/css";
 
 type LoginFormProps = {
   requestAction: (
@@ -49,12 +48,18 @@ export function LoginForm({ requestAction, errorMessage }: LoginFormProps) {
   }
 
   return (
-    <form className="space-y-5" onSubmit={handleSubmit}>
-      <label className="block space-y-2 text-sm font-medium">
+    <form className={css({ display: "grid", gap: 5 })} onSubmit={handleSubmit}>
+      <label
+        className={css({
+          display: "grid",
+          gap: 2,
+          fontWeight: 500,
+          textStyle: "sm"
+        })}
+      >
         <span>이메일</span>
-        <input
+        <Input
           autoComplete="email"
-          className={inputClassName}
           disabled={isPending}
           name="email"
           placeholder="name@example.com"
@@ -63,22 +68,38 @@ export function LoginForm({ requestAction, errorMessage }: LoginFormProps) {
         />
       </label>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        className={css({
+          alignItems: { md: "center" },
+          display: "flex",
+          flexDirection: { base: "column", md: "row" },
+          gap: 3,
+          justifyContent: { md: "space-between" }
+        })}
+      >
         <p
           aria-live="polite"
-          className="min-h-5 text-sm text-muted-foreground"
+          className={css({
+            color: "textMuted",
+            minH: 5,
+            textStyle: "sm"
+          })}
         >
           {message ? (
             <span
-              className={
-                message.type === "error" ? "text-destructive" : undefined
-              }
+              className={css({
+                color: message.type === "error" ? "dangerText" : "textMuted"
+              })}
             >
               {message.text}
             </span>
           ) : null}
         </p>
-        <Button className="w-full sm:w-auto" disabled={isPending} type="submit">
+        <Button
+          className={css({ w: { base: "full", md: "auto" } })}
+          disabled={isPending}
+          type="submit"
+        >
           {isPending ? (
             <Loader2 aria-hidden="true" className="size-4 animate-spin" />
           ) : (

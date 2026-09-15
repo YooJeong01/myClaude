@@ -1,0 +1,1 @@
+- `3408578` — screens 2차 code-review should-fix 4건 반영: Card surface variant, analyses/experiences max-width 복원, experiences 이메일 표시 복원, 일반 에러 텍스트 `dangerText` 토큰 교체.

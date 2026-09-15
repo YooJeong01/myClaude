@@ -1,5 +1,5 @@
 declare module "react-big-calendar" {
-  import type { ReactElement } from "react";
+  import type { ComponentType, ReactElement } from "react";
 
   export const Views: {
     MONTH: "month";
@@ -18,6 +18,9 @@ declare module "react-big-calendar" {
   ): unknown;
 
   export type CalendarProps<TEvent extends object = object> = {
+    components?: {
+      event?: ComponentType<{ event: TEvent; title?: string }>;
+    };
     culture?: string;
     defaultView?: string;
     endAccessor: keyof TEvent | string;

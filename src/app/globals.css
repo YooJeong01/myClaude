@@ -1,38 +1,143 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
-  --radius: 0.5rem;
-}
+@import "../../styled-system/styles.css";
 
 * {
-  border-color: hsl(var(--border));
+  box-sizing: border-box;
 }
 
 body {
   min-height: 100vh;
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
+  margin: 0;
+  background: var(--colors-bg);
+  color: var(--colors-text);
   font-family:
-    Arial,
-    Helvetica,
+    "Pretendard Variable",
+    "Apple SD Gothic Neo",
+    "Malgun Gothic",
+    system-ui,
     sans-serif;
+}
+
+.rbc-calendar {
+  color: var(--colors-text);
+  font-family: inherit;
+}
+
+.rbc-month-view,
+.rbc-header,
+.rbc-day-bg {
+  border-color: var(--colors-border);
+}
+
+.rbc-month-view {
+  border-width: 1px 0 0;
+}
+
+.rbc-month-row,
+.rbc-month-header {
+  border-color: var(--colors-border);
+}
+
+.rbc-day-bg + .rbc-day-bg {
+  border-left: 0;
+}
+
+.rbc-header {
+  border-bottom: 1px solid var(--colors-border);
+  padding: 6px 4px;
+  background: transparent;
+  color: var(--colors-text-faint);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.rbc-month-header .rbc-header:first-child {
+  color: var(--colors-tag-red-text);
+}
+
+.rbc-off-range-bg {
+  background: transparent;
+}
+
+.rbc-off-range {
+  color: var(--colors-text-faint);
+}
+
+.rbc-today {
+  background: transparent;
+}
+
+.rbc-now .rbc-button-link {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--colors-tag-red-text);
+  color: var(--colors-primary-text);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rbc-toolbar {
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.rbc-toolbar button {
+  min-height: 44px;
+  border: 1px solid var(--colors-border-strong);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--colors-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.rbc-toolbar button:hover,
+.rbc-toolbar button:focus {
+  background: var(--colors-surface);
+  color: var(--colors-text);
+}
+
+.rbc-toolbar button.rbc-active,
+.rbc-toolbar button.rbc-active:hover,
+.rbc-toolbar button.rbc-active:focus {
+  border-color: var(--colors-primary);
+  background: var(--colors-primary);
+  color: var(--colors-primary-text);
+  box-shadow: none;
+}
+
+.rbc-event,
+.rbc-day-slot .rbc-background-event {
+  border: 0 !important;
+  background: transparent !important;
+  color: inherit !important;
+  min-height: 20px;
+  padding: 0;
+}
+
+.rbc-row-segment {
+  padding: 1px 2px;
+}
+
+.rbc-event-content {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.rbc-event:focus {
+  outline: 2px solid var(--colors-link);
+  outline-offset: 2px;
 }
