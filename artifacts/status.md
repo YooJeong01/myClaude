@@ -1,18 +1,16 @@
 # 상태 보드
 
-- last update: 2026-09-15 01:00 (by plan) — 세션 종료. 인수인계 문서:
-  `artifacts/handover/2026-09-15-00-20-claude-session-end-handover.md`(정본, 역할별 정리).
-  ⚠️ 이 세션 종료 중 **다른 세션이 동시에 같은 작업 폴더에서 문서화 작업 중이었음을 발견** —
-  그 세션이 `main`에서 딴 `chore/session-handover-docs` 브랜치에 자기 핸드오버를 커밋함(코드
-  변경 없음, 순수 문서). 이 커밋은 `feat/design-system`과 무관하니 신경 안 써도 되지만, **다음
-  세션은 git 작업 전 항상 `git status --short --branch`로 현재 체크아웃 브랜치를 먼저 확인할 것**
-  (worktree 안 쓰는 구조라 다른 세션이 언제든 브랜치를 바꿔둘 수 있음 — 이번에 실제로 발생).
+- last update: 2026-09-15 21:50 (by plan) — QA 3라운드 완료(분석상세/지원동기 육안 확인 +
+  사이드바 폴딩 실제 클릭 확인, 문제 0건). `redesign` 스코프 육안 QA 전부 완료.
+  `artifacts/test-reports/redesign-visual-qa-round3.md` 참고. `git status --short --branch`로
+  현재 브랜치(`feat/design-system`) 확인 후 시작함.
 
 ## 현재 페이즈
 
-**`feat/design-system` — job-listing-filters 병합 + 리디자인 blocker/should-fix 전부 수정·확인
-완료.** ⚠️ 남은 건 분석상세/지원동기 화면 육안 확인 + 사이드바 폴딩 실제 클릭 확인뿐 — 스코프
-거의 마무리 단계, `main` 병합 후보에 근접.
+**`feat/design-system` — `main` 병합 후보 준비 완료.** job-listing-filters 병합, 리디자인
+blocker/should-fix 전부 반영, 분석상세·지원동기·사이드바 폴딩 육안 확인까지 전부 끝남.
+`main`(a39901c)이 base에서 안 움직여서 병합 시 충돌 없음(`git merge-base main feat/design-system`
+== `main` HEAD 확인됨). **사용자 승인 후 병합 가능한 상태 — plan이 직접 병합하지 않고 대기.**
 
 병합 검증(`tsc`+`build`) 완료, `test:e2e` 9/9 통과 확인됨(캘린더 작업 이후 재검증 포함).
 
@@ -39,24 +37,22 @@
 | Gmail/잡코리아 제거 | done | – | done | 완료(blocker 0, should-fix 반영) | – | ✅ |
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
 | redesign: design-system (파운데이션) | done | done(스펙) | done(should-fix 3건 반영, `89fcf7e`) | 완료(diff 직접 확인) | – | 보류(화면과 묶어서) |
-| redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | done(should-fix 4건 반영, `c7a831d`) | 수정 전 리뷰 완료(blocker 0, should-fix 4) | 대기(육안) | 보류 |
-| redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`, should-fix `3408578`, 768px 필터폼 fix `eaf6dc5`, E2E spec `b00a800`) | 완료(blocker 0, should-fix 4 반영) | 대기(육안) | 보류 |
-| redesign: 사이드바 폴딩 버그 1차(동적 css() 값) | done | – | done (`13ebd29`) | 대기 | 대기(육안) | 보류 |
-| redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | done (`25f4052`) | 대기 | 대기(육안) | 보류 |
-| redesign: 캘린더 iOS풍 재작업 | done | done | done (`7ad12dc`, blocker fix `0cea55a`) | 대기 | 대기(육안 재확인) | 보류 |
+| redesign: screens 1차(app-shell·dashboard·analysis-detail·motivation·calendar) | done | done(스펙 5개) | done(should-fix 4건 반영, `c7a831d`) | 수정 전 리뷰 완료(blocker 0, should-fix 4) | 완료(육안, round3) | 보류 |
+| redesign: screens 2차(login·experiences·analyses-index·job-postings·analysis-history) | done | done(스펙 5개, T6~T10) | done (`0ef20fd`, should-fix `3408578`, 768px 필터폼 fix `eaf6dc5`, E2E spec `b00a800`) | 완료(blocker 0, should-fix 4 반영) | 완료(육안, round2+round3) | 보류 |
+| redesign: 사이드바 폴딩 버그 1차(동적 css() 값) | done | – | done (`13ebd29`) | 대기(nit만 남음, 병합 비차단) | 완료(실제 클릭, round3) | 보류 |
+| redesign: 사이드바 토글 접근불가 버그 2차(폭 부족) | done(근본원인 확인) | – | done (`25f4052`) | 대기(nit만 남음, 병합 비차단) | 완료(실제 클릭, round3) | 보류 |
+| redesign: 캘린더 iOS풍 재작업 | done | done | done (`7ad12dc`, blocker fix `0cea55a`) | 대기(nit만 남음, 병합 비차단) | 완료(round2 재확인) | 보류 |
 | job-listing-filters (페이지네이션·마감필터·D-day·신입경력) | done | – | done | 완료(blocker 0, should-fix 4건 반영) | 완료(blocker 0) | `feat/design-system`으로 병합 완료 |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- (사이드바 관련: 없음 — 사이드바 코드 수정 + 다크모드 토글 구현 완료. **아직 병합 요청 안 함**)
-- job-listing-filters 관련 후속(병합 자체를 막지는 않음, `main` 병합 전 정리 권장):
-  1. ~~`e2e/day5-report.spec.ts`의 "공고 검색·페이지네이션" 시나리오가 옛 "더 보기"/`cursor` UI
-     기준이라 vacuous pass 상태~~ — 숫자 페이지네이션 검증으로 갱신 완료(`b00a800`).
-  2. `server/jobs/backfill-career-level.ts` dry-run/apply 미실행 — 기존 1574건 `career_level`
+- job-listing-filters 관련 후속(병합 자체를 막지는 않음, `main` 병합 전/후 언제든 정리 가능):
+  1. `server/jobs/backfill-career-level.ts` dry-run/apply 미실행 — 기존 1574건 `career_level`
      비어있을 가능성 높음.
-- **`feat/design-system` 자체가 아직 `main` 병합 후보 아님** — screens 2차 review 대기, 1차/2차
-  qa 육안 확인 대기, 캘린더 iOS풍 작업은 구현 완료이나 브라우저 육안 확인 필요.
+- screens 2차 리뷰 nit 6건(중복 스타일 정리 등, 병합 비차단) — 여유 있을 때 정리.
+- **`feat/design-system` 육안 QA 전부 완료 — `main` 병합 후보 상태.** 병합은 사용자 승인 필요
+  (아래 "다음 액션" 참고).
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -80,16 +76,18 @@
 ## 다음 액션
 
 - **완료된 검증**: `pnpm exec tsc --noEmit` + `pnpm lint` + `pnpm build` + `pnpm test:e2e` 9/9 통과.
-  특히 `e2e/day5-report.spec.ts` 7번은 `2페이지 이동=true`, `1페이지 이전버튼 비활성=true`로 확인됨.
-- plan/code-review/qa: 2차 라운드(T6~T10) should-fix 4건 반영 완료(`3408578`) + 사이드바/캘린더/다크모드 수정 결과 확인.
-  tsc/lint/build는 Codex 기준 통과. 실제 브라우저 육안 확인 필요(사이드바 폴딩 직접 눌러서 확인,
-  캘린더 iOS풍 시각 확인, 테마 토글 persistence 확인). 완료:
-  `artifacts/handover/2026-09-14-07-26-codex-sidebar-dynamic-css-fix-done.md`,
-  `artifacts/handover/2026-09-14-08-15-codex-sidebar-toggle-fix-done.md`,
-  `artifacts/handover/2026-09-14-15-04-codex-calendar-ios-done.md`,
-  `artifacts/handover/2026-09-14-16-48-codex-visual-qa-fixes-done.md`.
-- 전체 완료되면: qa 라운드(E2E 회귀 + 반응형/다크) → 사용자에게 최종 `main` 병합 요청.
-- 사용자 기상 후: 자동 로그인 방식(세션연장/체크박스/구글OAuth) 확인 필요.
+  분석상세·지원동기·사이드바 폴딩(실제 클릭) 육안 확인까지 완료(round3,
+  `artifacts/test-reports/redesign-visual-qa-round3.md`) — 문제 0건.
+- **다음 세션 시작점**: `feat/design-system`을 `main`으로 병합할지 **사용자에게 물어볼 것**.
+  병합 명령어(충돌 없음 확인됨, `main`이 base `a39901c`에서 안 움직임):
+  ```
+  git checkout main && git merge --no-ff feat/design-system
+  ```
+  사용자가 명시적으로 병합 지시하면 그 자리에서 실행 가능(계획된 병합 게이트 — plan이 스스로
+  판단해서 병합하는 것만 막는 것이지 사용자 직접 지시까지 막는 건 아님, `project-multi-agent-workflow`
+  메모리 참고). 병합 후 남는 후속(nit 6건, career_level 백필)은 급하지 않음.
+- 미확정 사항(병합과 무관, 다음 라운드): 자동 로그인 방식(세션연장/체크박스/구글OAuth 중 택1),
+  Day 8(Capacitor+Tauri) 착수 여부.
 
 ## 참고
 
