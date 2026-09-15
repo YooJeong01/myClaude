@@ -12,6 +12,10 @@ const textareaStyle = css({
   py: 2,
   resize: "vertical",
   textStyle: "sm",
+  transitionDuration: "fast",
+  transitionProperty: "colors",
+  transitionTimingFunction: "standard",
+  w: "full",
   _disabled: {
     cursor: "not-allowed",
     opacity: 0.6

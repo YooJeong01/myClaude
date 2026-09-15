@@ -13,7 +13,7 @@ import {
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { cardStyle } from "@/shared/ui/card";
-import { Input, inputStyle } from "@/shared/ui/input";
+import { Input, selectStyle } from "@/shared/ui/input";
 import { css } from "../../../../styled-system/css";
 
 const JOB_POSTING_SOURCES = [
@@ -66,6 +66,7 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
             md: "repeat(2, minmax(0, 1fr))",
             xl: "minmax(0, 1fr) 10rem 10rem 10rem 10rem auto auto"
           },
+          alignItems: "center",
           p: 4
         })
       )}
@@ -77,7 +78,7 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
         placeholder="회사명 또는 직무 검색"
       />
       <select
-        className={cn(inputStyle, css({ w: "full" }))}
+        className={selectStyle}
         defaultValue={defaultValues.employmentType}
         name="employmentType"
       >
@@ -89,7 +90,7 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
         ))}
       </select>
       <select
-        className={cn(inputStyle, css({ w: "full" }))}
+        className={selectStyle}
         defaultValue={defaultValues.careerLevel}
         name="careerLevel"
       >
@@ -101,7 +102,7 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
         ))}
       </select>
       <select
-        className={cn(inputStyle, css({ w: "full" }))}
+        className={selectStyle}
         defaultValue={defaultValues.source}
         name="source"
       >
@@ -112,7 +113,7 @@ export function JobPostingFilterForm({ defaultValues }: FilterFormProps) {
         ))}
       </select>
       <select
-        className={cn(inputStyle, css({ w: "full" }))}
+        className={selectStyle}
         defaultValue={defaultValues.onlyClosed ? "1" : ""}
         name="onlyClosed"
       >
