@@ -1,22 +1,19 @@
 # 상태 보드
 
-- last update: 2026-09-15 22:15 (by plan) — **사용자 직접 지시로 `feat/design-system` → `main`
-  병합 완료** (충돌 0건, `git merge --no-ff`). 병합 후 `tsc --noEmit` + `pnpm build` 재검증
-  통과 확인. `main`이 `origin/main` 대비 83 commits ahead — **push는 아직 안 함, 사용자 확인
-  대기 중.**
+- last update: 2026-09-15 22:20 (by plan) — **사용자 직접 지시로 `feat/design-system` → `main`
+  병합 + push + 로컬 브랜치 정리까지 완료.** 병합(충돌 0건) → `tsc`+`build` 재검증 통과 →
+  `git push origin main`(`a39901c..eee21de`) → 병합된 `feat/design-system` 로컬 브랜치 삭제.
+  `chore/session-handover-docs`(다른 세션이 만든 별개 브랜치)는 손대지 않음.
 
 ## 현재 페이즈
 
-**리디자인(노션풍) + job-listing-filters 스코프가 `main`에 병합 완료.** 로컬 `main`만 앞서있고
-원격(`origin/main`)엔 아직 반영 안 됨 — push 여부 사용자 확인 필요.
+**리디자인(노션풍) + job-listing-filters 스코프가 `main`에 병합·push 완료.** 로컬/원격
+`main` 동기화됨. 로컬 작업 브랜치는 `main` 하나만 남음.
 
 ## 작업 트리
 
 - holder: (empty)
-- branch: `main` (병합 완료, push 대기). `feat/design-system`은 병합됐으니 정리 대상(삭제 여부
-  확인 필요, 로컬 브랜치라 위험 낮음).
-- 참고용 병합 커밋: 병합 직후 커밋 메시지 `[merge] feat/design-system — 노션풍 리디자인 +
-  job-listing-filters 병합`.
+- branch: `main` (병합·push 완료, `origin/main`과 동기화).
 
 ## 참고 (2026-09-14 진행 노트)
 
