@@ -1,18 +1,17 @@
 # 상태 보드
 
-- last update: 2026-09-18 (by plan) — **사용자 직접 지시로 `feat/screens-nit-cleanup` → `main`
-  병합 완료**(충돌 0건). 병합 후 `tsc --noEmit` + `pnpm build` 재검증 통과. **push는 아직 안 함,
-  사용자 확인 대기 중.**
+- last update: 2026-09-18 (by plan) — `feat/screens-nit-cleanup` → `main` 병합 + push +
+  로컬 브랜치 정리까지 전부 완료(`origin/main` `d83f26a..2db31d4`).
 
 ## 현재 페이즈
 
-**`main`에 리디자인(노션풍) + job-listing-filters + screens nit 정리까지 전부 반영 완료
-(로컬 기준).** 원격(`origin/main`)엔 아직 push 안 함.
+**`main`에 리디자인(노션풍) + job-listing-filters + screens nit 정리까지 전부 반영·push
+완료.** 로컬/원격 동기화됨. 로컬 브랜치는 `main` 하나만 남음.
 
 ## 작업 트리
 
 - holder: (empty)
-- branch: `main` (병합 완료, push 대기).
+- branch: `main` (병합·push 완료, `origin/main`과 동기화).
 
 ## 파이프라인
 
@@ -30,7 +29,7 @@
 
 ## 블로킹 / 사용자 대기
 
-- `main` push 여부 확인 필요 (아래 "다음 액션" 참고).
+- 없음.
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -46,9 +45,8 @@
 
 ## 다음 액션
 
-1. **`main` push 여부 사용자에게 확인.** push하면 병합된 `feat/screens-nit-cleanup` 로컬 브랜치
-   정리(삭제)도 같이 할 것 — 지난 세션 패턴과 동일.
-2. 위 1번과 무관하게, 사용자 편한 때 "사용자 결정 필요" 섹션 2건 확인.
+- 사용자 편한 때 "사용자 결정 필요" 섹션 2건(자동 로그인 방식, Day 8 착수 여부) 확인.
+  급한 블로커는 없음.
 
 ## 참고
 
