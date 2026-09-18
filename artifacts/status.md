@@ -1,19 +1,18 @@
 # 상태 보드
 
-- last update: 2026-09-15 23:05 (by plan) — Codex의 screens nit 6건 정리 완료(`0cfd093`).
-  plan이 diff 직접 리뷰함(파일 12개 전부 확인) — 스펙대로 기계적 리팩터링만 수행, 동작 변경
-  없음, 우려사항 없음. tsc/lint/build 전부 Codex 기준 통과. **`main` 병합은 사용자 확인 대기.**
+- last update: 2026-09-18 (by plan) — **사용자 직접 지시로 `feat/screens-nit-cleanup` → `main`
+  병합 완료**(충돌 0건). 병합 후 `tsc --noEmit` + `pnpm build` 재검증 통과. **push는 아직 안 함,
+  사용자 확인 대기 중.**
 
 ## 현재 페이즈
 
-**`main`은 리디자인(노션풍) + job-listing-filters 전체 반영 완료 상태(원격 동기화됨).**
-`feat/screens-nit-cleanup`(nit 6건 정리)이 검증까지 끝나서 병합 후보 상태 — 사용자 확인만 남음.
+**`main`에 리디자인(노션풍) + job-listing-filters + screens nit 정리까지 전부 반영 완료
+(로컬 기준).** 원격(`origin/main`)엔 아직 push 안 함.
 
 ## 작업 트리
 
 - holder: (empty)
-- branch: `feat/screens-nit-cleanup` — nit 6건 정리 완료(`0cfd093`), plan 리뷰 완료, 병합 후보.
-- `main`: 병합·push 완료, 원격과 동기화됨.
+- branch: `main` (병합 완료, push 대기).
 
 ## 파이프라인
 
@@ -26,13 +25,12 @@
 | session-refresh 버그수정 (getClaims→getUser) | done | – | done | 완료(blocker 0) | – | ✅ |
 | redesign + job-listing-filters (파운데이션·화면 10개·사이드바·다크모드·캘린더·필터) | done | done | done | 완료(각 라운드 blocker 0) | 완료(육안 3라운드) | ✅ (`main`, `eee21de`) |
 | career_level 백필 | done | – | done(dry-run+apply, 총 394건: 1차 376건 + 이번 18건) | – | – | ✅ (`main`) |
-| screens 2차 리뷰 nit 6건 정리 | done(위임) | – | done (`0cfd093`, tsc/lint/build 통과) | 완료(plan 직접 diff 리뷰, 우려사항 없음) | 대기(육안, 병합 비차단) | 병합 후보(사용자 확인 대기) |
+| screens 2차 리뷰 nit 6건 정리 | done(위임) | – | done (`0cfd093`, tsc/lint/build 통과) | 완료(plan 직접 diff 리뷰, 우려사항 없음) | 대기(육안, 병합 비차단) | ✅ (`main`, 병합 완료, push 대기) |
 | Day 8 (Capacitor + Tauri) | 대기 (day8.md 작성됨) | – | – | – | – | – |
 
 ## 블로킹 / 사용자 대기
 
-- `feat/screens-nit-cleanup`을 `main`에 병합할지 확인 필요(내용은 순수 스타일 리팩터링,
-  기능 변경 없음 — 아래 "다음 액션" 참고).
+- `main` push 여부 확인 필요 (아래 "다음 액션" 참고).
 
 ## 확정된 시각 방향 (참고: `project-design-stack-and-direction` 메모리)
 
@@ -48,11 +46,8 @@
 
 ## 다음 액션
 
-1. `feat/screens-nit-cleanup`을 `main`으로 병합할지 **사용자에게 물어볼 것**(충돌 위험 없음 —
-   `main`이 이 브랜치의 base에서 안 움직임). 병합 명령어:
-   ```
-   git checkout main && git merge --no-ff feat/screens-nit-cleanup
-   ```
+1. **`main` push 여부 사용자에게 확인.** push하면 병합된 `feat/screens-nit-cleanup` 로컬 브랜치
+   정리(삭제)도 같이 할 것 — 지난 세션 패턴과 동일.
 2. 위 1번과 무관하게, 사용자 편한 때 "사용자 결정 필요" 섹션 2건 확인.
 
 ## 참고
