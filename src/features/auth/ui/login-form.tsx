@@ -4,6 +4,7 @@ import { Loader2, Mail } from "lucide-react";
 import { useState, useTransition, type FormEvent } from "react";
 
 import { Button } from "@/shared/ui/button";
+import { FormStatusRow } from "@/shared/ui/form-status-row";
 import { Input } from "@/shared/ui/input";
 import { css } from "../../../../styled-system/css";
 
@@ -68,33 +69,7 @@ export function LoginForm({ requestAction, errorMessage }: LoginFormProps) {
         />
       </label>
 
-      <div
-        className={css({
-          alignItems: { md: "center" },
-          display: "flex",
-          flexDirection: { base: "column", md: "row" },
-          gap: 3,
-          justifyContent: { md: "space-between" }
-        })}
-      >
-        <p
-          aria-live="polite"
-          className={css({
-            color: "textMuted",
-            minH: 5,
-            textStyle: "sm"
-          })}
-        >
-          {message ? (
-            <span
-              className={css({
-                color: message.type === "error" ? "dangerText" : "textMuted"
-              })}
-            >
-              {message.text}
-            </span>
-          ) : null}
-        </p>
+      <FormStatusRow message={message}>
         <Button
           className={css({ w: { base: "full", md: "auto" } })}
           disabled={isPending}
@@ -107,7 +82,7 @@ export function LoginForm({ requestAction, errorMessage }: LoginFormProps) {
           )}
           로그인 링크 받기
         </Button>
-      </div>
+      </FormStatusRow>
     </form>
   );
 }

@@ -11,6 +11,10 @@ const inputStyle = css({
   h: 10,
   px: 3,
   textStyle: "sm",
+  transitionDuration: "fast",
+  transitionProperty: "colors",
+  transitionTimingFunction: "standard",
+  w: "full",
   _disabled: {
     cursor: "not-allowed",
     opacity: 0.6
@@ -26,6 +30,8 @@ const inputStyle = css({
   }
 });
 
+const selectStyle = inputStyle;
+
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -35,4 +41,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-export { Input, inputStyle };
+export { Input, inputStyle, selectStyle };

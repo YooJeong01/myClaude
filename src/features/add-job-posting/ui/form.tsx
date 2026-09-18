@@ -6,10 +6,10 @@ import { useRef, useState, useTransition, type FormEvent } from "react";
 
 import { EMPLOYMENT_TYPES, type EmploymentType } from "@/entities/job-posting";
 import type { NewJobPostingInput } from "@/entities/job-posting";
-import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { Card } from "@/shared/ui/card";
-import { Input, inputStyle } from "@/shared/ui/input";
+import { FormStatusRow } from "@/shared/ui/form-status-row";
+import { Input, selectStyle } from "@/shared/ui/input";
 import { Textarea } from "@/shared/ui/textarea";
 import { css } from "../../../../styled-system/css";
 
@@ -47,6 +47,12 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
     error: null,
     success: null
   });
+  let submitMessage: { type: "error" | "success"; text: string } | null = null;
+  if (state.error) {
+    submitMessage = { type: "error", text: state.error };
+  } else if (state.success) {
+    submitMessage = { type: "success", text: state.success };
+  }
 
   async function handleParseUrl() {
     const form = formRef.current;
@@ -207,7 +213,7 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
         <label className={css({ display: "grid", gap: 2, fontWeight: 500, textStyle: "sm" })}>
           <span>고용형태</span>
           <select
-            className={cn(inputStyle, css({ w: "full" }))}
+            className={selectStyle}
             defaultValue="기타"
             disabled={isPending}
             name="employmentType"
@@ -249,25 +255,7 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
         />
       </label>
 
-      <div
-        className={css({
-          alignItems: { md: "center" },
-          display: "flex",
-          flexDirection: { base: "column", md: "row" },
-          gap: 3,
-          justifyContent: { md: "space-between" }
-        })}
-      >
-        <p
-          aria-live="polite"
-          className={css({ color: "textMuted", minH: 5, textStyle: "sm" })}
-        >
-          {state.error ? (
-            <span className={css({ color: "dangerText" })}>{state.error}</span>
-          ) : (
-            state.success
-          )}
-        </p>
+      <FormStatusRow message={submitMessage}>
         <Button
           className={css({ w: { base: "full", md: "auto" } })}
           disabled={isPending}
@@ -280,7 +268,7 @@ export function AddJobPostingForm({ submitAction }: AddJobPostingFormProps) {
           )}
           공고 저장
         </Button>
-      </div>
+      </FormStatusRow>
     </form>
   );
 }

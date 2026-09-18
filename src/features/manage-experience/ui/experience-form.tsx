@@ -10,6 +10,7 @@ import {
   type NewExperienceInput
 } from "@/entities/experience";
 import { Button } from "@/shared/ui/button";
+import { FormStatusRow } from "@/shared/ui/form-status-row";
 import { Input } from "@/shared/ui/input";
 import { Textarea } from "@/shared/ui/textarea";
 import { css } from "../../../../styled-system/css";
@@ -102,33 +103,7 @@ export function ExperienceForm({
         />
       </label>
 
-      <div
-        className={css({
-          alignItems: { md: "center" },
-          display: "flex",
-          flexDirection: { base: "column", md: "row" },
-          gap: 3,
-          justifyContent: { md: "space-between" }
-        })}
-      >
-        <p
-          aria-live="polite"
-          className={css({
-            color: "textMuted",
-            minH: 5,
-            textStyle: "sm"
-          })}
-        >
-          {message ? (
-            <span
-              className={css({
-                color: message.type === "error" ? "dangerText" : "textMuted"
-              })}
-            >
-              {message.text}
-            </span>
-          ) : null}
-        </p>
+      <FormStatusRow message={message}>
         <Button
           className={css({ w: { base: "full", md: "auto" } })}
           disabled={isPending}
@@ -141,7 +116,7 @@ export function ExperienceForm({
           )}
           {experience ? "수정 저장" : "경험 저장"}
         </Button>
-      </div>
+      </FormStatusRow>
     </form>
   );
 }

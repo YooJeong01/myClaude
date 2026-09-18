@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import type { CompanyAnalysisSummary } from "@/entities/company-analysis";
 import { Card } from "@/shared/ui/card";
+import { separatedArticleListStyle } from "@/shared/ui/separated-list";
 import { css } from "../../../../styled-system/css";
 
 import { FreshnessBadge } from "./freshness-badge";
@@ -29,14 +30,7 @@ export function AnalysisHistoryList({
   }
 
   return (
-    <Card
-      className={css({
-        "& > article + article": {
-          borderColor: "border",
-          borderTopWidth: "1px"
-        }
-      })}
-    >
+    <Card className={separatedArticleListStyle}>
       {analyses.map((analysis) => (
         <article
           className={css({

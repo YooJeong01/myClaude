@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import type { Experience, NewExperienceInput } from "@/entities/experience";
 import { Button } from "@/shared/ui/button";
 import { Card } from "@/shared/ui/card";
+import { separatedArticleListStyle } from "@/shared/ui/separated-list";
 import { css } from "../../../../styled-system/css";
 
 import { ExperienceForm } from "./experience-form";
@@ -67,14 +68,7 @@ export function ExperienceList({
       >
         {error}
       </p>
-      <Card
-        className={css({
-          "& > article + article": {
-            borderColor: "border",
-            borderTopWidth: "1px"
-          }
-        })}
-      >
+      <Card className={separatedArticleListStyle}>
         {experiences.map((experience) => {
           const isEditing = editingId === experience.id;
           return (
